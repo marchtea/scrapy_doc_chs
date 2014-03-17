@@ -1,54 +1,53 @@
 ======================================
-Scrapy documentation quick start guide
+Scrapy文档快速开始向导
 ======================================
 
-This file provides a quick guide on how to compile the Scrapy documentation.
+本文档提供了编译Scrapy文档的快速入门
 
 
-Setup the environment
+环境配置
 ---------------------
 
-To compile the documentation you need the following Python libraries:
+以下Python库在编译文档时将会被使用:
 
  * Sphinx
  * docutils
  * jinja
 
-If you have setuptools available the following command will install all of them
-(since Sphinx requires both docutils and jinja)::
+如果您已经安装好setuptools,执行下列命令将会安装全部所需的库
+(Sphinx同时依赖了docutils和jinja)::
 
     easy_install Sphinx
 
 
-Compile the documentation
+编译文档
 -------------------------
 
-To compile the documentation (to classic HTML output) run the following command
-from this dir::
+在当前路径下运行下面的命令将编译文档(输出为HTML)::
 
     make html
 
-Documentation will be generated (in HTML format) inside the ``build/html`` dir.
+(HTML格式的)文档将被生成在``build/html``路径下.
 
 
-View the documentation
+查看文档
 ----------------------
 
-To view the documentation run the following command::
+您可以执行下列命令来查看文档::
 
     make htmlview
 
-This command will fire up your default browser and open the main page of your
-(previously generated) HTML documentation.
+
+该命令将会启动您默认的浏览器，并且打开您之前生成的HTML文档的首页
 
 
-Start over
+重新开始
 ----------
 
-To cleanup all generated documentation files and start from scratch run::
+执行下列命令来清除生成的文档::
 
     make clean
 
-Keep in mind that this command won't touch any documentation source files.
+注意，该命令不会对文档的源文件有任何影响
 
 
