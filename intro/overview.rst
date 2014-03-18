@@ -1,47 +1,42 @@
 .. _intro-overview:
 
 ==================
-Scrapy at a glance
+初窥Scrapy
 ==================
 
-Scrapy is an application framework for crawling web sites and extracting
-structured data which can be used for a wide range of useful applications, like
-data mining, information processing or historical archival.
+Scrapy是一个为了爬取网站数据，提取结构性数据而编写的应用框架。
+可以应用在包括数据挖掘，信息处理或存储历史数据等一系列的程序中。
 
-Even though Scrapy was originally designed for `screen scraping`_ (more
-precisely, `web scraping`_), it can also be used to extract data using APIs
-(such as `Amazon Associates Web Services`_) or as a general purpose web
-crawler.
+其最初是为了 `页面抓取`_ (更确切来说, `网络抓取`_ )所设计的，
+也可以应用在获取API所返回的数据(例如 `Amazon Associates Web Services`_ ) 或者通用的网络爬虫。
 
-The purpose of this document is to introduce you to the concepts behind Scrapy
-so you can get an idea of how it works and decide if Scrapy is what you need.
+本文档将通过介绍Scrapy背后的概念使您对其工作原理有所了解，
+并确定Scrapy是否是您所需要的。
 
-When you're ready to start a project, you can :ref:`start with the tutorial
-<intro-tutorial>`.
+当您准备好开始您的项目后，您可以参考 :ref:`入门教程<intro-tutorial>` 。
 
-Pick a website
+选择一个网站
 ==============
 
-So you need to extract some information from a website, but the website doesn't
-provide any API or mechanism to access that info programmatically.  Scrapy can
-help you extract that information.
+当您需要从某个未提供API或未提供可以通过程序获取信息的机制的网站中获取某些信息时，
+Scrapy可以助你一臂之力。
 
-Let's say we want to extract the URL, name, description and size of all torrent
-files added today in the `Mininova`_ site.
+以 `Mininova`_ 网站为例，我们想要获取今日添加的所有种子文件的URL, 
+名字， 描述以及文件大小信息。
 
-The list of all torrents added today can be found on this page:
+今日添加的种子文件列表可以通过这个页面找到:
 
     http://www.mininova.org/today
 
 .. _intro-overview-item:
 
-Define the data you want to scrape
+定义您想抓取的数据
 ==================================
 
-The first thing is to define the data we want to scrape. In Scrapy, this is
-done through :ref:`Scrapy Items <topics-items>` (Torrent files, in this case).
+第一步是定义我们需要爬取的数据。在Scrapy中，
+这是通过 :ref:`Scrapy Items <topics-items>` 来完成的.(在本例子中为种子文件)
 
-This would be our Item::
+我们定义的Item::
 
     from scrapy.item import Item, Field
 
@@ -51,41 +46,38 @@ This would be our Item::
         description = Field()
         size = Field()
 
-Write a Spider to extract the data
+编写提取数据的爬虫(*蜘蛛*)
 ==================================
 
-The next thing is to write a Spider which defines the start URL
-(http://www.mininova.org/today), the rules for following links and the rules
-for extracting the data from pages.
+第二步是编写一个爬虫。其定义了初始URL(http://www.mininova.org/today)、
+针对后续链接的规则以及从页面中提取数据的规则。
 
-If we take a look at that page content we'll see that all torrent URLs are like
-http://www.mininova.org/tor/NUMBER where ``NUMBER`` is an integer. We'll use
-that to construct the regular expression for the links to follow: ``/tor/\d+``.
+通过观察页面的内容可以发现所有种子的URL都类似http://www.mininova.org/tor/NUMBER ，
+其中 ``NUMBER`` 是一个整数。
+根据此规律，我们可以定义需要进行跟随的链接的正则表达式: ``/tor/\d+`` 。
 
-We'll use `XPath`_ for selecting the data to extract from the web page HTML
-source. Let's take one of those torrent pages:
+我们使用 `XPath`_ 来从页面的HTML源码中选择需要提取的数据。
+以其中一个种子文件的页面为例:
 
     http://www.mininova.org/tor/2676093
 
-And look at the page HTML source to construct the XPath to select the data we
-want which is: torrent name, description and size.
+观察HTML页面源码并创建我们需要的数据(种子名字，描述和大小)的XPath表达式。
 
 .. highlight:: html
 
-By looking at the page HTML source we can see that the file name is contained
-inside a ``<h1>`` tag::
+通过观察，我们可以发现文件名是包含在 ``<h1>`` 标签中的::
 
    <h1>Darwin - The Evolution Of An Exhibition</h1>
 
 .. highlight:: none
 
-An XPath expression to extract the name could be::
+与此对应的XPath表达式::
 
     //h1/text()
 
 .. highlight:: html
 
-And the description is contained inside a ``<div>`` tag with ``id="description"``::
+种子的描述是被包含在 ``id="description"`` 的 ``<div>`` 标签中::
 
    <h2>Description:</h2>
 
@@ -96,14 +88,13 @@ And the description is contained inside a ``<div>`` tag with ``id="description"`
 
 .. highlight:: none
 
-An XPath expression to select the description could be::
+对应获取描述的XPath表达式::
 
     //div[@id='description']
 
 .. highlight:: html
 
-Finally, the file size is contained in the second ``<p>`` tag inside the ``<div>``
-tag with ``id=specifications``::
+文件大小的信息包含在 ``id=specifications`` 的 ``<div>`` 的第二个 ``<p>`` 标签中::
 
    <div id="specifications">
 
@@ -119,15 +110,15 @@ tag with ``id=specifications``::
 
 .. highlight:: none
 
-An XPath expression to select the file size could be::
+选择文件大小的XPath表达式::
 
    //div[@id='specifications']/p[2]/text()[2]
 
 .. highlight:: python
 
-For more information about XPath see the `XPath reference`_.
+关于XPath的详细内容请参考 `XPath参考`_ 。
 
-Finally, here's the spider code::
+最后，结合以上内容给出爬虫的代码::
 
     from scrapy.contrib.spiders import CrawlSpider, Rule
     from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
@@ -149,123 +140,93 @@ Finally, here's the spider code::
             torrent['size'] = sel.xpath("//div[@id='info-left']/p[2]/text()[2]").extract()
             return torrent
 
-The ``TorrentItem`` class is :ref:`defined above <intro-overview-item>`.
+``TorrentItem`` 的定义在 :ref:`上边 <intro-overview-item>` 。
 
-Run the spider to extract the data
+执行爬虫，获取数据
 ==================================
 
-Finally, we'll run the spider to crawl the site an output file
-``scraped_data.json`` with the scraped data in JSON format::
+终于，我们将要运行爬虫来获取网站的数据，并将其以JSON格式存入到 
+``scraped_data.json`` 文件中::
 
     scrapy crawl mininova -o scraped_data.json -t json
 
-This uses :ref:`feed exports <topics-feed-exports>` to generate the JSON file.
-You can easily change the export format (XML or CSV, for example) or the
-storage backend (FTP or `Amazon S3`_, for example).
+命令中使用了 :ref:`feed导出 <topics-feed-exports>` 来导出JSON文件。您可以很轻松的修改导出格式(例如XML或者CSV)或者存储后端(例如FTP或者 `Amazon S3`_)。
 
-You can also write an :ref:`item pipeline <topics-item-pipeline>` to store the
-items in a database very easily.
+同时，您也可以编写 :ref:`item管道 <topics-item-pipeline>` 将item存储到数据库中。
 
-Review scraped data
+查看提取到的数据
 ===================
 
-If you check the ``scraped_data.json`` file after the process finishes, you'll
-see the scraped items there::
+执行结束后，当您查看 ``scraped_data.json`` , 您将看到提取到的item::
 
     [{"url": "http://www.mininova.org/tor/2676093", "name": ["Darwin - The Evolution Of An Exhibition"], "description": ["Short documentary made for Plymouth ..."], "size": ["150.62 megabyte"]},
     # ... other items ...
     ]
 
-You'll notice that all field values (except for the ``url`` which was assigned
-directly) are actually lists. This is because the :ref:`selectors
-<topics-selectors>` return lists. You may want to store single values, or
-perform some additional parsing/cleansing to the values. That's what
-:ref:`Item Loaders <topics-loaders>` are for.
+由于 :ref:`selectors <topics-selectors>` 返回list, 所以值都是以list存储的(除了 ``url`` 是直接赋值之外)。 
+如果您想要保存单个数据或者对数据执行额外的处理,那将是 :ref:`Item Loaders <topics-loaders>` 发挥作用的地方。
 
 .. _topics-whatelse:
 
-What else?
+还有什么？
 ==========
 
-You've seen how to extract and store items from a website using Scrapy, but
-this is just the surface. Scrapy provides a lot of powerful features for making
-scraping easy and efficient, such as:
+您已经了解了如何通过Scrapy提取存储网页中的信息，但这仅仅只是冰山一角。Scrapy提供了很多强大的特性来使得爬取更为简单高效, 例如:
 
-* Built-in support for :ref:`selecting and extracting <topics-selectors>` data
-  from HTML and XML sources
+* HTML, XML源数据 :ref:`选择及提取 <topics-selectors>` 的内置支持
 
-* Built-in support for cleaning and sanitizing the scraped data using a
-  collection of reusable filters (called :ref:`Item Loaders <topics-loaders>`)
-  shared between all the spiders.
+* 提供了一系列在全部爬虫之间共享的可复用的过滤器(即 :ref:`Item Loaders <topics-loaders>`), 对爬取数据进行智能处理提供了内置支持。
 
-* Built-in support for :ref:`generating feed exports <topics-feed-exports>` in
-  multiple formats (JSON, CSV, XML) and storing them in multiple backends (FTP,
-  S3, local filesystem)
+* 通过 :ref:`feed导出 <topics-feed-exports>` 提供了多格式(JSON, CSV, XML)，多存储后端(FTP, S3, 本地文件系统)的内置支持
 
 * A media pipeline for :ref:`automatically downloading images <topics-images>`
   (or any other media) associated with the scraped items
 
-* Support for :ref:`extending Scrapy <extending-scrapy>` by plugging
-  your own functionality using :ref:`signals <topics-signals>` and a
-  well-defined API (middlewares, :ref:`extensions <topics-extensions>`, and
-  :ref:`pipelines <topics-item-pipeline>`).
+* 高扩展性。您可以通过使用 :ref:`signals <topics-signals>` ，设计好的API(中间件, :ref:`插件 <topics-extensions>`, :ref:`pipelines<topics-item-pipeline>`)来编写您自己的功能。
 
-* Wide range of built-in middlewares and extensions for:
+* 内置中间件及扩展为下列功能提供了广泛支持:
 
-  * cookies and session handling
-  * HTTP compression
-  * HTTP authentication
-  * HTTP cache
-  * user-agent spoofing
+  * cookies and session 处理
+  * HTTP 压缩
+  * HTTP 认证 
+  * HTTP 缓存
+  * user-agent 欺骗
   * robots.txt
-  * crawl depth restriction
-  * and more
+  * 爬取深度限制
+  * 其他
 
-* Robust encoding support and auto-detection, for dealing with foreign,
-  non-standard and broken encoding declarations.
+* 针对非英语系中不标准或者错误的编码声明, 提供了自动检测以及健壮的编码支持。
 
-* Support for creating spiders based on pre-defined templates, to speed up
-  spider creation and make their code more consistent on large projects. See
-  :command:`genspider` command for more details.
+* 支持根据模板生成爬虫。这可以加速爬虫创建，并使得在大型项目中代码更一致。详细内容请参阅 :command:`genspider` 命令。
 
-* Extensible :ref:`stats collection <topics-stats>` for multiple spider
-  metrics, useful for monitoring the performance of your spiders and detecting
-  when they get broken
+* 针对多爬虫下性能评估、失败检测,提供了可扩展的 :ref:`状态收集工具 <topics-stats>` 。
 
-* An :ref:`Interactive shell console <topics-shell>` for trying XPaths, very
-  useful for writing and debugging your spiders
+* 提供 :ref:`交互式shell终端 <topics-shell>` , 为您测试XPath表达式，编写和调试爬虫提供了极大的方便
 
-* A :ref:`System service <topics-scrapyd>` designed to ease the deployment and
-  run of your spiders in production.
+* 提供 :ref:`System service <topics-scrapyd>`, 简化在生产环境的部署及运行
 
-* A built-in :ref:`Web service <topics-webservice>` for monitoring and
-  controlling your bot
+* 内置 :ref:`Web service <topics-webservice>`, 使您可以监视及控制您的机器
 
-* A :ref:`Telnet console <topics-telnetconsole>` for hooking into a Python
-  console running inside your Scrapy process, to introspect and debug your
-  crawler
+* 内置 :ref:`Telnet终端 <topics-telnetconsole>` ，通过在Scrapy进程中钩入Python终端，使您可以查看并且调试爬虫
 
-* :ref:`Logging <topics-logging>` facility that you can hook on to for catching
-  errors during the scraping process.
+* :ref:`Logging <topics-logging>` 为您在爬取过程中捕捉错误提供了方便
 
-* Support for crawling based on URLs discovered through `Sitemaps`_
+* 支持 `Sitemaps`_ 爬取
 
-* A caching DNS resolver
+* 具有缓存的DNS解析器
 
-What's next?
+接下来
 ============
 
-The next obvious steps are for you to `download Scrapy`_, read :ref:`the
-tutorial <intro-tutorial>` and join `the community`_. Thanks for your
-interest!
+下一步当然是 `下载Scrapy`_ 了， 您可以阅读 :ref:`入门教程 <intro-tutorial>` 并且加入 `社区`_ 。感谢您的支持!
 
-.. _download Scrapy: http://scrapy.org/download/
-.. _the community: http://scrapy.org/community/
-.. _screen scraping: http://en.wikipedia.org/wiki/Screen_scraping
-.. _web scraping: http://en.wikipedia.org/wiki/Web_scraping
+.. _下载Scrapy: http://scrapy.org/download/
+.. _社区: http://scrapy.org/community/
+.. _页面抓取: http://en.wikipedia.org/wiki/Screen_scraping
+.. _网络抓取: http://en.wikipedia.org/wiki/Web_scraping
 .. _Amazon Associates Web Services: http://aws.amazon.com/associates/
 .. _Mininova: http://www.mininova.org
 .. _XPath: http://www.w3.org/TR/xpath
-.. _XPath reference: http://www.w3.org/TR/xpath
+.. _XPath参考: http://www.w3.org/TR/xpath
 .. _Amazon S3: http://aws.amazon.com/s3/
 .. _Sitemaps: http://www.sitemaps.org
