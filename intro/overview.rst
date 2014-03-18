@@ -145,7 +145,7 @@ Scrapy可以助你一臂之力。
 执行爬虫，获取数据
 ==================================
 
-终于，我们将要运行爬虫来获取网站的数据，并将其以JSON格式存入到 
+终于，我们可以运行爬虫来获取网站的数据，并以JSON格式存入到 
 ``scraped_data.json`` 文件中::
 
     scrapy crawl mininova -o scraped_data.json -t json
@@ -175,14 +175,13 @@ Scrapy可以助你一臂之力。
 
 * HTML, XML源数据 :ref:`选择及提取 <topics-selectors>` 的内置支持
 
-* 提供了一系列在全部爬虫之间共享的可复用的过滤器(即 :ref:`Item Loaders <topics-loaders>`), 对爬取数据进行智能处理提供了内置支持。
+* 通过提供了一系列在爬虫之间共享的可复用的过滤器(即 :ref:`Item Loaders <topics-loaders>`)以对爬取的数据进行智能处理提供了内置支持。
 
 * 通过 :ref:`feed导出 <topics-feed-exports>` 提供了多格式(JSON, CSV, XML)，多存储后端(FTP, S3, 本地文件系统)的内置支持
 
-* A media pipeline for :ref:`automatically downloading images <topics-images>`
-  (or any other media) associated with the scraped items
+* 提供用于对爬取到得内容中 :ref:`自动下载图片 <topics-images>` (或者其他资源) 的媒体资源管道
 
-* 高扩展性。您可以通过使用 :ref:`signals <topics-signals>` ，设计好的API(中间件, :ref:`插件 <topics-extensions>`, :ref:`pipelines<topics-item-pipeline>`)来编写您自己的功能。
+* 高扩展性。您可以通过使用 :ref:`signals <topics-signals>` ，设计好的API(中间件, :ref:`插件 <topics-extensions>`, :ref:`pipelines<topics-item-pipeline>`)来定制实现您的功能。
 
 * 内置中间件及扩展为下列功能提供了广泛支持:
 
@@ -190,12 +189,12 @@ Scrapy可以助你一臂之力。
   * HTTP 压缩
   * HTTP 认证 
   * HTTP 缓存
-  * user-agent 欺骗
+  * 模拟user-agent
   * robots.txt
   * 爬取深度限制
   * 其他
 
-* 针对非英语系中不标准或者错误的编码声明, 提供了自动检测以及健壮的编码支持。
+* 针对非英语语系中不标准或者错误的编码声明, 提供了自动检测以及健壮的编码支持。
 
 * 支持根据模板生成爬虫。这可以加速爬虫创建，并使得在大型项目中代码更一致。详细内容请参阅 :command:`genspider` 命令。
 
