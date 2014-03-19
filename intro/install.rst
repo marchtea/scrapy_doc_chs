@@ -1,81 +1,74 @@
 .. _intro-install:
 
 ==================
-Installation guide
+安装指南
 ==================
 
-Pre-requisites
+前期准备
 ==============
 
-The installation steps assume that you have the following things installed:
+下列的安装步骤假定您已经安装好下列程序:
 
 * `Python`_ 2.7
-* `lxml`_. Most Linux distributions ships prepackaged versions of lxml. Otherwise refer to http://lxml.de/installation.html
-* `OpenSSL`_. This comes preinstalled in all operating systems except Windows (see :ref:`intro-install-platform-notes`)
-* `pip`_ or `easy_install`_ Python package managers
+* `lxml`_. 大多数Linux发行版自带了lxml。如果缺失，请查看http://lxml.de/installation.html
+* `OpenSSL`_. 除了Windows(请查看 :ref:`intro-install-platform-notes`)之外的系统都已经提供。
+* `pip`_ or `easy_install`_ Python安装管理器
 
-Installing Scrapy
+安装Scrapy
 =================
 
-You can install Scrapy using easy_install or pip (which is the canonical way to
-distribute and install Python packages).
+您可以通过使用easy_install或者(更被推荐用来分发和安装Python包的工具)pip来安装Scrapy。
 
-.. note:: Check :ref:`intro-install-platform-notes` first.
+.. note:: 请先查看 :ref:`intro-install-platform-notes`.
 
-To install using pip::
+使用pip安装::
 
    pip install Scrapy
 
-To install using easy_install::
+使用easy_install安装::
 
    easy_install Scrapy
 
 .. _intro-install-platform-notes:
 
-Platform specific installation notes
+平台安装指南
 ====================================
 
 Windows
 -------
 
-After installing Python, follow these steps before installing Scrapy:
+安装完Python后，在安装Scrapy前请先执行下列步骤:
 
-* add the ``C:\python27\Scripts`` and ``C:\python27`` folders to the system
-  path by adding those directories to the ``PATH`` environment variable from
-  the `Control Panel`_.
+* 修改 `控制面板`_ 中的 ``PATH`` 环境变量，将 ``C:\python27\Scripts`` 和 ``C:\python27`` 添加到系统路径中。
 
-* install OpenSSL by following these steps:
+* 执行下列步骤来安装OpenSSL:
 
-  1. go to `Win32 OpenSSL page <http://slproweb.com/products/Win32OpenSSL.html>`_
+  1. 打开 `Win32 OpenSSL页面 <http://slproweb.com/products/Win32OpenSSL.html>`_
 
-  2. download Visual C++ 2008 redistributables for your Windows and architecture
+  2. 根据您的Windows版本和架构(32位或64位)，下载Visual C++ 2008 redistributables.
 
-  3. download OpenSSL for your Windows and architecture (the regular version, not the light one)
+  3. 根据您的Windows版本和架构来下载OpenSSL(完整版，不是简化版)
 
-  4. add the ``c:\openssl-win32\bin`` (or similar) directory to your ``PATH``, the same way you added ``python27`` in the first step`` in the first step
+  4. 按照上面添加 ``python27`` 环境变量的方式将 ``c:\openssl-win32\bin`` 添加到您的 ``PATH`` 中。
 
-* some binary packages that Scrapy depends on (like Twisted, lxml and pyOpenSSL) require a compiler available to install, and fail if you don't have Visual Studio installed. You can find Windows installers for those in the following links. Make sure you respect your Python version and Windows architecture.
+* 一些Scrapy依赖的二进制包(Twisted, lxml以及pyOpenSSL)要求系统中预装有编译器。如果没有安装Visual Studio,则会出现错误。您可以在下边的链接中找到Windows的安装包。在安装前请注意您的Python版本和Windows的架构(32或64位)
 
   * pywin32: http://sourceforge.net/projects/pywin32/files/
   * Twisted: http://twistedmatrix.com/trac/wiki/Downloads
-  * zope.interface: download the egg from `zope.interface pypi page <http://pypi.python.org/pypi/zope.interface>`_ and install it by running ``easy_install file.egg``
+  * zope.interface: 您可以从 `zope.interface pypi page <http://pypi.python.org/pypi/zope.interface>`_ 下载并运行 ``easy_install file.egg`` 安装
   * lxml: http://pypi.python.org/pypi/lxml/
   * pyOpenSSL: https://launchpad.net/pyopenssl
 
-Finally, this page contains many precompiled Python binary libraries, which may
-come handy to fulfill Scrapy dependencies:
+另外， 下面的页面包括很多已经编译好的Python二进制库，方便满足Scrapy的依赖。
 
     http://www.lfd.uci.edu/~gohlke/pythonlibs/
 
-Ubuntu 9.10 or above
+Ubuntu 9.10及以上版本 
 ~~~~~~~~~~~~~~~~~~~~
 
-**Don't** use the ``python-scrapy`` package provided by Ubuntu, they are
-typically too old and slow to catch up with latest Scrapy.
+**不要** 使用Ubuntu提供的 ``python-scrapy`` ，相较于最新版的Scrapy，该包版本太旧，并且运行速度也较为缓慢。
 
-Instead, use the official :ref:`Ubuntu Packages <topics-ubuntu>`, which already
-solve all dependencies for you and are continuously updated with the latest bug
-fixes.
+您可以使用官方提供的 :ref:`Ubuntu Packages <topics-ubuntu>` 。该包解决了全部依赖问题，并且与最新的bug修复保持持续更新。
 
 
 .. _Python: http://www.python.org
