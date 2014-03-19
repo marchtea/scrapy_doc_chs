@@ -64,7 +64,7 @@ Windows
     http://www.lfd.uci.edu/~gohlke/pythonlibs/
 
 Ubuntu 9.10及以上版本 
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **不要** 使用Ubuntu提供的 ``python-scrapy`` ，相较于最新版的Scrapy，该包版本太旧，并且运行速度也较为缓慢。
 

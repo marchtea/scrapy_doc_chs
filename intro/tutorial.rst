@@ -1,44 +1,41 @@
 .. _intro-tutorial:
 
 ===============
-Scrapy Tutorial
+Scrapy入门教程
 ===============
 
-In this tutorial, we'll assume that Scrapy is already installed on your system.
-If that's not the case, see :ref:`intro-install`.
+在本篇教程中，我们假定您已经安装好Scrapy。
+如若不然，请参考 :ref:`intro-install` 。
 
-We are going to use `Open directory project (dmoz) <http://www.dmoz.org/>`_ as
-our example domain to scrape.
+接下来我们以 `Open Directory Project(dmoz) (dmoz) <http://www.dmoz.org/>`_
+为例来讲述爬取。
 
-This tutorial will walk you through these tasks:
+本篇教程中将带您完成下列任务:
 
-1. Creating a new Scrapy project
-2. Defining the Items you will extract
-3. Writing a :ref:`spider <topics-spiders>` to crawl a site and extract
-   :ref:`Items <topics-items>`
-4. Writing an :ref:`Item Pipeline <topics-item-pipeline>` to store the
-   extracted Items
+1. 创建一个Scrapy项目
+2. 定义提取的Item
+3. 编写爬取网站的 :ref:`爬虫 <topics-spiders>` 并且提取 :ref:`Item <topics-items>`
+4. 编写 :ref:`Item Pipeline <topics-item-pipeline>` 来存储提取到的Item(即数据)
 
-Scrapy is written in Python_. If you're new to the language you might want to
-start by getting an idea of what the language is like, to get the most out of
-Scrapy.  If you're already familiar with other languages, and want to learn
-Python quickly, we recommend `Learn Python The Hard Way`_.  If you're new to programming
-and want to start with Python, take a look at `this list of Python resources
-for non-programmers`_.
+Scrapy由 Python_ 编写。如果您刚接触并且好奇这门语言的特性以及Scrapy的详情，
+对于已经熟悉其他语言并且想快速学习Python的编程老手，
+我们推荐 `Learn Python The Hard Way`_ ，
+对于想从Python开始学习的编程新手， 
+`非程序员的Python学习资料列表`_ 将是您的选择。
 
 .. _Python: http://www.python.org
-.. _this list of Python resources for non-programmers: http://wiki.python.org/moin/BeginnersGuide/NonProgrammers
+.. _非程序员的Python学习资料列表: http://wiki.python.org/moin/BeginnersGuide/NonProgrammers
 .. _Learn Python The Hard Way: http://learnpythonthehardway.org/book/
 
-Creating a project
+创建项目
 ==================
 
-Before you start scraping, you will have set up a new Scrapy project. Enter a
-directory where you'd like to store your code and then run::
+在开始爬取之前，您必须创建一个新的Scrapy项目。
+进入您打算存储代码的目录中，运行下列命令::
 
    scrapy startproject tutorial
 
-This will create a ``tutorial`` directory with the following contents::
+该命令将会创建包含下列内容的 ``tutorial`` 目录::
 
    tutorial/
        scrapy.cfg
@@ -51,32 +48,28 @@ This will create a ``tutorial`` directory with the following contents::
                __init__.py
                ...
 
-These are basically:
+这些文件分别是:
 
-* ``scrapy.cfg``: the project configuration file
-* ``tutorial/``: the project's python module, you'll later import your code from
-  here.
-* ``tutorial/items.py``: the project's items file.
-* ``tutorial/pipelines.py``: the project's pipelines file.
-* ``tutorial/settings.py``: the project's settings file.
-* ``tutorial/spiders/``: a directory where you'll later put your spiders.
+* ``scrapy.cfg``: 项目的配置文件
+* ``tutorial/``: 该项目的python模块。之后您将在此加入代码。
+* ``tutorial/items.py``: 项目中的item文件.
+* ``tutorial/pipelines.py``: 项目中的pipelines文件.
+* ``tutorial/settings.py``: 项目的设置文件.
+* ``tutorial/spiders/``: 放置spider代码的目录.
 
-Defining our Item
+定义Item
 =================
 
-`Items` are containers that will be loaded with the scraped data; they work
-like simple python dicts but provide additional protection against populating
-undeclared fields, to prevent typos.
+`Items` 是保存爬取到的数据的容器；其使用方法和python字典类似，
+并且提供了额外保护来避免拼写错误导致的未定义字段错误。
 
-They are declared by creating a :class:`scrapy.item.Item` class and defining
-its attributes as :class:`scrapy.item.Field` objects, like you will in an ORM
-(don't worry if you're not familiar with ORMs, you will see that this is an
-easy task).
+类似在ORM中做的一样，您可以通过创建一个 :class:`scrapy.item.Item` 类，
+并且定义类型为 `scrapy.item.Field` 的类属性来定义一个Item。
+(如果不了解ORM, 不用担心，您会发现这个步骤非常简单)
 
-We begin by modeling the item that we will use to hold the sites data obtained
-from dmoz.org, as we want to capture the name, url and description of the
-sites, we define fields for each of these three attributes. To do that, we edit
-``items.py``, found in the ``tutorial`` directory. Our Item class looks like this::
+首先我们需要根据从dmoz.org获取到的数据对item进行建模。
+我们需要从dmoz中获取名字，url，以及网站的描述。
+对此，我们在item中定义相应的字段。编辑 ``tutorial`` 目录中的 ``items.py`` 文件::
 
     from scrapy.item import Item, Field
 
@@ -85,43 +78,33 @@ sites, we define fields for each of these three attributes. To do that, we edit
         link = Field()
         desc = Field()
 
-This may seem complicated at first, but defining the item allows you to use other handy
-components of Scrapy that need to know how your item looks.
+一开始这看起来可能有点复杂，但是通过定义item，
+您可以很方便的使用Scrapy的其他方法。而这些方法需要知道您的item的定义。
 
-Our first Spider
-================
+编写第一个爬虫(Spider)
+======================================
 
-Spiders are user-written classes used to scrape information from a domain (or group
-of domains).
+Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类。
 
-They define an initial list of URLs to download, how to follow links, and how
-to parse the contents of those pages to extract :ref:`items <topics-items>`.
+其包含了一个用于下载的初始URL，如何跟进网页中的链接以及如何分析页面中的内容，
+提取生成 :ref:`items <topics-items>` 。
 
-To create a Spider, you must subclass :class:`scrapy.spider.Spider` and
-define the three main mandatory attributes:
+为了创建一个Spider，您必须继承 :class:`scrapy.spider.Spider` 类，
+并且必须定义以下三个属性:
 
-* :attr:`~scrapy.spider.Spider.name`: identifies the Spider. It must be
-  unique, that is, you can't set the same name for different Spiders.
+* :attr:`~scrapy.spider.Spider.name`: 用于区别Spider。
+  该名字必须是唯一的，您不可以为不同的Spider设定相同的名字。
 
-* :attr:`~scrapy.spider.Spider.start_urls`: is a list of URLs where the
-  Spider will begin to crawl from.  So, the first pages downloaded will be those
-  listed here. The subsequent URLs will be generated successively from data
-  contained in the start URLs.
+* :attr:`~scrapy.spider.Spider.start_urls`: 包含了Spider在启动时进行爬取的url列表。
+  因此，第一个被获取到的页面将是其中之一。
+  后续的URL则从初始的URL获取到的数据中提取出来。 
 
-* :meth:`~scrapy.spider.Spider.parse` is a method of the spider, which will
-  be called with the downloaded :class:`~scrapy.http.Response` object of each
-  start URL. The response is passed to the method as the first and only
-  argument.
+* :meth:`~scrapy.spider.Spider.parse` 是spider的一个方法。
+  被调用时，每个初始URL完成下载后生成的 :class:`~scrapy.http.Response`
+  对象将会作为唯一的参数传递给该函数。
+  该方法负责解析返回的数据(response data)，提取数据(生成item)以及生成需要进一步处理的URL的 :class:`~scrapy.http.Request` 对象。
 
-  This method is responsible for parsing the response data and extracting
-  scraped data (as scraped items) and more URLs to follow.
-
-  The :meth:`~scrapy.spider.Spider.parse` method is in charge of processing
-  the response and returning scraped data (as :class:`~scrapy.item.Item`
-  objects) and more URLs to follow (as :class:`~scrapy.http.Request` objects).
-
-This is the code for our first Spider; save it in a file named
-``dmoz_spider.py`` under the ``tutorial/spiders`` directory::
+以下为我们的第一个Spider代码，保存在 ``tutorial/spiders`` 目录下的 ``dmoz_spider.py`` 文件中::
 
    from scrapy.spider import Spider
 
@@ -137,15 +120,14 @@ This is the code for our first Spider; save it in a file named
            filename = response.url.split("/")[-2]
            open(filename, 'wb').write(response.body)
 
-Crawling
+爬取
 --------
 
-To put our spider to work, go to the project's top level directory and run::
+进入项目的根目录，执行下列命令启动spider::
 
    scrapy crawl dmoz
 
-The ``crawl dmoz`` command runs the spider for the ``dmoz.org`` domain. You
-will get an output similar to this::
+``crawl dmoz`` 启动用于爬取 ``dmoz.org`` 的spider，您将得到类似与下列的输出::
 
     2014-01-23 18:13:07-0400 [scrapy] INFO: Scrapy started (bot: tutorial)
     2014-01-23 18:13:07-0400 [scrapy] INFO: Optional features available: ...
@@ -159,99 +141,71 @@ will get an output similar to this::
     2014-01-23 18:13:09-0400 [dmoz] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/> (referer: None)
     2014-01-23 18:13:09-0400 [dmoz] INFO: Closing spider (finished)
 
-Pay attention to the lines containing ``[dmoz]``, which corresponds to our
-spider. You can see a log line for each URL defined in ``start_urls``. Because
-these URLs are the starting ones, they have no referrers, which is shown at the
-end of the log line, where it says ``(referer: None)``.
+查看包含 ``[dmoz]`` 的输出，可以看到输出的log中包含定义在 ``start_urls`` 的初始URL，并且与spider中是一一对应的。在log中可以看到其没有指向其他页面( ``(referer:None)`` )。
 
-But more interesting, as our ``parse`` method instructs, two files have been
-created: *Books* and *Resources*, with the content of both URLs.
+除此之外，更有趣的事情发生了。就像我们 ``parse`` 方法说指定的那样，有两个包含url所对应的内容的文件被创建了: *Book* , *Resources* 。
 
-What just happened under the hood?
+刚才发生了什么？
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Scrapy creates :class:`scrapy.http.Request` objects for each URL in the
-``start_urls`` attribute of the Spider, and assigns them the ``parse`` method of
-the spider as their callback function.
+Scrapy为Spider的 ``start_urls`` 属性中的每个URL创建了 :class:`scrapy.http.Request` 对象，并将 ``parse`` 方法作为回调函数(callback)赋值给了Request。
 
-These Requests are scheduled, then executed, and
-:class:`scrapy.http.Response` objects are returned and then fed back to the
-spider, through the :meth:`~scrapy.spider.Spider.parse` method.
+Request对象经过调度，执行生成 :class:`scrapy.http.Response` 对象并送回给spider :meth:`~scrapy.spider.Spider.parse` 方法。
 
-Extracting Items
+提取Item
 ----------------
 
-Introduction to Selectors
+Selectors选择器简介
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-There are several ways to extract data from web pages. Scrapy uses a mechanism
-based on `XPath`_ or `CSS`_ expressions called :ref:`Scrapy Selectors
-<topics-selectors>`.  For more information about selectors and other extraction
-mechanisms see the :ref:`Selectors documentation <topics-selectors>`.
+从网页中提取数据有很多方法。Scrapy使用了一种基于 `XPath`_ 和 `CSS`_ 表达式机制: 
+:ref:`Scrapy Selectors<topics-selectors>` 。
+关于selector和其他提取机制的信息请参考 :ref:`Selector文档 <topics-selectors>` 。
 
 .. _XPath: http://www.w3.org/TR/xpath
 .. _CSS: http://www.w3.org/TR/selectors
 
-Here are some examples of XPath expressions and their meanings:
+这里给出XPath表达式的例子及对应的意义:
 
-* ``/html/head/title``: selects the ``<title>`` element, inside the ``<head>``
-  element of a HTML document
+* ``/html/head/title``: 选择HTML文档中 ``<head>`` 标签内的 ``<title>`` 元素
 
-* ``/html/head/title/text()``: selects the text inside the aforementioned
-  ``<title>`` element.
+* ``/html/head/title/text()``: 选择上面提到的 ``<title>`` 元素的文字
 
-* ``//td``: selects all the ``<td>`` elements
+* ``//td``: 选择所有的 ``<td>`` 元素
 
-* ``//div[@class="mine"]``: selects all ``div`` elements which contain an
-  attribute ``class="mine"``
+* ``//div[@class="mine"]``: 选择所有具有 ``class="mine"`` 属性的 ``div`` 元素
 
-These are just a couple of simple examples of what you can do with XPath, but
-XPath expressions are indeed much more powerful. To learn more about XPath we
-recommend `this XPath tutorial <http://www.w3schools.com/XPath/default.asp>`_.
+上边仅仅是几个简单的XPath例子，实际上XPath远远要比这强大的多。
+如果您想了解的更多，我们推荐 `这篇XPath教程 <http://www.w3schools.com/XPath/default.asp>`_ 。
 
-For working with XPaths, Scrapy provides a :class:`~scrapy.selector.Selector`
-class, which is instantiated with a :class:`~scrapy.http.HtmlResponse` or
-:class:`~scrapy.http.XmlResponse` object as first argument.
+Scrapy提供了 :class:`~scrapy.selector.Selector` 类来配合使用XPath。
+您可以使用 :class:`~scrapy.http.HtmlResponse` 或者 :class:`~scrapy.http.XmlResponse` 作为第一个参数来初始化 :class:`~scrapy.selector.Selector` 。
 
-You can see selectors as objects that represent nodes in the document
-structure. So, the first instantiated selectors are associated with the root
-node, or the entire document.
+Selector有四个基本的方法(点击相应的方法可以看到详细的API文档):
 
-Selectors have four basic methods (click on the method to see the complete API
-documentation):
+* :meth:`~scrapy.selector.Selector.xpath`: 传入xpath表达式，返回该表达式所对应的所有节点的selector list列表 。
 
-* :meth:`~scrapy.selector.Selector.xpath`: returns a list of selectors, each of
-  them representing the nodes selected by the xpath expression given as
-  argument.
+* :meth:`~scrapy.selector.Selector.css`: 传入CSS表达式，返回该表达式所对应的所有节点的selector list列表.
 
-* :meth:`~scrapy.selector.Selector.css`: returns a list of selectors, each of
-  them representing the nodes selected by the CSS expression given as argument.
+* :meth:`~scrapy.selector.Selector.extract`: 序列化该节点为unicode字符串并返回。
 
-* :meth:`~scrapy.selector.Selector.extract`: returns a unicode string with the
-  selected data.
-
-* :meth:`~scrapy.selector.Selector.re`: returns a list of unicode strings
-  extracted by applying the regular expression given as argument.
+* :meth:`~scrapy.selector.Selector.re`: 根据传入的正则表达式对数据进行提取，返回unicode字符串list列表。
 
 
-Trying Selectors in the Shell
+在Shell中尝试Selector选择器
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To illustrate the use of Selectors we're going to use the built-in :ref:`Scrapy
-shell <topics-shell>`, which also requires IPython (an extended Python console)
-installed on your system.
+为了介绍Selector的使用方法，接下来我们将要使用内置的 :ref:`Scrapy shell <topics-shell>` 。Scrapy Shell需要您预装好IPython(一个扩展的Python终端)。
 
-To start a shell, you must go to the project's top level directory and run::
+您需要进入项目的根目录，执行下列命令来启动shell::
 
    scrapy shell "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/"
 
 .. note::
 
-   Remember to always enclose urls with quotes when running Scrapy shell from
-   command-line, otherwise urls containing arguments (ie. ``&`` character)
-   will not work.
+   当您在终端运行Scrapy时，请一定记得给url地址加上引号，否则包含参数的url(例如 ``&`` 字符)会导致Scrapy运行失败。 
 
-This is what the shell looks like::
+shell的输出类似::
 
     [ ... Scrapy log here ... ]
 
@@ -271,15 +225,10 @@ This is what the shell looks like::
 
     In [1]:
 
-After the shell loads, you will have the response fetched in a local
-``response`` variable, so if you type ``response.body`` you will see the body
-of the response, or you can type ``response.headers`` to see its headers.
+当shell载入后，您将得到一个包含response数据的本地 ``response`` 变量。输入 ``response.body`` 将输出response的包体， 输出 ``response.header`` 可以看到response的包头。
+同时，shell根据response提前初始化了变量 ``sel`` 。该selector根据response的类型自动选择最合适的分析规则(XML vs HTML)。
 
-The shell also pre-instantiates a selector for this response in variable ``sel``,
-the selector automatically chooses the best parsing rules (XML vs HTML) based
-on response's type.
-
-So let's try it::
+让我们来试试::
 
    In [1]: sel.xpath('//title')
    Out[1]: [<Selector xpath='//title' data=u'<title>Open Directory - Computers: Progr'>]
@@ -296,40 +245,32 @@ So let's try it::
    In [5]: sel.xpath('//title/text()').re('(\w+):')
    Out[5]: [u'Computers', u'Programming', u'Languages', u'Python']
 
-Extracting the data
+提取数据
 ^^^^^^^^^^^^^^^^^^^
 
-Now, let's try to extract some real information from those pages.
+现在，我们来尝试从这些页面中提取些有用的数据。
 
-You could type ``response.body`` in the console, and inspect the source code to
-figure out the XPaths you need to use. However, inspecting the raw HTML code
-there could become a very tedious task. To make this an easier task, you can
-use some Firefox extensions like Firebug. For more information see
-:ref:`topics-firebug` and :ref:`topics-firefox`.
+您可以在终端中输入 ``response.body`` 来观察HTML源码并确定合适的XPath表达式。不过，这任务实在是非常无聊而且不易。您可以考虑使用Firefox的Firebug扩展来使得工作更为轻松。详情请参考 :ref:`topics-firebug` 和 :ref:`topics-firefox` 。 
 
-After inspecting the page source, you'll find that the web sites information
-is inside a ``<ul>`` element, in fact the *second* ``<ul>`` element.
+在查看了网页的源码后，您会发现网站的信息是被包含在 *第二个* ``<ul>`` 元素中。
 
-So we can select each ``<li>`` element belonging to the sites list with this
-code::
+我们可以通过这段代码选择该页面中网站列表里所有 ``<li>`` 元素::
 
    sel.xpath('//ul/li')
 
-And from them, the sites descriptions::
+网站的描述::
 
    sel.xpath('//ul/li/text()').extract()
 
-The sites titles::
+网站的标题::
 
    sel.xpath('//ul/li/a/text()').extract()
 
-And the sites links::
+以及网站的链接::
 
    sel.xpath('//ul/li/a/@href').extract()
 
-As we've said before, each ``.xpath()`` call returns a list of selectors, so we can
-concatenate further ``.xpath()`` calls to dig deeper into a node. We are going to use
-that property here, so::
+之前提到过每个 ``.xpath()`` 调用返回selector组成的list，因此我们可以拼接更多的 ``.xpath()`` 来进一步获取某个节点。我们将在下边使用这样的特性::
 
    sites = sel.xpath('//ul/li')
    for site in sites:
@@ -340,12 +281,9 @@ that property here, so::
 
 .. note::
 
-   For a more detailed description of using nested selectors, see
-   :ref:`topics-selectors-nesting-selectors` and
-   :ref:`topics-selectors-relative-xpaths` in the :ref:`topics-selectors`
-   documentation
+   关于嵌套selctor的更多详细信息，请参考 :ref:`topics-selectors-nesting-selectors` 以及 :ref:`topics-selectors` 文档中的 :ref:`topics-selectors-relative-xpaths` 部分。
 
-Let's add this code to our spider::
+在我们的spider中加入这段代码::
 
    from scrapy.spider import Spider
    from scrapy.selector import Selector
@@ -367,28 +305,23 @@ Let's add this code to our spider::
                desc = site.xpath('text()').extract()
                print title, link, desc
 
-Notice we import our Selector class from scrapy.selector and instantiate a
-new Selector object.  We can now specify our XPaths just as we did in the shell.
-Now try crawling the dmoz.org domain again and you'll see sites being printed
-in your output, run::
+注意代码中是从scrapy.selector中import了Selector，并且初始化了一个Selector对象。
+接着可以使用我们在shell中操作过的XPath表达式。
+现在尝试再次爬取dmoz.org，您将看到爬取到的网站信息被成功输出::
 
    scrapy crawl dmoz
 
-Using our item
+使用item
 --------------
-
-:class:`~scrapy.item.Item` objects are custom python dicts; you can access the
-values of their fields (attributes of the class we defined earlier) using the
-standard dict syntax like::
+:class:`~scrapy.item.Item` 对象是自定义的python字典。
+您可以使用标准的字典语法来获取到其每个字段的值。(字段即是我们之前用Field赋值的属性)::
 
    >>> item = DmozItem()
    >>> item['title'] = 'Example title'
    >>> item['title']
    'Example title'
 
-Spiders are expected to return their scraped data inside
-:class:`~scrapy.item.Item` objects. So, in order to return the data we've
-scraped so far, the final code for our Spider would be like this::
+一般来说，Spider将会将爬取到的数据以 :class:`~scrapy.item.Item` 对象返回。所以为了将爬取的数据返回，我们最终的代码将是::
 
     from scrapy.spider import Spider
     from scrapy.selector import Selector
@@ -415,10 +348,9 @@ scraped so far, the final code for our Spider would be like this::
                 items.append(item)
             return items
 
-.. note:: You can find a fully-functional variant of this spider in the dirbot_
-   project available at https://github.com/scrapy/dirbot
+.. note:: 您可以在 dirbot_ 项目中找到一个具有完整功能的spider。其项目可以通过 https://github.com/scrapy/dirbot 中找到。
 
-Now doing a crawl on the dmoz.org domain yields ``DmozItem`` objects::
+现在对dmoz.org进行爬取将会产生 ``DmozItem`` 对象::
 
    [dmoz] DEBUG: Scraped from <200 http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
         {'desc': [u' - By David Mertz; Addison Wesley. Book in progress, full text, ASCII format. Asks for feedback. [author website, Gnosis Software, Inc.\n],
@@ -429,34 +361,28 @@ Now doing a crawl on the dmoz.org domain yields ``DmozItem`` objects::
          'link': [u'http://www.informit.com/store/product.aspx?isbn=0130211192'],
          'title': [u'XML Processing with Python']}
 
-Storing the scraped data
+保存爬取到的数据
 ========================
 
-The simplest way to store the scraped data is by using the :ref:`Feed exports
-<topics-feed-exports>`, with the following command::
+最简单存储爬取的数据的方式是使用 :ref:`Feed exports <topics-feed-exports>`::
 
     scrapy crawl dmoz -o items.json -t json
 
-That will generate a ``items.json`` file containing all scraped items,
-serialized in `JSON`_.
+该命令将采用 `JSON`_ 格式对爬取的数据进行序列化，生成 ``items.json`` 文件。
 
-In small projects (like the one in this tutorial), that should be enough.
-However, if you want to perform more complex things with the scraped items, you
-can write an :ref:`Item Pipeline <topics-item-pipeline>`. As with Items, a
-placeholder file for Item Pipelines has been set up for you when the project is
-created, in ``tutorial/pipelines.py``. Though you don't need to implement any item
-pipelines if you just want to store the scraped items.
+在类似本篇教程里这样小规模的项目中，这种存储方式已经足够。
+如果需要对爬取到的item做更多更为复杂的操作，您可以编写
+:ref:`Item Pipeline <topics-item-pipeline>` 。
+类似于我们在创建项目时对Item做的，用于您编写自己的
+``tutorial/pipelines.py`` 也被创建。
+不过如果您仅仅想要保存item，您不需要实现任何的pipeline。
 
-Next steps
+下一步
 ==========
 
-This tutorial covers only the basics of Scrapy, but there's a lot of other
-features not mentioned here. Check the :ref:`topics-whatelse` section in
-:ref:`intro-overview` chapter for a quick overview of the most important ones.
+本篇教程仅介绍了Scrapy的基础，还有很多特性没有涉及。请查看 :ref:`intro-overview` 章节中的 :ref:`topics-whatelse` 部分,大致浏览大部分重要的特性。
 
-Then, we recommend you continue by playing with an example project (see
-:ref:`intro-examples`), and then continue with the section
-:ref:`section-basics`.
+接着，我们推荐您把玩一个例子(查看 :ref:`intro-examples`)，而后继续阅读 :ref:`section-basics` 。
 
 .. _JSON: http://en.wikipedia.org/wiki/JSON
 .. _dirbot: https://github.com/scrapy/dirbot
