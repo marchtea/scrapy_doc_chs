@@ -74,6 +74,6 @@ Ubuntu 9.10及以上版本
 .. _Python: http://www.python.org
 .. _pip: http://www.pip-installer.org/en/latest/installing.html
 .. _easy_install: http://pypi.python.org/pypi/setuptools
-.. _Control Panel: http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/sysdm_advancd_environmnt_addchange_variable.mspx
+.. _控制面板: http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/sysdm_advancd_environmnt_addchange_variable.mspx
 .. _lxml: http://lxml.de/
 .. _OpenSSL: https://pypi.python.org/pypi/pyOpenSSL
