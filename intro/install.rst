@@ -12,12 +12,12 @@
 * `Python`_ 2.7
 * `lxml`_. 大多数Linux发行版自带了lxml。如果缺失，请查看http://lxml.de/installation.html
 * `OpenSSL`_. 除了Windows(请查看 :ref:`intro-install-platform-notes`)之外的系统都已经提供。
-* `pip`_ or `easy_install`_ Python安装管理器
+* `pip`_ 或者 `easy_install`_ Python安装管理器
 
 安装Scrapy
 =================
 
-您可以通过使用easy_install或者(更被推荐用来分发和安装Python包的工具)pip来安装Scrapy。
+您可以通过使用easy_install或者pip来安装Scrapy。(pip是更受推荐用来分发和安装Python包的工具)
 
 .. note:: 请先查看 :ref:`intro-install-platform-notes`.
 
