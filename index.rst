@@ -1,30 +1,29 @@
 .. _topics-index:
 
 ==============================
-Scrapy |version| documentation
+Scrapy |version| 文档 
 ==============================
 
-This documentation contains everything you need to know about Scrapy.
+本文档涵盖了所有Scrapy的内容。
 
-Getting help
+获得帮助
 ============
 
-Having trouble? We'd like to help!
+遇到问题了？我们来帮您！
 
-* Try the :doc:`FAQ <faq>` -- it's got answers to some common questions.
-* Looking for specific information? Try the :ref:`genindex` or :ref:`modindex`.
-* Search for information in the `archives of the scrapy-users mailing list`_, or
-  `post a question`_.
-* Ask a question in the `#scrapy IRC channel`_.
-* Report bugs with Scrapy in our `issue tracker`_.
+* 查看下 :doc:`FAQ <faq>` ，这里有些常见的问题的解决办法。
+* 寻找详细的信息？试试 :ref:`genindex` 或者 :ref:`modindex` 。
+* 您可以在 `scrapy-users的邮件列表`_ 中寻找内容，或者 `提问问题`_
+* 在 `#scrapy IRC channel`_ 提问
+* 在 `issue tracker`_ 中提交Scrapy的bug
 
-.. _archives of the scrapy-users mailing list: http://groups.google.com/group/scrapy-users/
-.. _post a question: http://groups.google.com/group/scrapy-users/
+.. _scrapy-users的邮件列表: http://groups.google.com/group/scrapy-users/
+.. _提问问题: http://groups.google.com/group/scrapy-users/
 .. _#scrapy IRC channel: irc://irc.freenode.net/scrapy
 .. _issue tracker: https://github.com/scrapy/scrapy/issues
 
 
-First steps
+第一步
 ===========
 
 .. toctree::
@@ -36,20 +35,20 @@ First steps
    intro/examples
 
 :doc:`intro/overview`
-    Understand what Scrapy is and how it can help you.
+    了解Scrapy如何祝你一臂之力。
 
 :doc:`intro/install`
-    Get Scrapy installed on your computer.
+    安装Scrapy。
 
 :doc:`intro/tutorial`
-    Write your first Scrapy project.
+    编写您的第一个Scrapy项目。
 
 :doc:`intro/examples`
-    Learn more by playing with a pre-made Scrapy project.
+    通过把玩已存在的Scrapy项目来学习更多内容。
 
 .. _section-basics:
 
-Basic concepts
+基本概念
 ==============
 
 .. toctree::
@@ -66,33 +65,33 @@ Basic concepts
    topics/link-extractors
 
 :doc:`topics/commands`
-    Learn about the command-line tool used to manage your Scrapy project.
+    学习用于管理Scrapy项目的命令行工具
 
 :doc:`topics/items`
-    Define the data you want to scrape.
+    定义爬取的数据
 
 :doc:`topics/spiders`
-    Write the rules to crawl your websites.
+    编写爬取网站的规则
 
 :doc:`topics/selectors`
-    Extract the data from web pages using XPath.
+    使用XPath提取网页的数据
 
 :doc:`topics/shell`
-    Test your extraction code in an interactive environment.
+    在交互环境中测试提取数据的代码
 
 :doc:`topics/loaders`
-    Populate your items with the extracted data.
+    使用爬取到的数据填充item
 
 :doc:`topics/item-pipeline`
-    Post-process and store your scraped data.
+    后处理(Post-process)，存储爬取的数据 
 
 :doc:`topics/feed-exports`
-    Output your scraped data using different formats and storages.
+    以不同格式输出爬取数据到不同的存储端
 
 :doc:`topics/link-extractors`
-    Convenient classes to extract links to follow from pages.
+    方便用于提取后续跟进链接的类。
 
-Built-in services
+内置服务
 =================
 
 .. toctree::
@@ -105,22 +104,22 @@ Built-in services
    topics/webservice
 
 :doc:`topics/logging`
-    Understand the simple logging facility provided by Scrapy.
+    了解Scrapy提供的logging功能。
    
 :doc:`topics/stats`
-    Collect statistics about your scraping crawler.
+    收集爬虫运行数据
 
 :doc:`topics/email`
-    Send email notifications when certain events occur.
+    当特定事件发生时发送邮件通知
 
 :doc:`topics/telnetconsole`
-    Inspect a running crawler using a built-in Python console.
+    使用内置的Python终端检查运行中的crawler(爬虫)
 
 :doc:`topics/webservice`
-    Monitor and control a crawler using a web service.
+    使用web service对您的爬虫进行监控和管理
 
 
-Solving specific problems
+解决特定问题
 =========================
 
 .. toctree::
@@ -143,53 +142,53 @@ Solving specific problems
    topics/djangoitem
 
 :doc:`faq`
-    Get answers to most frequently asked questions.
+    常见问题的解决办法。
 
 :doc:`topics/debug`
-    Learn how to debug common problems of your scrapy spider.
+    学习如何对scrapy spider的常见问题进行debug。
 
 :doc:`topics/contracts`
-    Learn how to use contracts for testing your spiders.
+    学习如何使用contract来测试您的spider。
 
 :doc:`topics/practices`
-    Get familiar with some Scrapy common practices.
+    熟悉Scrapy的一些惯例做法。
 
 :doc:`topics/broad-crawls`
-    Tune Scrapy for crawling a lot domains in parallel.
+    调整Scrapy来适应并发爬取大量网站(a lot of domains)。
 
 :doc:`topics/firefox`
-    Learn how to scrape with Firefox and some useful add-ons.
+    了解如何使用Firefox及其他有用的插件来爬取数据。
 
 :doc:`topics/firebug`
-    Learn how to scrape efficiently using Firebug.
+    了解如何使用Firebug来爬取数据。
 
 :doc:`topics/leaks`
-    Learn how to find and get rid of memory leaks in your crawler.
+    了解如何查找并让您的爬虫避免内存泄露。
 
 :doc:`topics/images`
-    Download static images associated with your scraped items.
+    下载爬取的item中的图片。
 
 :doc:`topics/ubuntu`
-    Install latest Scrapy packages easily on Ubuntu
+    在Ubuntu下下载最新的Scrapy。
 
 :doc:`topics/scrapyd`
-    Deploying your Scrapy project in production.
+    在生产环境中部署您的Scrapy项目。
 
 :doc:`topics/autothrottle`
-    Adjust crawl rate dynamically based on load.
+    根据负载(load)动态调节爬取速度。
 
 :doc:`topics/benchmarking`
-    Check how Scrapy performs on your hardware.
+    在您的硬件平台上测试Scrapy的性能。
 
 :doc:`topics/jobs`
-    Learn how to pause and resume crawls for large spiders.
+    学习如何停止和恢复爬虫
 
 :doc:`topics/djangoitem`
-    Write scraped items using Django models.
+    使用Django模型编写爬取的item
 
 .. _extending-scrapy:
 
-Extending Scrapy
+扩展Scrapy
 ================
 
 .. toctree::
@@ -202,21 +201,21 @@ Extending Scrapy
    topics/api
 
 :doc:`topics/architecture`
-    Understand the Scrapy architecture.
+    了解Scrapy架构。
 
 :doc:`topics/downloader-middleware`
-    Customize how pages get requested and downloaded.
+    自定义页面被请求及下载操作。
 
 :doc:`topics/spider-middleware`
-    Customize the input and output of your spiders.
+    自定义spider的输入与输出。
 
 :doc:`topics/extensions`
-    Extend Scrapy with your custom functionality
+    提供您自定义的功能来扩展Scrapy
 
 :doc:`topics/api`
-    Use it on extensions and middlewares to extend Scrapy functionality
+    在extension(扩展)和middleware(中间件)使用api来扩展Scrapy的功能
 
-Reference
+参考
 =========
 
 .. toctree::
@@ -229,25 +228,25 @@ Reference
    topics/exporters
 
 :doc:`topics/commands`
-    Learn about the command-line tool and see all :ref:`available commands <topics-commands-ref>`.
+    学习命令行工具及所有 :ref:`可用的命令 <topics-commands-ref>` 。
 
 :doc:`topics/request-response`
-    Understand the classes used to represent HTTP requests and responses.
+    了解代表HTTP请求和回复的request,response类
 
 :doc:`topics/settings`
-    Learn how to configure Scrapy and see all :ref:`available settings <topics-settings-ref>`.
+    了解如何配置Scrapy及所有 :ref:`可用的设置 <topics-settings-ref>` 。
 
 :doc:`topics/signals`
-    See all available signals and how to work with them.
+    查看如何使用及所有可用的信号
 
 :doc:`topics/exceptions`
-    See all available exceptions and their meaning.
+    查看所有可用的exception以及相应的意义。
 
 :doc:`topics/exporters`
-    Quickly export your scraped items to a file (XML, CSV, etc).
+    快速将您爬取到的item导出到文件中(XML, CSV等格式)
 
 
-All the rest
+其他
 ============
 
 .. toctree::
@@ -259,13 +258,13 @@ All the rest
    experimental/index
 
 :doc:`news`
-    See what has changed in recent Scrapy versions.
+    了解最近的Scrapy版本的修改。
 
 :doc:`contributing`
-    Learn how to contribute to the Scrapy project.
+    了解如何为Scrapy项目做出贡献。
 
 :doc:`versioning`
-    Understand Scrapy versioning and API stability.
+    了解Scrapy如何命名版本以及API的稳定性。
 
 :doc:`experimental/index`
-    Learn about bleeding-edge features.
+    了解最新的特性
