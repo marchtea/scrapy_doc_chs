@@ -1,25 +1,17 @@
 .. _intro-examples:
 
 ========
-Examples
+例子
 ========
 
-The best way to learn is with examples, and Scrapy is no exception. For this
-reason, there is an example Scrapy project named dirbot_, that you can use to
-play and learn more about Scrapy. It contains the dmoz spider described in the
-tutorial.
+学习的最好方法就是参考例子，Scrapy也不例外。Scrapy提供了一个叫做 dirbot_ 的样例项目供您把玩学习。其包含了在教程中介绍的dmoz spider。
 
-This dirbot_ project is available at: https://github.com/scrapy/dirbot
+您可以通过 https://github.com/scrapy/dirbot 找到 dirbot_ 。其包含了README文件，详细介绍了项目的内容。
 
-It contains a README file with a detailed description of the project contents.
+如果您熟悉git，您可以checkout代码。或者您可以点击 `Downloads`_ 来下载项目的tarball或者zip的压缩包。
 
-If you're familiar with git, you can checkout the code. Otherwise you can
-download a tarball or zip file of the project by clicking on `Downloads`_.
-
-The `scrapy tag on Snipplr`_ is used for sharing code snippets such as spiders,
-middlewares, extensions, or scripts. Feel free (and encouraged!) to share any
-code there.
+`Snipplr上的scrapy标签`_ 是用来分享spider，middeware，extension或者script代码片段。欢迎(并鼓励)在那分享您的代码。
 
 .. _dirbot: https://github.com/scrapy/dirbot
 .. _Downloads: https://github.com/scrapy/dirbot/archives/master
-.. _scrapy tag on Snipplr: http://snipplr.com/all/tags/scrapy/
+.. _Snipplr上的scrapy标签: http://snipplr.com/all/tags/scrapy/
