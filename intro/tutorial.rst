@@ -7,14 +7,14 @@ Scrapy入门教程
 在本篇教程中，我们假定您已经安装好Scrapy。
 如若不然，请参考 :ref:`intro-install` 。
 
-接下来我们以 `Open Directory Project(dmoz) (dmoz) <http://www.dmoz.org/>`_
+接下来以 `Open Directory Project(dmoz) (dmoz) <http://www.dmoz.org/>`_
 为例来讲述爬取。
 
 本篇教程中将带您完成下列任务:
 
 1. 创建一个Scrapy项目
 2. 定义提取的Item
-3. 编写爬取网站的 :ref:`爬虫 <topics-spiders>` 并且提取 :ref:`Item <topics-items>`
+3. 编写爬取网站的 :ref:`spider <topics-spiders>` 并提取 :ref:`Item <topics-items>`
 4. 编写 :ref:`Item Pipeline <topics-item-pipeline>` 来存储提取到的Item(即数据)
 
 Scrapy由 Python_ 编写。如果您刚接触并且好奇这门语言的特性以及Scrapy的详情，
@@ -60,16 +60,16 @@ Scrapy由 Python_ 编写。如果您刚接触并且好奇这门语言的特性�
 定义Item
 =================
 
-`Items` 是保存爬取到的数据的容器；其使用方法和python字典类似，
-并且提供了额外保护来避免拼写错误导致的未定义字段错误。
+`Item` 是保存爬取到的数据的容器；其使用方法和python字典类似，
+并且提供了额外保护机制来避免拼写错误导致的未定义字段错误。
 
 类似在ORM中做的一样，您可以通过创建一个 :class:`scrapy.item.Item` 类，
 并且定义类型为 `scrapy.item.Field` 的类属性来定义一个Item。
 (如果不了解ORM, 不用担心，您会发现这个步骤非常简单)
 
-首先我们需要根据从dmoz.org获取到的数据对item进行建模。
+首先根据需要从dmoz.org获取到的数据对item进行建模。
 我们需要从dmoz中获取名字，url，以及网站的描述。
-对此，我们在item中定义相应的字段。编辑 ``tutorial`` 目录中的 ``items.py`` 文件::
+对此，在item中定义相应的字段。编辑 ``tutorial`` 目录中的 ``items.py`` 文件::
 
     from scrapy.item import Item, Field
 
@@ -87,17 +87,17 @@ Scrapy由 Python_ 编写。如果您刚接触并且好奇这门语言的特性�
 Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类。
 
 其包含了一个用于下载的初始URL，如何跟进网页中的链接以及如何分析页面中的内容，
-提取生成 :ref:`items <topics-items>` 。
+提取生成 :ref:`item <topics-items>` 的方法。
 
 为了创建一个Spider，您必须继承 :class:`scrapy.spider.Spider` 类，
-并且必须定义以下三个属性:
+且定义以下三个属性:
 
 * :attr:`~scrapy.spider.Spider.name`: 用于区别Spider。
   该名字必须是唯一的，您不可以为不同的Spider设定相同的名字。
 
 * :attr:`~scrapy.spider.Spider.start_urls`: 包含了Spider在启动时进行爬取的url列表。
   因此，第一个被获取到的页面将是其中之一。
-  后续的URL则从初始的URL获取到的数据中提取出来。 
+  后续的URL则从初始的URL获取到的数据中提取。 
 
 * :meth:`~scrapy.spider.Spider.parse` 是spider的一个方法。
   被调用时，每个初始URL完成下载后生成的 :class:`~scrapy.http.Response`
@@ -127,7 +127,7 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 
    scrapy crawl dmoz
 
-``crawl dmoz`` 启动用于爬取 ``dmoz.org`` 的spider，您将得到类似与下列的输出::
+``crawl dmoz`` 启动用于爬取 ``dmoz.org`` 的spider，您将得到类似的输出::
 
     2014-01-23 18:13:07-0400 [scrapy] INFO: Scrapy started (bot: tutorial)
     2014-01-23 18:13:07-0400 [scrapy] INFO: Optional features available: ...
@@ -143,7 +143,7 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 
 查看包含 ``[dmoz]`` 的输出，可以看到输出的log中包含定义在 ``start_urls`` 的初始URL，并且与spider中是一一对应的。在log中可以看到其没有指向其他页面( ``(referer:None)`` )。
 
-除此之外，更有趣的事情发生了。就像我们 ``parse`` 方法说指定的那样，有两个包含url所对应的内容的文件被创建了: *Book* , *Resources* 。
+除此之外，更有趣的事情发生了。就像我们 ``parse`` 方法指定的那样，有两个包含url所对应的内容的文件被创建了: *Book* , *Resources* 。
 
 刚才发生了什么？
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -165,7 +165,7 @@ Selectors选择器简介
 .. _XPath: http://www.w3.org/TR/xpath
 .. _CSS: http://www.w3.org/TR/selectors
 
-这里给出XPath表达式的例子及对应的意义:
+这里给出XPath表达式的例子及对应的含义:
 
 * ``/html/head/title``: 选择HTML文档中 ``<head>`` 标签内的 ``<title>`` 元素
 
@@ -175,7 +175,7 @@ Selectors选择器简介
 
 * ``//div[@class="mine"]``: 选择所有具有 ``class="mine"`` 属性的 ``div`` 元素
 
-上边仅仅是几个简单的XPath例子，实际上XPath远远要比这强大的多。
+上边仅仅是几个简单的XPath例子，XPath实际上要比这远远强大的多。
 如果您想了解的更多，我们推荐 `这篇XPath教程 <http://www.w3schools.com/XPath/default.asp>`_ 。
 
 Scrapy提供了 :class:`~scrapy.selector.Selector` 类来配合使用XPath。
@@ -187,7 +187,7 @@ Selector有四个基本的方法(点击相应的方法可以看到详细的API�
 
 * :meth:`~scrapy.selector.Selector.css`: 传入CSS表达式，返回该表达式所对应的所有节点的selector list列表.
 
-* :meth:`~scrapy.selector.Selector.extract`: 序列化该节点为unicode字符串并返回。
+* :meth:`~scrapy.selector.Selector.extract`: 序列化该节点为unicode字符串并返回list。
 
 * :meth:`~scrapy.selector.Selector.re`: 根据传入的正则表达式对数据进行提取，返回unicode字符串list列表。
 
@@ -250,7 +250,7 @@ shell的输出类似::
 
 现在，我们来尝试从这些页面中提取些有用的数据。
 
-您可以在终端中输入 ``response.body`` 来观察HTML源码并确定合适的XPath表达式。不过，这任务实在是非常无聊而且不易。您可以考虑使用Firefox的Firebug扩展来使得工作更为轻松。详情请参考 :ref:`topics-firebug` 和 :ref:`topics-firefox` 。 
+您可以在终端中输入 ``response.body`` 来观察HTML源码并确定合适的XPath表达式。不过，这任务非常无聊且不易。您可以考虑使用Firefox的Firebug扩展来使得工作更为轻松。详情请参考 :ref:`topics-firebug` 和 :ref:`topics-firefox` 。 
 
 在查看了网页的源码后，您会发现网站的信息是被包含在 *第二个* ``<ul>`` 元素中。
 
@@ -270,7 +270,7 @@ shell的输出类似::
 
    sel.xpath('//ul/li/a/@href').extract()
 
-之前提到过每个 ``.xpath()`` 调用返回selector组成的list，因此我们可以拼接更多的 ``.xpath()`` 来进一步获取某个节点。我们将在下边使用这样的特性::
+之前提到过，每个 ``.xpath()`` 调用返回selector组成的list，因此我们可以拼接更多的 ``.xpath()`` 来进一步获取某个节点。我们将在下边使用这样的特性::
 
    sites = sel.xpath('//ul/li')
    for site in sites:
@@ -348,7 +348,7 @@ shell的输出类似::
                 items.append(item)
             return items
 
-.. note:: 您可以在 dirbot_ 项目中找到一个具有完整功能的spider。其项目可以通过 https://github.com/scrapy/dirbot 中找到。
+.. note:: 您可以在 dirbot_ 项目中找到一个具有完整功能的spider。该项目可以通过 https://github.com/scrapy/dirbot 找到。
 
 现在对dmoz.org进行爬取将会产生 ``DmozItem`` 对象::
 
