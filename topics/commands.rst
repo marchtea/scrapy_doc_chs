@@ -1,28 +1,25 @@
 .. _topics-commands:
 
-=================
-Command line tool
-=================
+=========================================
+命令行工具(Command line tools)
+=========================================
 
 .. versionadded:: 0.10
 
-Scrapy is controlled through the ``scrapy`` command-line tool, to be referred
-here as the "Scrapy tool" to differentiate it from the sub-commands, which we
-just call "commands" or "Scrapy commands".
+Scrapy是通过 ``scrapy`` 命令行工具进行控制的。
+这里我们称之为 "Scrapy tool" 以用来和子命令进行区分。
+对于子命令，我们称为 "command" 或者 "Scrapy commands"。
 
-The Scrapy tool provides several commands, for multiple purposes, and each one
-accepts a different set of arguments and options.
+Scrapy tool 针对不同的目的提供了多个命令，每个命令支持不同的参数和选项。
 
 .. _topics-project-structure:
 
-Default structure of Scrapy projects
+默认的Scrapy项目结构
 ====================================
 
-Before delving into the command-line tool and its sub-commands, let's first
-understand the directory structure of a Scrapy project.
+在开始对命令行工具以及子命令的探索前，让我们首先了解一下Scrapy的项目的目录结构。
 
-Even thought it can be modified, all Scrapy projects have the same file
-structure by default, similar to this::
+虽然可以被修改，但所有的Scrapy项目默认有类似于下边的文件结构::
 
    scrapy.cfg
    myproject/
@@ -36,18 +33,15 @@ structure by default, similar to this::
            spider2.py
            ...
 
-The directory where the ``scrapy.cfg`` file resides is known as the *project
-root directory*. That file contains the name of the python module that defines
-the project settings. Here is an example::
+``scrapy.cfg`` 存放的目录被认为是 *项目的根目录* 。该文件中包含python模块名的字段定义了项目的设置。例如::
 
     [settings]
     default = myproject.settings
 
-Using the ``scrapy`` tool
+使用 ``scrapy`` 工具
 =========================
 
-You can start by running the Scrapy tool with no arguments and it will print
-some usage help and the available commands::
+您可以以无参数的方式启动Scrapy工具。该命令将会给出一些使用帮助以及可用的命令::
 
     Scrapy X.Y - no active project
 
@@ -59,9 +53,7 @@ some usage help and the available commands::
       fetch         Fetch a URL using the Scrapy downloader
     [...]
 
-The first line will print the currently active project, if you're inside a
-Scrapy project. In this, it was run from outside a project. If run from inside
-a project it would have printed something like this::
+如果您在Scrapy项目中运行，当前激活的项目将会显示在输出的第一行。上面的输出就是响应的例子。如果您在一个项目中运行命令将会得到类似的输出::
 
     Scrapy X.Y - project: myproject
 
@@ -70,66 +62,56 @@ a project it would have printed something like this::
 
     [...]
 
-Creating projects
+创建项目
 -----------------
 
-The first thing you typically do with the ``scrapy`` tool is create your Scrapy
-project::
+一般来说，使用 ``scrapy`` 工具的第一件事就是创建您的Scrapy项目::
 
     scrapy startproject myproject
 
-That will create a Scrapy project under the ``myproject`` directory.
+该命令将会在 ``myproject`` 目录中创建一个Scrapy项目。
 
-Next, you go inside the new project directory::
+接下来，进入到项目目录中::
 
     cd myproject
 
-And you're ready to use the ``scrapy`` command to manage and control your
-project from there.
+这时候您就可以使用 ``scrapy`` 命令来管理和控制您的项目了。
 
-Controlling projects
+控制项目
 --------------------
 
-You use the ``scrapy`` tool from inside your projects to control and manage
-them.
+您可以在您的项目中使用 ``scrapy`` 工具来对其进行控制和管理。
 
-For example, to create a new spider::
+比如，创建一个新的spider::
 
     scrapy genspider mydomain mydomain.com
 
-Some Scrapy commands (like :command:`crawl`) must be run from inside a Scrapy
-project. See the :ref:`commands reference <topics-commands-ref>` below for more
-information on which commands must be run from inside projects, and which not.
+有些Scrapy命令(比如 :command:`crawl`)要求必须在Scrapy项目中运行。
+您可以通过下边的 :ref:`commands reference <topics-commands-ref>`
+来了解哪些命令需要在项目中运行，哪些不用。
 
-Also keep in mind that some commands may have slightly different behaviours
-when running them from inside projects. For example, the fetch command will use
-spider-overridden behaviours (such as the ``user_agent`` attribute to override
-the user-agent) if the url being fetched is associated with some specific
-spider. This is intentional, as the ``fetch`` command is meant to be used to
-check how spiders are downloading pages.
+另外要注意，有些命令在项目里运行时的效果有些许区别。
+以fetch命令为例，如果被爬取的url与某个特定spider相关联，
+则该命令将会使用spider的动作(spider-overridden behaviours)。
+(比如spider指定的 ``user_agent``)。
+该表现是有意而为之的。一般来说， ``fetch`` 命令就是用来测试检查spider是如何下载页面。
 
 .. _topics-commands-ref:
 
-Available tool commands
-=======================
+可用的工具命令(tool commands)
+========================================
 
-This section contains a list of the available built-in commands with a
-description and some usage examples. Remember you can always get more info
-about each command by running::
+该章节提供了可用的内置命令的列表。每个命令都提供了描述以及一些使用例子。您总是可以通过运行命令来获取关于每个命令的详细内容::
 
     scrapy <command> -h
 
-And you can see all available commands with::
+您也可以查看所有可用的命令::
 
     scrapy -h
 
-There are two kinds of commands, those that only work from inside a Scrapy
-project (Project-specific commands) and those that also work without an active
-Scrapy project (Global commands), though they may behave slightly different
-when running from inside a project (as they would use the project overridden
-settings).
+Scrapy提供了两种类型的命令。一种必须在Scrapy项目中运行(针对项目(Project-specific)的命令)，另外一种则不需要(全局命令)。全局命令在项目中运行时的表现可能会与在非项目中运行有些许差别(因为可能会使用项目的设定)。
 
-Global commands:
+全局命令:
 
 * :command:`startproject`
 * :command:`settings`
@@ -139,7 +121,7 @@ Global commands:
 * :command:`view`
 * :command:`version`
 
-Project-only commands:
+项目(Project-only)命令:
 
 * :command:`crawl`
 * :command:`check`
@@ -155,13 +137,12 @@ Project-only commands:
 startproject
 ------------
 
-* Syntax: ``scrapy startproject <project_name>``
-* Requires project: *no*
+* 语法: ``scrapy startproject <project_name>``
+* 是否需要项目: *no*
 
-Creates a new Scrapy project named ``project_name``, under the ``project_name``
-directory.
+在 ``project_name`` 文件夹下创建一个名为 ``project_name`` 的Scrapy项目。
 
-Usage example::
+例子::
 
     $ scrapy startproject myproject
 
@@ -170,17 +151,14 @@ Usage example::
 genspider
 ---------
 
-* Syntax: ``scrapy genspider [-t template] <name> <domain>``
-* Requires project: *yes*
+* 语法: ``scrapy genspider [-t template] <name> <domain>``
+* 是否需要项目: *yes*
 
-Create a new spider in the current project.
+在当前项目中创建spider。
 
-This is just a convenient shortcut command for creating spiders based on
-pre-defined templates, but certainly not the only way to create spiders. You
-can just create the spider source code files yourself, instead of using this
-command.
+这仅仅是创建spider的一种快捷方法。该方法可以使用提前定义好的模板来生成spider。您也可以自己创建spider的源码文件。
 
-Usage example::
+例子::
 
     $ scrapy genspider -l
     Available templates:
@@ -211,12 +189,12 @@ Usage example::
 crawl
 -----
 
-* Syntax: ``scrapy crawl <spider>``
-* Requires project: *yes*
+* 语法: ``scrapy crawl <spider>``
+* 是否需要项目: *yes*
 
-Start crawling using a spider.
+使用spider进行爬取。
 
-Usage examples::
+例子::
 
     $ scrapy crawl myspider
     [ ... myspider starts crawling ... ]
@@ -227,12 +205,12 @@ Usage examples::
 check
 -----
 
-* Syntax: ``scrapy check [-l] <spider>``
-* Requires project: *yes*
+* 语法: ``scrapy check [-l] <spider>``
+* 是否需要项目: *yes*
 
-Run contract checks.
+运行contract检查。
 
-Usage examples::
+例子::
 
     $ scrapy check -l
     first_spider
@@ -254,13 +232,12 @@ Usage examples::
 list
 ----
 
-* Syntax: ``scrapy list``
-* Requires project: *yes*
+* 语法: ``scrapy list``
+* 是否需要项目: *yes*
 
-List all available spiders in the current project. The output is one spider per
-line.
+列出当前项目中所有可用的spider。每行输出一个spider。
 
-Usage example::
+使用例子::
 
     $ scrapy list
     spider1
@@ -271,17 +248,14 @@ Usage example::
 edit
 ----
 
-* Syntax: ``scrapy edit <spider>``
-* Requires project: *yes*
+* 语法: ``scrapy edit <spider>``
+* 是否需要项目: *yes*
 
-Edit the given spider using the editor defined in the :setting:`EDITOR`
-setting.
+使用 :setting:`EDITOR` 中设定的编辑器编辑给定的spider
 
-This command is provided only as a convenient shortcut for the most common
-case, the developer is of course free to choose any tool or IDE to write and
-debug his spiders.
+该命令仅仅是提供一个快捷方式。开发者可以自由选择其他工具或者IDE来编写调试spider。
 
-Usage example::
+例子::
 
     $ scrapy edit spider1
 
@@ -290,22 +264,18 @@ Usage example::
 fetch
 -----
 
-* Syntax: ``scrapy fetch <url>``
-* Requires project: *no*
+* 语法: ``scrapy fetch <url>``
+* 是否需要项目: *no*
 
-Downloads the given URL using the Scrapy downloader and writes the contents to
-standard output.
+使用Scrapy下载器(downloader)下载给定的URL，并将获取到的内容送到标准输出。
 
-The interesting thing about this command is that it fetches the page how the
-spider would download it. For example, if the spider has an ``USER_AGENT``
-attribute which overrides the User Agent, it will use that one.
+该命令以spider下载页面的方式获取页面。例如，如果spider有 ``USER_AGENT`` 属性修改了 User Agent，该命令将会使用该属性。
 
-So this command can be used to "see" how your spider would fetch a certain page.
+因此，您可以使用该命令来查看spider如何获取某个特定页面。
 
-If used outside a project, no particular per-spider behaviour would be applied
-and it will just use the default Scrapy downloader settings.
+该命令如果非项目中运行则会使用默认Scrapy downloader设定。
 
-Usage examples::
+例子::
 
     $ scrapy fetch --nolog http://www.example.com/some/page.html
     [ ... html content here ... ]
@@ -326,14 +296,14 @@ Usage examples::
 view
 ----
 
-* Syntax: ``scrapy view <url>``
-* Requires project: *no*
+* 语法: ``scrapy view <url>``
+* 是否需要项目: *no*
 
-Opens the given URL in a browser, as your Scrapy spider would "see" it.
-Sometimes spiders see pages differently from regular users, so this can be used
-to check what the spider "sees" and confirm it's what you expect.
+在浏览器中打开给定的URL，并以Scrapy spider获取到的形式展现。
+有些时候spider获取到的页面和普通用户看到的并不相同。
+因此该命令可以用来检查spider所获取到的页面，并确认这是您所期望的。
 
-Usage example::
+例子::
 
     $ scrapy view http://www.example.com/some/page.html
     [ ... browser starts ... ]
@@ -343,13 +313,13 @@ Usage example::
 shell
 -----
 
-* Syntax: ``scrapy shell [url]``
-* Requires project: *no*
+* 语法: ``scrapy shell [url]``
+* 是否需要项目: *no*
 
-Starts the Scrapy shell for the given URL (if given) or empty if no URL is
-given. See :ref:`topics-shell` for more info.
+以给定的URL(如果给出)或者空(没有给出URL)启动Scrapy shell。
+查看 :ref:`topics-shell` 获取更多信息。
 
-Usage example::
+例子::
 
     $ scrapy shell http://www.example.com/some/page.html
     [ ... scrapy shell starts ... ]
@@ -359,39 +329,34 @@ Usage example::
 parse
 -----
 
-* Syntax: ``scrapy parse <url> [options]``
-* Requires project: *yes*
+* 语法: ``scrapy parse <url> [options]``
+* 是否需要项目: *yes*
 
-Fetches the given URL and parses it with the spider that handles it, using the
-method passed with the ``--callback`` option, or ``parse`` if not given.
+获取给定的URL并使用相应的spider分析处理。如果您提供 ``--callback`` 选项，则使用spider的该方法处理，否则使用 ``parse`` 。
 
-Supported options:
+支持的选项:
 
-* ``--spider=SPIDER``: bypass spider autodetection and force use of specific spider
+* ``--spider=SPIDER``: 跳过自动检测spider并强制使用特定的spider
 
-* ``--a NAME=VALUE``: set spider argument (may be repeated)
+* ``--a NAME=VALUE``: 设置spider的参数(可能被重复)
 
-* ``--callback`` or ``-c``: spider method to use as callback for parsing the
-  response
+* ``--callback`` or ``-c``: spider中用于解析返回(response)的回调函数
 
-* ``--pipelines``: process items through pipelines
+* ``--pipelines``: 在pipeline中处理item
 
-* ``--rules`` or ``-r``: use :class:`~scrapy.contrib.spiders.CrawlSpider`
-  rules to discover the callback (i.e. spider method) to use for parsing the
-  response
+* ``--rules`` or ``-r``: 使用 :class:`~scrapy.contrib.spiders.CrawlSpider` 规则来发现用来解析返回(response)的回调函数
 
-* ``--noitems``: don't show scraped items
+* ``--noitems``: 不显示爬取到的item 
 
-* ``--nolinks``: don't show extracted links
+* ``--nolinks``: 不显示提取到的链接 
 
-* ``--nocolour``: avoid using pygments to colorize the output
+* ``--nocolour``: 避免使用pygments对输出着色
 
-* ``--depth`` or ``-d``: depth level for which the requests should be followed
-  recursively (default: 1)
+* ``--depth`` or ``-d``: 指定跟进链接请求的层次数(默认: 1)
 
-* ``--verbose`` or ``-v``: display information for each depth level
+* ``--verbose`` or ``-v``: 显示每个请求的详细信息
 
-Usage example::
+例子::
 
     $ scrapy parse http://www.example.com/ -c parse_item
     [ ... scrapy log lines crawling example.com spider ... ]
@@ -411,15 +376,14 @@ Usage example::
 settings
 --------
 
-* Syntax: ``scrapy settings [options]``
-* Requires project: *no*
+* 语法: ``scrapy settings [options]``
+* 是否需要项目: *no*
 
-Get the value of a Scrapy setting.
+获取Scrapy的设定
 
-If used inside a project it'll show the project setting value, otherwise it'll
-show the default Scrapy value for that setting.
+在项目中运行时，该命令将会输出项目的设定值，否则输出Scrapy默认设定。
 
-Example usage::
+例子::
 
     $ scrapy settings --get BOT_NAME
     scrapybot
@@ -431,13 +395,12 @@ Example usage::
 runspider
 ---------
 
-* Syntax: ``scrapy runspider <spider_file.py>``
-* Requires project: *no*
+* 语法: ``scrapy runspider <spider_file.py>``
+* 是否需要项目: *no*
 
-Run a spider self-contained in a Python file, without having to create a
-project.
+在未创建项目的情况下，运行一个编写在Python文件中的spider。
 
-Example usage::
+例子::
 
     $ scrapy runspider myspider.py
     [ ... spider starts crawling ... ]
@@ -447,11 +410,10 @@ Example usage::
 version
 -------
 
-* Syntax: ``scrapy version [-v]``
-* Requires project: *no*
+* 语法: ``scrapy version [-v]``
+* 是否需要项目: *no*
 
-Prints the Scrapy version. If used with ``-v`` it also prints Python, Twisted
-and Platform info, which is useful for bug reports.
+输出Scrapy版本。配合 ``-v`` 运行时，该命令同时输出Python, Twisted以及平台的信息，方便bug提交。
 
 .. command:: deploy
 
@@ -460,10 +422,10 @@ deploy
 
 .. versionadded:: 0.11
 
-* Syntax: ``scrapy deploy [ <target:project> | -l <target> | -L ]``
-* Requires project: *yes*
+* 语法: ``scrapy deploy [ <target:project> | -l <target> | -L ]``
+* 是否需要项目: *yes*
 
-Deploy the project into a Scrapyd server. See `Deploying your project`_.
+将项目部署到Scrapyd服务。查看 `部署您的项目`_ 。
 
 .. command:: bench
 
@@ -472,17 +434,15 @@ bench
 
 .. versionadded:: 0.17
 
-* Syntax: ``scrapy bench``
-* Requires project: *no*
+* 语法: ``scrapy bench``
+* 是否需要项目: *no*
 
-Run a quick benchmark test. :ref:`benchmarking`.
+运行benchmark测试。 :ref:`benchmarking` 。
 
-Custom project commands
+自定义项目命令
 =======================
 
-You can also add your custom project commands by using the
-:setting:`COMMANDS_MODULE` setting. See the Scrapy commands in
-`scrapy/commands`_ for examples on how to implement your commands.
+您也可以通过 :setting:`COMMANDS_MODULE` 来添加您自己的项目命令。您可以以 `scrapy/commands`_ 中Scrapy commands为例来了解如何实现您的命令。
 
 .. _scrapy/commands: https://github.com/scrapy/scrapy/blob/master/scrapy/commands
 .. setting:: COMMANDS_MODULE
@@ -492,11 +452,10 @@ COMMANDS_MODULE
 
 Default: ``''`` (empty string)
 
-A module to use for looking up custom Scrapy commands. This is used to add custom
-commands for your Scrapy project.
+用于查找添加自定义Scrapy命令的模块。
 
-Example::
+例子::
 
     COMMANDS_MODULE = 'mybot.commands'
 
-.. _Deploying your project: http://scrapyd.readthedocs.org/en/latest/#deploying-your-project
+.. _部署您的项目: http://scrapyd.readthedocs.org/en/latest/#deploying-your-project
