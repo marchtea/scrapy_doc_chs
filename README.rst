@@ -21,6 +21,7 @@ Scrapy中文文档翻译计划
   * index.rst
   * topics/commands.rst
   * topics/items.rst
+  * topics/spiders.rst
 
 
 加入我们吧
