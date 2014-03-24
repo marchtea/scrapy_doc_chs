@@ -1,116 +1,97 @@
 .. _topics-shell:
 
-============
-Scrapy shell
-============
+============================
+Scrapy终端(Scrapy shell)
+============================
 
-The Scrapy shell is an interactive shell where you can try and debug your
-scraping code very quickly, without having to run the spider. It's meant to be
-used for testing data extraction code, but you can actually use it for testing
-any kind of code as it is also a regular Python shell.
+Scrapy终端是一个交互终端，供您在未启动spider的情况下尝试及调试您的爬取代码。
+其本意是用来测试提取数据的代码，不过您可以将其作为正常的Python终端，在上面测试任何的Python代码。
 
-The shell is used for testing XPath or CSS expressions and see how they work
-and what data they extract from the web pages you're trying to scrape. It
-allows you to interactively test your expressions while you're writing your
-spider, without having to run the spider to test every change.
+该终端是用来测试XPath或CSS表达式，查看他们的工作方式及从爬取的网页中提取的数据。
+在编写您的spider时，该终端提供了交互性测试您的表达式代码的功能，免去了每次修改后运行spider的麻烦。
 
-Once you get familiarized with the Scrapy shell, you'll see that it's an
-invaluable tool for developing and debugging your spiders.
+一旦熟悉了Scrapy终端后，您会发现其在开发和调试spider时发挥的巨大作用。
 
-If you have `IPython`_ installed, the Scrapy shell will use it (instead of the
-standard Python console). The `IPython`_ console is much more powerful and
-provides smart auto-completion and colorized output, among other things.
+如果您安装了 `IPython`_ ，Scrapy终端将使用 `IPython`_ (替代标准Python终端)。
+`IPython`_ 终端与其他相比更为强大，提供智能的自动补全，高亮输出，及其他特性。
 
-We highly recommend you install `IPython`_, specially if you're working on
-Unix systems (where `IPython`_ excels). See the `IPython installation guide`_
-for more info.
+我们强烈推荐您安装 `IPython`_ ，特别是如果您使用Unix系统(`IPython`_ 在Unix下工作的很好)。
+详情请参考 `IPython installation guide`_ 。
 
 .. _IPython: http://ipython.org/
 .. _IPython installation guide: http://ipython.org/install.html
 
-Launch the shell
+启动终端
 ================
 
-To launch the Scrapy shell you can use the :command:`shell` command like
-this::
+您可以使用 :command:`shell` 来启动Scrapy终端::
 
     scrapy shell <url>
 
-Where the ``<url>`` is the URL you want to scrape.
+``<url>`` 是您要爬取的网页的地址。
 
-Using the shell
+使用终端
 ===============
 
-The Scrapy shell is just a regular Python console (or `IPython`_ console if you
-have it available) which provides some additional shortcut functions for
-convenience.
+Scrapy终端仅仅是一个普通的Python终端(或 `IPython`_ )。其提供了一些额外的快捷方式。
 
-Available Shortcuts
--------------------
+可用的快捷命令(shortcut)
+----------------------------------
 
- * ``shelp()`` - print a help with the list of available objects and shortcuts
+ * ``shelp()`` - 打印可用对象及快捷命令的帮助列表
 
- * ``fetch(request_or_url)`` - fetch a new response from the given request or
-   URL and update all related objects accordingly.
+ * ``fetch(request_or_url)`` - 根据给定的请求(request)或URL获取一个新的response，并更新相关的对象
 
- * ``view(response)`` - open the given response in your local web browser, for
-   inspection. This will add a `\<base\> tag`_ to the response body in order
-   for external links (such as images and style sheets) to display properly.
-   Note, however,that this will create a temporary file in your computer,
-   which won't be removed automatically.
+ * ``view(response)`` - 在本机的浏览器打开给定的response。
+   其会在response的body中添加一个 `\<base\> tag`_ ，使得外部链接(例如图片及css)能正确显示。
+   注意，该操作会在本地创建一个临时文件，且该文件不会被自动删除。
 
 .. _<base> tag: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
 
-Available Scrapy objects
+可用的Scrapy对象
 ------------------------
 
-The Scrapy shell automatically creates some convenient objects from the
-downloaded page, like the :class:`~scrapy.http.Response` object and the
-:class:`~scrapy.selector.Selector` objects (for both HTML and XML
-content).
+Scrapy终端根据下载的页面会自动创建一些方便使用的对象，例如
+:class:`~scrapy.http.Response` 对象及
+:class:`~scrapy.selector.Selector` 对象(对HTML及XML内容)。
 
-Those objects are:
+这些对象有:
 
- * ``crawler`` - the current :class:`~scrapy.crawler.Crawler` object.
+ * ``crawler`` - 当前 :class:`~scrapy.crawler.Crawler` 对象.
 
- * ``spider`` - the Spider which is known to handle the URL, or a
-   :class:`~scrapy.spider.Spider` object if there is no spider found for
-   the current URL
+ * ``spider`` - 处理URL的spider。
+   对当前URL没有处理的Spider时则为一个 :class:`~scrapy.spider.Spider` 对象。
 
- * ``request`` - a :class:`~scrapy.http.Request` object of the last fetched
-   page. You can modify this request using :meth:`~scrapy.http.Request.replace`
-   or fetch a new request (without leaving the shell) using the ``fetch``
-   shortcut.
+ * ``request`` - 最近获取到的页面的 :class:`~scrapy.http.Request` 对象。
+   您可以使用 :meth:`~scrapy.http.Request.replace` 修改该request。或者
+   使用 ``fetch`` 快捷方式来获取新的request。
 
- * ``response`` - a :class:`~scrapy.http.Response` object containing the last
-   fetched page
+ * ``response`` - 包含最近获取到的页面的 :class:`~scrapy.http.Response` 对象。
 
- * ``sel`` - a :class:`~scrapy.selector.Selector` object constructed
-   with the last response fetched
+ * ``sel`` - 根据最近获取到的response构建的 :class:`~scrapy.selector.Selector` 对象。
 
- * ``settings`` - the current :ref:`Scrapy settings <topics-settings>`
+ * ``settings`` - 当前的 :ref:`Scrapy settings <topics-settings>`
 
-Example of shell session
-========================
+终端会话(shell session)样例
+==========================================
 
-Here's an example of a typical shell session where we start by scraping the
-http://scrapy.org page, and then proceed to scrape the http://slashdot.org
-page. Finally, we modify the (Slashdot) request method to POST and re-fetch it
-getting a HTTP 405 (method not allowed) error. We end the session by typing
-Ctrl-D (in Unix systems) or Ctrl-Z in Windows.
+下面给出一个典型的终端会话的例子。
+在该例子中，我们首先爬取了 http://scarpy.org 的页面，而后接着爬取
+http://slashdot.org 的页面。
+最后，我们修改了(Slashdot)的请求，将请求设置为POST并重新获取，
+得到HTTP 405(不允许的方法)错误。
+之后通过Ctrl-D(Unix)或Ctrl-Z(Windows)关闭会话。
 
-Keep in mind that the data extracted here may not be the same when you try it,
-as those pages are not static and could have changed by the time you test this.
-The only purpose of this example is to get you familiarized with how the Scrapy
-shell works.
+需要注意的是，由于爬取的页面不是静态页，内容会随着时间而修改，
+因此例子中提取到的数据可能与您尝试的结果不同。
+该例子的唯一目的是让您熟悉Scrapy终端。
 
-First, we launch the shell::
+
+首先，我们启动终端::
 
     scrapy shell 'http://scrapy.org' --nolog
 
-Then, the shell fetches the URL (using the Scrapy downloader) and prints the
-list of available objects and useful shortcuts (you'll notice that these lines
-all start with the ``[s]`` prefix)::
+接着该终端(使用Scrapy下载器(downloader))获取URL内容并打印可用的对象及快捷命令(注意到以 ``[s]`` 开头的行)::
 
     [s] Available Scrapy objects:
     [s]   crawler    <scrapy.crawler.Crawler object at 0x1e16b50>
@@ -127,7 +108,7 @@ all start with the ``[s]`` prefix)::
 
     >>>
 
-After that, we can star playing with the objects::
+之后，您就可以操作这些对象了::
 
     >>> sel.xpath("//h2/text()").extract()[0]
     u'Welcome to Scrapy'
@@ -160,16 +141,15 @@ After that, we can star playing with the objects::
 
 .. _topics-shell-inspect-response:
 
-Invoking the shell from spiders to inspect responses
+在spider中启动shell来查看response
 ====================================================
 
-Sometimes you want to inspect the responses that are being processed in a
-certain point of your spider, if only to check that response you expect is
-getting there.
+有时您想在spider的某个位置中查看被处理的response，
+以确认您期望的response到达特定位置。
 
-This can be achieved by using the ``scrapy.shell.inspect_response`` function.
+这可以通过 ``scrapy.shell.inspect_response`` 函数来实现。
 
-Here's an example of how you would call it from your spider::
+以下是如何在spider中调用该函数的例子::
 
     from scrapy.spider import Spider
 
@@ -190,7 +170,7 @@ Here's an example of how you would call it from your spider::
 
             # Rest of parsing code.
 
-When you run the spider, you will get something similar to this::
+当运行spider时，您将得到类似下列的输出::
 
     2014-01-23 17:48:31-0400 [myspider] DEBUG: Crawled (200) <GET http://example.com> (referer: None)
     2014-01-23 17:48:31-0400 [myspider] DEBUG: Crawled (200) <GET http://example.org> (referer: None)
@@ -201,24 +181,21 @@ When you run the spider, you will get something similar to this::
     >>> response.url
     'http://example.org'
 
-Then, you can check if the extraction code is working::
+接着测试提取代码::
 
     >>> sel.xpath('//h1[@class="fn"]')
     []
 
-Nope, it doesn't. So you can open the response in your web browser and see if
-it's the response you were expecting::
+呃，看来是没有。您可以在浏览器里查看response的结果，判断是否是您期望的结果::
 
     >>> view(response)
     True
 
-Finally you hit Ctrl-D (or Ctrl-Z in Windows) to exit the shell and resume the
-crawling::
+最后您可以点击Ctrl-D(Windows下Ctrl-Z)来退出终端，恢复爬取::
 
     >>> ^D
     2014-01-23 17:50:03-0400 [myspider] DEBUG: Crawled (200) <GET http://example.net> (referer: None)
     ...
 
-Note that you can't use the ``fetch`` shortcut here since the Scrapy engine is
-blocked by the shell. However, after you leave the shell, the spider will
-continue crawling where it stopped, as shown above.
+注意: 由于该终端屏蔽了Scrapy引擎，您在这个终端中不能使用 ``fetch`` 快捷命令(shortcut)。
+当您离开终端时，spider会从其停下的地方恢复爬取，正如上面显示的那样。
