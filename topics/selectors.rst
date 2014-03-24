@@ -1,12 +1,12 @@
 .. _topics-selectors:
 
-==================
+============================
 选择器（Selectors）
-==================
+============================
 
 当抓取网页时，你做的最常见的任务是从HTML源码中提取数据。现有的一些库可以达到这个目的：
 
- * `BeautifulSoup`_ 是在程序员间非常流行的屏幕抓取库，它基于HTML代码的结构来构造一个Python对象， 对不良标记的处理也非常合理，但它有一个缺点：慢。
+ * `BeautifulSoup`_ 是在程序员间非常流行的网页分析库，它基于HTML代码的结构来构造一个Python对象， 对不良标记的处理也非常合理，但它有一个缺点：慢。
 
  * `lxml`_ 是一个基于 `ElementTree`_ （不是Python标准库的一部分）的python化的XML解析库（也可以解析HTML）。
 
@@ -30,10 +30,10 @@ Scrapy选择器构建于 `lxml`_ 库之上，这意味着它们在速度和解�
 
 
 使用选择器（selectors）
-======================
+===================================
 
 构造选择器（selectors）
-----------------------
+--------------------------------------
 
 .. highlight:: python
 
@@ -55,7 +55,7 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 
 
 使用选择器（selectors）
-----------------------
+-------------------------------------
 
 我们将使用 `Scrapy shell` （提供交互测试）和位于Scrapy文档服务器的一个样例页面，来解释如何使用选择器：
 
@@ -137,7 +137,7 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 .. _topics-selectors-nesting-selectors:
 
 嵌套选择器（selectors）
-----------------------
+--------------------------------------------
 
 选择器方法（ ``.xpath()`` or ``.css()`` ）返回相同类型的选择器列表，因此你也可以对这些选择器调用选择器方法。下面是一个例子::
 
@@ -160,7 +160,7 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
     Link number 4 points to url [u'image5.html'] and image [u'image5_thumb.jpg']
 
 结合正则表达式使用选择器（selectors）
-------------------------------------
+-------------------------------------------------------
 
 :class:`~scrapy.selector.Selector` 也有一个 ``.re()`` 方法，用来通过正则表达式来提取数据。然而，不同于使用 ``.xpath()`` 或者 ``.css()`` 方法, ``.re()`` 方法返回unicode字符串的列表。所以你无法构造嵌套式的 ``.re()`` 调用。
 
@@ -177,7 +177,7 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 .. _topics-selectors-relative-xpaths:
 
 使用相对XPaths
---------------
+---------------------------
 
 记住如果你使用嵌套的选择器，并使用起始为 ``/`` 的XPath，那么该XPath将对文档使用绝对路径，而且对于你调用的 ``Selector`` 不是相对路径。
 
@@ -205,7 +205,7 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 .. _Location Paths: http://www.w3.org/TR/xpath#location-paths
 
 使用EXSLT扩展
--------------
+-------------------------------
 
 因建于 `lxml`_ 之上, Scrapy选择器也支持一些 `EXSLT`_ 扩展，可以在XPath表达式中使用这些预先制定的命名空间：
 
@@ -218,7 +218,7 @@ set     http://exslt.org/sets                   `集合操作`_
 ======  ====================================    =======================
 
 正则表达式
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 例如在XPath的 ``starts-with()`` 或 ``contains()`` 无法满足需求时， ``test()`` 函数可以非常有用。
 
@@ -242,7 +242,7 @@ set     http://exslt.org/sets                   `集合操作`_
     [u'link1.html', u'link2.html', u'link4.html', u'link5.html']
     >>>
 
-.. 警告:: C语言库 ``libxslt`` 不原生支持EXSLT正则表达式，因此 `lxml`_ 在实现时使用了Python ``re`` 模块的钩子。
+.. warning:: C语言库 ``libxslt`` 不原生支持EXSLT正则表达式，因此 `lxml`_ 在实现时使用了Python ``re`` 模块的钩子。
     因此，在XPath表达式中使用regexp函数可能会牺牲少量的性能。
 
 集合操作
@@ -343,7 +343,7 @@ set     http://exslt.org/sets                   `集合操作`_
 .. _topics-selectors-ref:
 
 内建选择器的参考
-================
+=============================
 
 .. module:: scrapy.selector
    :synopsis: Selector class
@@ -410,7 +410,7 @@ set     http://exslt.org/sets                   `集合操作`_
 
 
 SelectorList对象
-----------------
+----------------------------
 
 .. class:: SelectorList
 
@@ -442,7 +442,7 @@ SelectorList对象
 
 
 在HTML响应上的选择器样例
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 这里是一些 :class:`Selector` 的样例，用来说明一些概念。
 在所有的例子中，我们假设已经有一个通过 :class:`~scrapy.http.HtmlResponse` 对象实例化的 :class:`Selector` ，如下::
@@ -464,7 +464,7 @@ SelectorList对象
       ...    print node.xpath("@class").extract()
 
 在XML响应上的选择器样例
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 这里是一些样例，用来说明一些概念。在两个例子中，我们假设已经有一个通过 :class:`~scrapy.http.XmlResponse` 对象实例化的 :class:`Selector` ，如下::
 
@@ -482,7 +482,7 @@ SelectorList对象
 .. _removing-namespaces:
 
 移除命名空间
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 在处理爬虫项目时，完全去掉命名空间而仅仅处理元素名字，写更多简单/实用的XPath会方便很多。你可以为此使用 :meth:`Selector.remove_namespaces` 方法。
 
