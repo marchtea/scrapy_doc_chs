@@ -35,7 +35,8 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
 3. 当项目进入 :class:`ImagesPipeline`，``image_urls`` 组内的URLs将被Scrapy的调度器和下载器（这意味着调度器和下载器的中间件可以复用）安排下载，当优先级更高，会在其他页面被抓取前处理。项目会在这个特定的管道阶段保持“locker”的状态，直到完成图片的下载（或者由于某些原因未完成下载）。
 
-4. 当图片下载完，另一个组（``images``）将被更新到结构中。这个组将包含一个字典列表，其中包括下载图片的信息，比如下载路径、源抓取地址（从``image_urls``组获得）和图片的校验码。``images``列表中的图片顺序将和源``image_urls``组保持一致。如果某个图片下载失败，将会记录下错误信息，图片也不会出现在``images``组中。
+4. 当图片下载完，另一个组(``images``)将被更新到结构中。这个组将包含一个字典列表，其中包括下载图片的信息，比如下载路径、源抓取地址（从 ``image_urls`` 组获得）和图片的校验码。
+   ``images`` 列表中的图片顺序将和源 ``image_urls`` 组保持一致。如果某个图片下载失败，将会记录下错误信息，图片也不会出现在 ``images`` 组中。
 
 
 使用样例
@@ -51,7 +52,7 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
         image_urls = Field()
         images = Field()
 
-如果你需要更加复杂的功能，想重写定制图片管道行为，参见 :ref:`topics-images-override`。
+如果你需要更加复杂的功能，想重写定制图片管道行为，参见 :ref:`topics-images-override` 。
 
 .. _topics-images-enabling:
 
@@ -64,7 +65,7 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
     ITEM_PIPELINES = {'scrapy.contrib.pipeline.images.ImagesPipeline': 1}
 
-并将 :setting:`IMAGES_STORE` 设置为一个有效的文件夹，用来存储下载的图片。否则管道将保持禁用状态，即使你在 :setting:`ITEM_PIPELINES`设置中添加了它。
+并将 :setting:`IMAGES_STORE` 设置为一个有效的文件夹，用来存储下载的图片。否则管道将保持禁用状态，即使你在 :setting:`ITEM_PIPELINES` 设置中添加了它。
 
 比如::
 
@@ -73,7 +74,7 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 图片存储
 ==============
 
-文件系统是当前官方唯一支持的存储系统，但也支持（非公开的） `Amazon S3`_。
+文件系统是当前官方唯一支持的存储系统，但也支持（非公开的） `Amazon S3`_ 。
 
 .. _Amazon S3: https://s3.amazonaws.com/
 
@@ -137,13 +138,13 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
 其中:
 
-* ``<size_name>`` 是 :setting:`IMAGES_THUMBS` 字典关键字（``small``， ``big``，等）
+* ``<size_name>`` 是 :setting:`IMAGES_THUMBS` 字典关键字（``small``， ``big`` ，等）
 
 * ``<image_id>`` 是图像url的 `SHA1 hash`_ 
 
 .. _SHA1 hash: http://en.wikipedia.org/wiki/SHA_hash_functions
 
-例如使用``small``和``big``缩略图名字的图片文件::
+例如使用 ``small`` 和 ``big`` 缩略图名字的图片文件::
 
    <IMAGES_STORE>/full/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
    <IMAGES_STORE>/thumbs/small/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
@@ -158,7 +159,7 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
 .. setting:: IMAGES_MIN_WIDTH
 
-你可以丢掉那些过小的图片，只需在:setting:`IMAGES_MIN_HEIGHT`和:setting:`IMAGES_MIN_WIDTH`设置中指定最小允许的尺寸。
+你可以丢掉那些过小的图片，只需在:setting:`IMAGES_MIN_HEIGHT` 和 :setting:`IMAGES_MIN_WIDTH` 设置中指定最小允许的尺寸。
 
 比如::
 
@@ -189,19 +190,19 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
              for image_url in item['image_urls']:
                  yield Request(image_url)
 
-      这些请求将被管道处理，当它们完成下载后，结果将以2-元素的元组列表形式传送到:meth:`~item_completed` 方法:
+      这些请求将被管道处理，当它们完成下载后，结果将以2-元素的元组列表形式传送到 :meth:`~item_completed` 方法:
 
       * ``success`` 是一个布尔值，当图片成功下载时为 ``True`` ，因为某个原因下载失败为``False`` 
 
-      * ``image_info_or_error`` 是一个包含下列关键字的字典（如果成功为 ``True`` ）或者出问题时为`Twisted Failure`_ 。
+      * ``image_info_or_error`` 是一个包含下列关键字的字典（如果成功为 ``True`` ）或者出问题时为 `Twisted Failure`_ 。
 
-        * ``url`` - 图片下载的url。这是从:meth:`~get_media_requests`方法返回请求的url。
+        * ``url`` - 图片下载的url。这是从 :meth:`~get_media_requests` 方法返回请求的url。
 
         * ``path`` - 图片存储的路径（类似 :setting:`IMAGES_STORE`）
 
         * ``checksum`` - 图片内容的 `MD5 hash`_ 
 
-      :meth:`~item_completed` 接收的元组列表需要保证与:meth:`~get_media_requests`方法返回请求的顺序相一致。下面是``results``参数的一个典型值::
+      :meth:`~item_completed` 接收的元组列表需要保证与 :meth:`~get_media_requests` 方法返回请求的顺序相一致。下面是 ``results`` 参数的一个典型值::
 
           [(True,
             {'checksum': '2b00042f7481c7b056c4b410d28f33cf',
@@ -222,7 +223,7 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
        :meth:`~item_completed` 方法需要返回一个输出，其将被送到随后的项目管道阶段，因此你需要返回（或者丢弃）项目，如你在任意管道里所做的一样。
 
-      这里是一个:meth:`~item_completed` 方法的例子，其中我们将下载的图片路径（传入到results中）存储到``image_paths``项目组中，如果其中没有图片，我们将丢弃项目::
+      这里是一个 :meth:`~item_completed` 方法的例子，其中我们将下载的图片路径（传入到results中）存储到 ``image_paths`` 项目组中，如果其中没有图片，我们将丢弃项目::
       
           from scrapy.exceptions import DropItem
 

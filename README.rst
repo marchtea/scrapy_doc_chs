@@ -24,6 +24,7 @@ Scrapy中文文档翻译计划
   * topics/spiders.rst
   * topics/selectors.rst
   * topics/shell.rst
+  * topics/images.rst
   * topics/logging.rst
 
 
