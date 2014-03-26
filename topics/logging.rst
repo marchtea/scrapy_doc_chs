@@ -4,50 +4,48 @@
 Logging
 =======
 
-Scrapy provides a logging facility which can be used through the
-:mod:`scrapy.log` module. The current underlying implementation uses `Twisted
-logging`_ but this may change in the future.
+Scrapy提供了log功能。您可以通过
+:mod:`scrapy.log` 模块使用。当前底层实现使用了 `Twisted logging`_ ，不过可能在之后会有所变化。
 
 .. _Twisted logging: http://twistedmatrix.com/projects/core/documentation/howto/logging.html
 
-The logging service must be explicitly started through the :func:`scrapy.log.start` function.
+log服务必须通过显示调用 :func:`scrapy.log.start` 来开启。
 
 .. _topics-logging-levels:
 
 Log levels
 ==========
 
-Scrapy provides 5 logging levels:
+Scrapy提供5层logging级别:
 
-1. :data:`~scrapy.log.CRITICAL` - for critical errors
-2. :data:`~scrapy.log.ERROR` - for regular errors
-3. :data:`~scrapy.log.WARNING` - for warning messages
-4. :data:`~scrapy.log.INFO` - for informational messages
-5. :data:`~scrapy.log.DEBUG` - for debugging messages
+1. :data:`~scrapy.log.CRITICAL` - 严重错误(critical)
+2. :data:`~scrapy.log.ERROR` - 一般错误(regular errors)
+3. :data:`~scrapy.log.WARNING` - 警告信息(warning messages)
+4. :data:`~scrapy.log.INFO` - 一般信息(informational messages)
+5. :data:`~scrapy.log.DEBUG` - 调试信息(debugging messages)
 
-How to set the log level
+如何设置log级别
 ========================
 
-You can set the log level using the `--loglevel/-L` command line option, or
-using the :setting:`LOG_LEVEL` setting.
+您可以通过终端选项(command line option) `--loglevel/-L` 或 :setting:`LOG_LEVEL` 来设置log级别。
 
-How to log messages
-===================
+如何记录信息(log messages)
+================================
 
-Here's a quick example of how to log a message using the ``WARNING`` level::
+下面给出如何使用 ``WARNING`` 级别来记录信息的例子::
 
     from scrapy import log
     log.msg("This is a warning", level=log.WARNING)
 
-Logging from Spiders
-====================
+在Spider中添加log(Logging from Spiders)
+========================================
 
-The recommended way to log from spiders is by using the Spider
-:meth:`~scrapy.spider.Spider.log` method, which already populates the
-``spider`` argument of the :func:`scrapy.log.msg` function. The other arguments
-are passed directly to the :func:`~scrapy.log.msg` function.
+在spider中添加log的推荐方式是使用Spider的
+:meth:`~scrapy.spider.Spider.log` 方法。该方法会自动在调用
+:func:`scrapy.log.msg` 时赋值 ``spider`` 参数。其他的参数则直接传递给
+:func:`~scrapy.log.msg` 方法。
 
-scrapy.log module
+scrapy.log模块
 =================
 
 .. module:: scrapy.log
@@ -55,64 +53,63 @@ scrapy.log module
 
 .. function:: start(logfile=None, loglevel=None, logstdout=None)
 
-    Start the logging facility. This must be called before actually logging any
-    messages. Otherwise, messages logged before this call will get lost.
+    启动log功能。该方法必须在记录(log)任何信息前被调用。否则调用前的信息将会丢失。
 
-    :param logfile: the file path to use for logging output. If omitted, the
-        :setting:`LOG_FILE` setting will be used. If both are ``None``, the log
-        will be sent to standard error.
+    :param logfile: 用于保存log输出的文件路径。如果被忽略，
+        :setting:`LOG_FILE` 设置会被使用。 
+        如果两个参数都是 ``None`` ，log将会被输出到标准错误流(standard error)。
     :type logfile: str
 
-    :param loglevel: the minimum logging level to log. Available values are:
+    :param loglevel: 记录的最低的log级别. 可用的值有:
         :data:`CRITICAL`, :data:`ERROR`, :data:`WARNING`, :data:`INFO` and
         :data:`DEBUG`.
 
-    :param logstdout: if ``True``, all standard output (and error) of your
-        application will be logged instead. For example if you "print 'hello'"
-        it will appear in the Scrapy log. If omitted, the :setting:`LOG_STDOUT`
-        setting will be used.
+    :param logstdout: 如果为 ``True`` ，
+        所有您的应用的标准输出(包括错误)将会被记录(logged instead)。
+        例如，如果您调用 "print 'hello'" ，则'hello' 会在Scrapy的log中被显示。
+        如果被忽略，则 :setting:`LOG_STDOUT` 设置会被使用。
+
     :type logstdout: boolean
 
 .. function:: msg(message, level=INFO, spider=None)
 
-    Log a message
+    记录信息(Log a message)
 
-    :param message: the message to log
+    :param message: log的信息
     :type message: str
 
-    :param level: the log level for this message. See
+    :param level: 该信息的log级别. 参考
         :ref:`topics-logging-levels`.
 
-    :param spider: the spider to use for logging this message. This parameter
-        should always be used when logging things related to a particular
-        spider.
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: 记录该信息的spider. 当记录的信息和特定的spider有关联时，该参数必须被使用。
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
 .. data:: CRITICAL
 
-    Log level for critical errors
+    严重错误的Log级别
 
 .. data:: ERROR
 
+    错误的Log级别
     Log level for errors
 
 .. data:: WARNING
 
+    警告的Log级别
     Log level for warnings
 
 .. data:: INFO
 
-    Log level for informational messages (recommended level for production
-    deployments)
+    记录信息的Log级别(生产部署时推荐的Log级别)
 
 .. data:: DEBUG
 
-    Log level for debugging messages (recommended level for development)
+    调试信息的Log级别(开发时推荐的Log级别)
 
-Logging settings
+Logging设置
 ================
 
-These settings can be used to configure the logging:
+以下设置可以被用来配置logging:
 
 * :setting:`LOG_ENABLED`
 * :setting:`LOG_ENCODING`
