@@ -1,71 +1,47 @@
 .. _topics-images:
 
 =======================
-Downloading Item Images
+下载项目图片
 =======================
 
 .. currentmodule:: scrapy.contrib.pipeline.images
 
-Scrapy provides an :doc:`item pipeline </topics/item-pipeline>` for downloading
-images attached to a particular item, for example, when you scrape products and
-also want to download their images locally.
+Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载属于某个特定项目的图片，比如，当你抓取产品时，也想把它们的图片下载到本地。
 
-This pipeline, called the Images Pipeline and implemented in the
-:class:`ImagesPipeline` class, provides a convenient way for
-downloading and storing images locally with some additional features:
+这条管道，被称作图片管道，在 :class:`ImagesPipeline` 类中实现，提供了一个方便并具有额外特性的方法，来下载并本地存储图片:
 
-* Convert all downloaded images to a common format (JPG) and mode (RGB)
-* Avoid re-downloading images which were downloaded recently
-* Thumbnail generation
-* Check images width/height to make sure they meet a minimum constraint
+* 将所有下载的图片转换成通用的格式（JPG）和模式（RGB）
+* 避免重新下载最近已经下载过的图片
+* 缩略图生成
+* 检测图像的宽/高，确保它们满足最小限制
 
-This pipeline also keeps an internal queue of those images which are currently
-being scheduled for download, and connects those items that arrive containing
-the same image, to that queue. This avoids downloading the same image more than
-once when it's shared by several items.
+这个管道也会为那些当前安排好要下载的图片保留一个内部队列，并将那些到达的包含相同图片的项目连接到那个队列中。
+这可以避免多次下载几个项目共享的同一个图片。
 
-`Pillow`_ is used for thumbnailing and normalizing images to JPEG/RGB format,
-so you need to install this library in order to use the images pipeline.
-`Python Imaging Library`_ (PIL) should also work in most cases, but it
-is known to cause troubles in some setups, so we recommend to use `Pillow`_
-instead of `PIL <Python Imaging Library>`_.
+`Pillow`_ 是用来生成缩略图，并将图片归一化为JPEG/RGB格式，因此为了使用图片管道，你需要安装这个库。
+`Python Imaging Library`_ (PIL) 在大多数情况下是有效的，但众所周知，在一些设置里会出现问题，因此我们推荐使用 `Pillow`_ 而不是 `PIL <Python Imaging Library>`_.
 
 .. _Pillow: https://github.com/python-imaging/Pillow
 .. _Python Imaging Library: http://www.pythonware.com/products/pil/
 
-Using the Images Pipeline
+使用图片管道
 =========================
 
-The typical workflow, when using the :class:`ImagesPipeline` goes like
-this:
+当使用 :class:`ImagesPipeline` ，典型的工作流程如下所示:
 
-1. In a Spider, you scrape an item and put the URLs of its images into a
-   ``image_urls`` field.
+1. 在一个爬虫里，你抓取一个项目，把其中图片的URL放入 ``image_urls`` 组内。
 
-2. The item is returned from the spider and goes to the item pipeline.
+2. 项目从爬虫内返回，进入项目管道。
 
-3. When the item reaches the :class:`ImagesPipeline`, the URLs in the
-   ``image_urls`` field are scheduled for download using the standard
-   Scrapy scheduler and downloader (which means the scheduler and downloader
-   middlewares are reused), but with a higher priority, processing them before other
-   pages are scraped. The item remains "locked" at that particular pipeline stage
-   until the images have finish downloading (or fail for some reason).
+3. 当项目进入 :class:`ImagesPipeline`，``image_urls`` 组内的URLs将被Scrapy的调度器和下载器（这意味着调度器和下载器的中间件可以复用）安排下载，当优先级更高，会在其他页面被抓取前处理。项目会在这个特定的管道阶段保持“locker”的状态，直到完成图片的下载（或者由于某些原因未完成下载）。
 
-4. When the images are downloaded another field (``images``) will be populated
-   with the results. This field will contain a list of dicts with information
-   about the images downloaded, such as the downloaded path, the original
-   scraped url (taken from the ``image_urls`` field) , and the image checksum.
-   The images in the list of the ``images`` field will retain the same order of
-   the original ``image_urls`` field. If some image failed downloading, an
-   error will be logged and the image won't be present in the ``images`` field.
+4. 当图片下载完，另一个组（``images``）将被更新到结构中。这个组将包含一个字典列表，其中包括下载图片的信息，比如下载路径、源抓取地址（从``image_urls``组获得）和图片的校验码。``images``列表中的图片顺序将和源``image_urls``组保持一致。如果某个图片下载失败，将会记录下错误信息，图片也不会出现在``images``组中。
 
 
-Usage example
+使用样例
 =============
 
-In order to use the image pipeline you just need to :ref:`enable it
-<topics-images-enabling>` and define an item with the ``image_urls`` and
-``images`` fields::
+为了使用图片管道，你仅需要 :ref:`启动它<topics-images-enabling>` 并用 ``image_urls`` 和 ``images`` 定义一个项目::
 
     from scrapy.item import Item
 
@@ -75,186 +51,157 @@ In order to use the image pipeline you just need to :ref:`enable it
         image_urls = Field()
         images = Field()
 
-If you need something more complex and want to override the custom images
-pipeline behaviour, see :ref:`topics-images-override`.
+如果你需要更加复杂的功能，想重写定制图片管道行为，参见 :ref:`topics-images-override`。
 
 .. _topics-images-enabling:
 
-Enabling your Images Pipeline
+开启你的图片管道
 =============================
 
 .. setting:: IMAGES_STORE
 
-To enable your images pipeline you must first add it to your project
-:setting:`ITEM_PIPELINES` setting::
+为了开启你的图片管道，你首先需要在项目中添加它 :setting:`ITEM_PIPELINES` setting::
 
     ITEM_PIPELINES = {'scrapy.contrib.pipeline.images.ImagesPipeline': 1}
 
-And set the :setting:`IMAGES_STORE` setting to a valid directory that will be
-used for storing the downloaded images. Otherwise the pipeline will remain
-disabled, even if you include it in the :setting:`ITEM_PIPELINES` setting.
+并将 :setting:`IMAGES_STORE` 设置为一个有效的文件夹，用来存储下载的图片。否则管道将保持禁用状态，即使你在 :setting:`ITEM_PIPELINES`设置中添加了它。
 
-For example::
+比如::
 
    IMAGES_STORE = '/path/to/valid/dir'
 
-Images Storage
+图片存储
 ==============
 
-File system is currently the only officially supported storage, but there is
-also (undocumented) support for `Amazon S3`_.
+文件系统是当前官方唯一支持的存储系统，但也支持（非公开的） `Amazon S3`_。
 
 .. _Amazon S3: https://s3.amazonaws.com/
 
-File system storage
+文件系统存储
 -------------------
 
-The images are stored in files (one per image), using a `SHA1 hash`_ of their
-URLs for the file names.
+图片存储在文件中（一个图片一个文件），并使用它们URL的 `SHA1 hash`_ 作为文件名。
 
-For example, the following image URL::
+比如，对下面的图片URL::
 
     http://www.example.com/image.jpg
 
-Whose `SHA1 hash` is::
+它的 `SHA1 hash` 值为::
 
     3afec3b4765f8f0a07b78f98c07b83f013567a0a
 
-Will be downloaded and stored in the following file::
+将被下载并存为下面的文件::
 
    <IMAGES_STORE>/full/3afec3b4765f8f0a07b78f98c07b83f013567a0a.jpg
 
-Where:
+其中:
 
-* ``<IMAGES_STORE>`` is the directory defined in :setting:`IMAGES_STORE` setting
+* ``<IMAGES_STORE>`` 是定义在 :setting:`IMAGES_STORE` 设置里的文件夹
 
-* ``full`` is a sub-directory to separate full images from thumbnails (if
-  used). For more info see :ref:`topics-images-thumbnails`.
+* ``full`` 是用来区分图片和缩略图（如果使用的话）的一个子文件夹。详情参见 :ref:`topics-images-thumbnails`.
 
-Additional features
+额外的特性
 ===================
 
-Image expiration
+图片失效
 ----------------
 
 .. setting:: IMAGES_EXPIRES
 
-The Image Pipeline avoids downloading images that were downloaded recently. To
-adjust this retention delay use the :setting:`IMAGES_EXPIRES` setting, which
-specifies the delay in number of days::
+图像管道避免下载最近已经下载的图片。使用 :setting:`IMAGES_EXPIRES` 设置可以调整失效期限，可以用天数来指定::
 
-    # 90 days of delay for image expiration
+    # 90天的图片失效期限
     IMAGES_EXPIRES = 90
 
 .. _topics-images-thumbnails:
 
-Thumbnail generation
+缩略图生成
 --------------------
 
-The Images Pipeline can automatically create thumbnails of the downloaded
-images.
+图片管道可以自动创建下载图片的缩略图。
 
 .. setting:: IMAGES_THUMBS
 
-In order use this feature, you must set :setting:`IMAGES_THUMBS` to a dictionary
-where the keys are the thumbnail names and the values are their dimensions.
+为了使用这个特性，你需要设置 :setting:`IMAGES_THUMBS` 字典，其关键字为缩略图名字，值为它们的大小尺寸。
 
-For example::
+比如::
 
    IMAGES_THUMBS = {
        'small': (50, 50),
        'big': (270, 270),
    }
 
-When you use this feature, the Images Pipeline will create thumbnails of the
-each specified size with this format::
+当你使用这个特性时，图片管道将使用下面的格式来创建各个特定尺寸的缩略图::
 
     <IMAGES_STORE>/thumbs/<size_name>/<image_id>.jpg
 
-Where:
+其中:
 
-* ``<size_name>`` is the one specified in the :setting:`IMAGES_THUMBS`
-  dictionary keys (``small``, ``big``, etc)
+* ``<size_name>`` 是 :setting:`IMAGES_THUMBS` 字典关键字（``small``， ``big``，等）
 
-* ``<image_id>`` is the `SHA1 hash`_ of the image url
+* ``<image_id>`` 是图像url的 `SHA1 hash`_ 
 
 .. _SHA1 hash: http://en.wikipedia.org/wiki/SHA_hash_functions
 
-Example of image files stored using ``small`` and ``big`` thumbnail names::
+例如使用``small``和``big``缩略图名字的图片文件::
 
    <IMAGES_STORE>/full/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
    <IMAGES_STORE>/thumbs/small/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
    <IMAGES_STORE>/thumbs/big/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
 
-The first one is the full image, as downloaded from the site.
+第一个是从网站下载的完整图片。
 
-Filtering out small images
+滤出小图片
 --------------------------
 
 .. setting:: IMAGES_MIN_HEIGHT
 
 .. setting:: IMAGES_MIN_WIDTH
 
-You can drop images which are too small, by specifying the minimum allowed size
-in the :setting:`IMAGES_MIN_HEIGHT` and :setting:`IMAGES_MIN_WIDTH` settings.
+你可以丢掉那些过小的图片，只需在:setting:`IMAGES_MIN_HEIGHT`和:setting:`IMAGES_MIN_WIDTH`设置中指定最小允许的尺寸。
 
-For example::
+比如::
 
    IMAGES_MIN_HEIGHT = 110
    IMAGES_MIN_WIDTH = 110
 
-Note: these size constraints don't affect thumbnail generation at all.
+注意：这些尺寸一点也不影响缩略图的生成。
 
-By default, there are no size constraints, so all images are processed.
+默认情况下，没有尺寸限制，因此所有图片都将处理。
 
 .. _topics-images-override:
 
-Implementing your custom Images Pipeline
+实现定制图片管道
 ========================================
 
 .. module:: scrapy.contrib.pipeline.images
    :synopsis: Images Pipeline
 
-Here are the methods that you should override in your custom Images Pipeline:
+下面是你可以在定制的图片管道里重写的方法：
 
 .. class:: ImagesPipeline
 
    .. method:: get_media_requests(item, info)
 
-      As seen on the workflow, the pipeline will get the URLs of the images to
-      download from the item. In order to do this, you must override the
-      :meth:`~get_media_requests` method and return a Request for each
-      image URL::
+      在工作流程中可以看到，管道会得到图片的URL并从项目中下载。为了这么做，你需要重写 :meth:`~get_media_requests` 方法，并对各个图片URL返回一个Request::
 
          def get_media_requests(self, item, info):
              for image_url in item['image_urls']:
                  yield Request(image_url)
 
-      Those requests will be processed by the pipeline and, when they have finished
-      downloading, the results will be sent to the
-      :meth:`~item_completed` method, as a list of 2-element tuples.
-      Each tuple will contain ``(success, image_info_or_failure)`` where:
+      这些请求将被管道处理，当它们完成下载后，结果将以2-元素的元组列表形式传送到:meth:`~item_completed` 方法:
 
-      * ``success`` is a boolean which is ``True`` if the image was downloaded
-        successfully or ``False`` if it failed for some reason
+      * ``success`` 是一个布尔值，当图片成功下载时为 ``True`` ，因为某个原因下载失败为``False`` 
 
-      * ``image_info_or_error`` is a dict containing the following keys (if success
-        is ``True``) or a `Twisted Failure`_ if there was a problem.
+      * ``image_info_or_error`` 是一个包含下列关键字的字典（如果成功为 ``True`` ）或者出问题时为`Twisted Failure`_ 。
 
-        * ``url`` - the url where the image was downloaded from. This is the url of
-          the request returned from the :meth:`~get_media_requests`
-          method.
+        * ``url`` - 图片下载的url。这是从:meth:`~get_media_requests`方法返回请求的url。
 
-        * ``path`` - the path (relative to :setting:`IMAGES_STORE`) where the image
-          was stored
+        * ``path`` - 图片存储的路径（类似 :setting:`IMAGES_STORE`）
 
-        * ``checksum`` - a `MD5 hash`_ of the image contents
+        * ``checksum`` - 图片内容的 `MD5 hash`_ 
 
-      The list of tuples received by :meth:`~item_completed` is
-      guaranteed to retain the same order of the requests returned from the
-      :meth:`~get_media_requests` method.
-
-      Here's a typical value of the ``results`` argument::
+      :meth:`~item_completed` 接收的元组列表需要保证与:meth:`~get_media_requests`方法返回请求的顺序相一致。下面是``results``参数的一个典型值::
 
           [(True,
             {'checksum': '2b00042f7481c7b056c4b410d28f33cf',
@@ -267,23 +214,16 @@ Here are the methods that you should override in your custom Images Pipeline:
            (False,
             Failure(...))]
 
-      By default the :meth:`get_media_requests` method returns ``None`` which
-      means there are no images to download for the item.
+      默认 :meth:`get_media_requests` 方法返回 ``None`` ，这意味着项目中没有图片可下载。
 
    .. method:: item_completed(results, items, info)
 
-      The :meth:`ImagesPipeline.item_completed` method called when all image
-      requests for a single item have completed (either finished downloading, or
-      failed for some reason).
+      当一个单独项目中的所有图片请求完成时（要么完成下载，要么因为某种原因下载失败）， :meth:`ImagesPipeline.item_completed` 方法将被调用。
 
-      The :meth:`~item_completed` method must return the
-      output that will be sent to subsequent item pipeline stages, so you must
-      return (or drop) the item, as you would in any pipeline.
+       :meth:`~item_completed` 方法需要返回一个输出，其将被送到随后的项目管道阶段，因此你需要返回（或者丢弃）项目，如你在任意管道里所做的一样。
 
-      Here is an example of the :meth:`~item_completed` method where we
-      store the downloaded image paths (passed in results) in the ``image_paths``
-      item field, and we drop the item if it doesn't contain any images::
-
+      这里是一个:meth:`~item_completed` 方法的例子，其中我们将下载的图片路径（传入到results中）存储到``image_paths``项目组中，如果其中没有图片，我们将丢弃项目::
+      
           from scrapy.exceptions import DropItem
 
           def item_completed(self, results, item, info):
@@ -293,14 +233,13 @@ Here are the methods that you should override in your custom Images Pipeline:
               item['image_paths'] = image_paths
               return item
 
-      By default, the :meth:`item_completed` method returns the item.
+      默认情况下， :meth:`item_completed` 方法返回项目。
 
 
-Custom Images pipeline example
+定制图片管道的例子
 ==============================
 
-Here is a full example of the Images Pipeline whose methods are examplified
-above::
+下面是一个图片管道的完整例子，其方法如上所示::
 
     from scrapy.contrib.pipeline.images import ImagesPipeline
     from scrapy.exceptions import DropItem
