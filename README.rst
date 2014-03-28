@@ -28,6 +28,7 @@ Scrapy中文文档翻译计划
   * topics/logging.rst
   * topics/feed-exporters.rst
   * topics/stats.rst
+  * topics/email.rst
 
 
 加入我们吧
