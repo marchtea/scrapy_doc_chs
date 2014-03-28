@@ -27,6 +27,7 @@ Scrapy中文文档翻译计划
   * topics/images.rst
   * topics/logging.rst
   * topics/feed-exporters.rst
+  * topics/stats.rst
 
 
 加入我们吧
@@ -54,7 +55,7 @@ Scrapy的文档写得很详细，与之带来的就是文档量很大。
 大致浏览一下结果。然后提交pull request。
 
 
-I/We need U
+We need U
 ^^^^^^^^^^^^^^^^^^^^
 
 

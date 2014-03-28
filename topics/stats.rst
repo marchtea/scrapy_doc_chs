@@ -1,36 +1,30 @@
 .. _topics-stats:
 
-================
-Stats Collection
-================
+==============================
+数据收集(Stats Collection)
+==============================
 
-Scrapy provides a convenient facility for collecting stats in the form of
-key/values, where values are often counters. The facility is called the Stats
-Collector, and can be accessed through the :attr:`~scrapy.crawler.Crawler.stats`
-attribute of the :ref:`topics-api-crawler`, as illustrated by the examples in
-the :ref:`topics-stats-usecases` section below.
+Scrapy提供了方便的收集数据的机制。数据以key/value方式存储，值大多是计数值。
+该机制叫做数据收集器(Stats Collector)，可以通过
+:ref:`topics-api-crawler` 的属性 :attr:`~scrapy.crawler.Crawler.stats`
+来使用。在下面的章节
+:ref:`topics-stats-usecases` 将给出例子来说明。
 
-However, the Stats Collector is always available, so you can always import it
-in your module and use its API (to increment or set new stat keys), regardless
-of whether the stats collection is enabled or not. If it's disabled, the API
-will still work but it won't collect anything. This is aimed at simplifying the
-stats collector usage: you should spend no more than one line of code for
-collecting stats in your spider, Scrapy extension, or whatever code you're
-using the Stats Collector from.
+无论数据收集(stats collection)开启或者关闭，数据收集器永远都是可用的。
+因此您可以import进自己的模块并使用其API(增加值或者设置新的状态键(stat keys))。
+该做法是为了简化数据收集的方法: 您不应该使用超过一行代码来收集您的spider，Scrpay扩展或任何您使用状态收集器代码里头的状态。
 
-Another feature of the Stats Collector is that it's very efficient (when
-enabled) and extremely efficient (almost unnoticeable) when disabled.
+状态收集器的另一个特性是(在启用状态下)很高效，(在关闭情况下)非常高效(几乎察觉不到)。
 
-The Stats Collector keeps a stats table per open spider which is automatically
-opened when the spider is opened, and closed when the spider is closed.
+状态收集器对每个spider保持一个状态表。当spider启动时，该表自动打开，当spider关闭时，自动关闭。
 
 .. _topics-stats-usecases:
 
-Common Stats Collector uses
+常见状态收集器使用方法
 ===========================
 
-Access the stats collector through the :attr:`~scrapy.crawler.Crawler.stats`
-attribute. Here is an example of an extension that access stats::
+通过 :attr:`~scrapy.crawler.Crawler.stats` 属性来使用状态收集器。
+下面是在扩展中使用状态的例子::
 
     class ExtensionThatAccessStats(object):
 
@@ -41,39 +35,38 @@ attribute. Here is an example of an extension that access stats::
         def from_crawler(cls, crawler):
             return cls(crawler.stats)
 
-Set stat value::
+设置状态::
 
     stats.set_value('hostname', socket.gethostname())
 
-Increment stat value::
+增加状态值::
 
     stats.inc_value('pages_crawled')
 
-Set stat value only if greater than previous::
+当新的值比原来的值大时设置状态::
 
     stats.max_value('max_items_scraped', value)
 
-Set stat value only if lower than previous::
+当新的值比原来的值小时设置状态::
 
     stats.min_value('min_free_memory_percent', value)
 
-Get stat value::
+获取状态::
 
     >>> stats.get_value('pages_crawled')
     8
 
-Get all stats::
+获取所有状态::
 
     >>> stats.get_stats()
     {'pages_crawled': 1238, 'start_time': datetime.datetime(2009, 7, 14, 21, 47, 28, 977139)}
 
-Available Stats Collectors
+可用的状态收集器
 ==========================
 
-Besides the basic :class:`StatsCollector` there are other Stats Collectors
-available in Scrapy which extend the basic Stats Collector. You can select
-which Stats Collector to use through the :setting:`STATS_CLASS` setting. The
-default Stats Collector used is the :class:`MemoryStatsCollector`. 
+除了基本的 :class:`StatsCollector` ，Scrapy也提供了基于 :class:`StatsCollector` 的状态收集器。
+您可以通过 :setting:`STATS_CLASS` 设置来选择。默认使用的是
+:class:`MemoryStatsCollector` 。
 
 .. module:: scrapy.statscol
    :synopsis: Stats Collectors
@@ -83,26 +76,20 @@ MemoryStatsCollector
 
 .. class:: MemoryStatsCollector
 
-    A simple stats collector that keeps the stats of the last scraping run (for
-    each spider) in memory, after they're closed. The stats can be accessed
-    through the :attr:`spider_stats` attribute, which is a dict keyed by spider
-    domain name.
+    一个简单的状态收集器。其在spider运行完毕后将其状态保存在内存中。状态可以通过
+    :attr:`spider_stats` 属性访问。该属性是一个以spider名字为键(key)的字典。
 
-    This is the default Stats Collector used in Scrapy.
+    这是Scrapy的默认选择。
 
     .. attribute:: spider_stats
 
-       A dict of dicts (keyed by spider name) containing the stats of the last
-       scraping run for each spider.
+       保存了每个spider最近一次爬取的状态的字典(dict)。该字典以spider名字为键，值也是字典。
 
 DummyStatsCollector
 -------------------
 
 .. class:: DummyStatsCollector
 
-    A Stats collector which does nothing but is very efficient (because it does
-    nothing). This stats collector can be set via the :setting:`STATS_CLASS`
-    setting, to disable stats collect in order to improve performance. However,
-    the performance penalty of stats collection is usually marginal compared to
-    other Scrapy workload like parsing pages.
-
+    该状态收集器并不做任何事情但非常高效(因为什么都不做(写文档的人真调皮o(╯□╰)o))。
+    您可以通过设置 :setting:`STATS_CLASS` 启用这个收集器，来关闭状态收集，提高效率。
+    不过，状态收集的性能负担相较于Scrapy其他的处理(例如分析页面)来说是非常小的。
