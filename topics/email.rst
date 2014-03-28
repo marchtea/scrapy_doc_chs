@@ -1,177 +1,170 @@
 .. _topics-email:
 
 ==============
-Sending e-mail
+发送email
 ==============
 
 .. module:: scrapy.mail
    :synopsis: Email sending facility
 
-Although Python makes sending e-mails relatively easy via the `smtplib`_
-library, Scrapy provides its own facility for sending e-mails which is very
-easy to use and it's implemented using `Twisted non-blocking IO`_, to avoid
-interfering with the non-blocking IO of the crawler. It also provides a
-simple API for sending attachments and it's very easy to configure, with a few
-:ref:`settings <topics-email-settings>`.
+虽然Python通过 `smtplib`_ 库使得发送email变得很简单，Scrapy仍然提供了自己的实现。
+该功能十分易用，同时由于采用了 `Twisted非阻塞式(non-blocking)IO`_ ，其避免了对爬虫的非阻塞式IO的影响。
+另外，其也提供了简单的API来发送附件。
+通过一些 :ref:`settings <topics-email-settings>` 设置，您可以很简单的进行配置。
 
 .. _smtplib: http://docs.python.org/library/smtplib.html
-.. _Twisted non-blocking IO: http://twistedmatrix.com/projects/core/documentation/howto/async.html
+.. _Twisted非阻塞式(non-blocking)IO: http://twistedmatrix.com/projects/core/documentation/howto/async.html
 
-Quick example
+简单例子
 =============
 
-There are two ways to instantiate the mail sender. You can instantiate it using
-the standard constructor::
+有两种方法可以创建邮件发送器(mail sender)。
+您可以通过标准构造器(constructor)创建::
 
     from scrapy.mail import MailSender
     mailer = MailSender()
 
-Or you can instantiate it passing a Scrapy settings object, which will respect
-the :ref:`settings <topics-email-settings>`::
+或者您可以传递一个Scrapy设置对象，其会参考 
+:ref:`settings <topics-email-settings>`::
 
     mailer = MailSender.from_settings(settings)
 
-And here is how to use it to send an e-mail (without attachments)::
+这是如何来发送邮件了(不包括附件)::
 
     mailer.send(to=["someone@example.com"], subject="Some subject", body="Some body", cc=["another@example.com"])
 
-MailSender class reference
+MailSender类参考手册
 ==========================
 
-MailSender is the preferred class to use for sending emails from Scrapy, as it
-uses `Twisted non-blocking IO`_, like the rest of the framework.
+在Scrapy中发送email推荐使用MailSender。其同框架中其他的部分一样，使用了
+`Twisted非阻塞式(non-blocking)IO`_ 。
 
 .. class:: MailSender(smtphost=None, mailfrom=None, smtpuser=None, smtppass=None, smtpport=None)
 
-    :param smtphost: the SMTP host to use for sending the emails. If omitted, the
-      :setting:`MAIL_HOST` setting will be used.
+    :param smtphost: 发送email的SMTP主机(host)。如果忽略，则使用 :setting:`MAIL_HOST` 。
     :type smtphost: str
 
-    :param mailfrom: the address used to send emails (in the ``From:`` header).
-      If omitted, the :setting:`MAIL_FROM` setting will be used.
+    :param mailfrom: 用于发送email的地址(address)(填入 ``From:``) 。
+      如果忽略，则使用 :setting:`MAIL_FROM` 。
     :type mailfrom: str
 
-    :param smtpuser: the SMTP user. If omitted, the :setting:`MAIL_USER`
-      setting will be used. If not given, no SMTP authentication will be
-      performed.
+    :param smtpuser: SMTP用户。如果忽略,则使用 :setting:`MAIL_USER` 。
+      如果未给定，则将不会进行SMTP认证(authentication)。
     :type smtphost: str
 
-    :param smtppass: the SMTP pass for authentication.
+    :param smtppass: SMTP认证的密码
     :type smtppass: str
 
-    :param smtpport: the SMTP port to connect to
+    :param smtpport: SMTP连接的短裤 
     :type smtpport: int
 
-    :param smtptls: enforce using SMTP STARTTLS
+    :param smtptls: 强制使用STARTTLS
     :type smtpport: boolean
 
-    :param smtpssl: enforce using a secure SSL connection
+    :param smtpssl: 强制使用SSL连接 
     :type smtpport: boolean
 
     .. classmethod:: from_settings(settings)
 
-        Instantiate using a Scrapy settings object, which will respect
-        :ref:`these Scrapy settings <topics-email-settings>`.
+        使用Scrapy设置对象来初始化对象。其会参考
+        :ref:`这些Scrapy设置 <topics-email-settings>`.
 
         :param settings: the e-mail recipients
         :type settings: :class:`scrapy.settings.Settings` object
 
     .. method:: send(to, subject, body, cc=None, attachs=(), mimetype='text/plain')
 
-        Send email to the given recipients.
+        发送email到给定的接收者。
 
-        :param to: the e-mail recipients
+        :param to: email接收者
         :type to: list
 
-        :param subject: the subject of the e-mail
+        :param subject: email内容
         :type subject: str
 
-        :param cc: the e-mails to CC
+        :param cc: 抄送的人
         :type cc: list
 
-        :param body: the e-mail body
+        :param body: email的内容
         :type body: str
 
-        :param attachs: an iterable of tuples ``(attach_name, mimetype,
-          file_object)`` where  ``attach_name`` is a string with the name that will
-          appear on the e-mail's attachment, ``mimetype`` is the mimetype of the
-          attachment and ``file_object`` is a readable file object with the
-          contents of the attachment
+        :param attachs: 可迭代的元组 ``(attach_name, mimetype, file_object)``。
+              ``attach_name`` 是一个在email的附件中显示的名字的字符串，
+              ``mimetype`` 是附件的mime类型，
+              ``file_object`` 是包含附件内容的可读的文件对象。
         :type attachs: iterable
 
-        :param mimetype: the MIME type of the e-mail
+        :param mimetype: email的mime类型
         :type mimetype: str
 
 
 .. _topics-email-settings:
 
-Mail settings
+Mail设置
 =============
 
-These settings define the default constructor values of the :class:`MailSender`
-class, and can be used to configure e-mail notifications in your project without
-writing any code (for those extensions and code that uses :class:`MailSender`).
+这些设置定义了
+:class:`MailSender` 构造器的默认值。其使得在您不编写任何一行代码的情况下，为您的项目配置实现email通知的功能。
 
 .. setting:: MAIL_FROM
 
 MAIL_FROM
 ---------
 
-Default: ``'scrapy@localhost'``
+默认值: ``'scrapy@localhost'``
 
-Sender email to use (``From:`` header) for sending emails.
+用于发送email的地址(address)(填入 ``From:``) 。
 
 .. setting:: MAIL_HOST
 
 MAIL_HOST
 ---------
 
-Default: ``'localhost'``
+默认值: ``'localhost'``
 
-SMTP host to use for sending emails.
+发送email的SMTP主机(host)。
 
 .. setting:: MAIL_PORT
 
 MAIL_PORT
 ---------
 
-Default: ``25``
+默认值: ``25``
 
-SMTP port to use for sending emails.
+发用邮件的SMTP端口。
 
 .. setting:: MAIL_USER
 
 MAIL_USER
 ---------
 
-Default: ``None``
+默认值: ``None``
 
-User to use for SMTP authentication. If disabled no SMTP authentication will be
-performed.
+SMTP用户。如果未给定，则将不会进行SMTP认证(authentication)。
 
 .. setting:: MAIL_PASS
 
 MAIL_PASS
 ---------
 
-Default: ``None``
+默认值: ``None``
 
-Password to use for SMTP authentication, along with :setting:`MAIL_USER`.
+用于SMTP认证，与 :setting:`MAIL_USER` 配套的密码。
 
 .. setting:: MAIL_TLS
 
 MAIL_TLS
 ---------
 
-Default: ``False``
+默认值: ``False``
 
-Enforce using STARTTLS. STARTTLS is a way to take an existing insecure connection, and upgrade it to a secure connection using SSL/TLS.
+强制使用STARTTLS。STARTTLS能使得在已经存在的不安全连接上，通过使用SSL/TLS来实现安全连接。
 
 .. setting:: MAIL_SSL
 
 MAIL_SSL
 ---------
 
-Default: ``False``
+默认值: ``False``
 
-Enforce connecting using an SSL encrypted connection
+强制使用SSL加密连接。
