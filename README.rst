@@ -29,6 +29,7 @@ Scrapy中文文档翻译计划
   * topics/feed-exporters.rst
   * topics/stats.rst
   * topics/email.rst
+  * topics/telnetconsole.rst
 
 
 加入我们吧

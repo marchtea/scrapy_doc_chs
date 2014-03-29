@@ -1,69 +1,66 @@
 .. _topics-telnetconsole:
 
-==============
-Telnet Console
-==============
+============================
+Telnet终端(Telnet Console)
+============================
 
 .. module:: scrapy.telnet
    :synopsis: The Telnet Console
 
-Scrapy comes with a built-in telnet console for inspecting and controlling a
-Scrapy running process. The telnet console is just a regular python shell
-running inside the Scrapy process, so you can do literally anything from it.
+Scrapy提供了内置的telnet终端，以供检查，控制Scrapy运行的进程。
+telnet仅仅是一个运行在Scrapy进程中的普通python终端。因此您可以在其中做任何事。
 
-The telnet console is a :ref:`built-in Scrapy extension
-<topics-extensions-ref>` which comes enabled by default, but you can also
-disable it if you want. For more information about the extension itself see
-:ref:`topics-extensions-ref-telnetconsole`.
+telnet终端是一个
+:ref:`自带的Scrapy扩展 <topics-extensions-ref>` 。
+该扩展默认为启用，不过您也可以关闭。
+关于扩展的更多内容请参考
+:ref:`topics-extensions-ref-telnetconsole` 。
 
 .. highlight:: none
 
-How to access the telnet console
+如何访问telnet终端
 ================================
 
-The telnet console listens in the TCP port defined in the
-:setting:`TELNETCONSOLE_PORT` setting, which defaults to ``6023``. To access
-the console you need to type::
+telnet终端监听设置中定义的
+:setting:`TELNETCONSOLE_PORT` ，默认为 ``6023`` 。
+访问telnet请输入::
 
     telnet localhost 6023
     >>>
     
-You need the telnet program which comes installed by default in Windows, and
-most Linux distros.
+Windows及大多数Linux发行版都自带了所需的telnet程序。
 
-Available variables in the telnet console
+telnet终端中可用的变量
 =========================================
 
-The telnet console is like a regular Python shell running inside the Scrapy
-process, so you can do anything from it including importing new modules, etc. 
+telnet仅仅是一个运行在Scrapy进程中的普通python终端。因此您可以做任何事情，甚至是导入新终端。
 
-However, the telnet console comes with some default variables defined for
-convenience:
+telnet为了方便提供了一些默认定义的变量:
 
 +----------------+-------------------------------------------------------------------+
-| Shortcut       | Description                                                       |
+| 快捷名称       | 描述                                                              |
 +================+===================================================================+
-| ``crawler``    | the Scrapy Crawler (:class:`scrapy.crawler.Crawler` object)       |
+| ``crawler``    | Scrapy Crawler (:class:`scrapy.crawler.Crawler` 对象)             |
 +----------------+-------------------------------------------------------------------+
-| ``engine``     | Crawler.engine attribute                                          |
+| ``engine``     | Crawler.engine属性                                                |
 +----------------+-------------------------------------------------------------------+
-| ``spider``     | the active spider                                                 |
+| ``spider``     | 当前激活的爬虫(spider)                                            |
 +----------------+-------------------------------------------------------------------+
 | ``slot``       | the engine slot                                                   |
 +----------------+-------------------------------------------------------------------+
-| ``extensions`` | the Extension Manager (Crawler.extensions attribute)              |
+| ``extensions`` | 扩展管理器(manager) (Crawler.extensions属性)                      |
 +----------------+-------------------------------------------------------------------+
-| ``stats``      | the Stats Collector (Crawler.stats attribute)                     |
+| ``stats``      | 状态收集器 (Crawler.stats属性)                                    |
 +----------------+-------------------------------------------------------------------+
-| ``settings``   | the Scrapy settings object (Crawler.settings attribute)           |
+| ``settings``   | Scrapy设置(setting)对象 (Crawler.settings属性)                    |
 +----------------+-------------------------------------------------------------------+
-| ``est``        | print a report of the engine status                               |
+| ``est``        | 打印引擎状态的报告                                                |
 +----------------+-------------------------------------------------------------------+
-| ``prefs``      | for memory debugging (see :ref:`topics-leaks`)                    |
+| ``prefs``      | 针对内存调试 (参考 :ref:`topics-leaks`)                           |
 +----------------+-------------------------------------------------------------------+
-| ``p``          | a shortcut to the `pprint.pprint`_ function                       |
+| ``p``          | `pprint.pprint`_ 函数的简写                                       |
 +----------------+-------------------------------------------------------------------+
-| ``hpy``        | for memory debugging (see :ref:`topics-leaks`)                    |
+| ``hpy``        | 针对内存调试 (参考 :ref:`topics-leaks`)                           |
 +----------------+-------------------------------------------------------------------+
 
 .. _pprint.pprint: http://docs.python.org/library/pprint.html#pprint.pprint
@@ -71,13 +68,12 @@ convenience:
 Telnet console usage examples
 =============================
 
-Here are some example tasks you can do with the telnet console:
+下面是使用telnet终端的一些例子:
 
-View engine status
+查看引擎状态
 ------------------
 
-You can use the ``est()`` method of the Scrapy engine to quickly show its state
-using the telnet console::
+在终端中您可以使用Scrapy引擎的 ``est()`` 方法来快速查看状态::
 
     telnet localhost 6023
     >>> est()
@@ -100,45 +96,44 @@ using the telnet console::
     engine.scraper.slot.needs_backout()             : False
 
 
-Pause, resume and stop the Scrapy engine
+暂停，恢复和停止Scrapy引擎
 ----------------------------------------
 
-To pause::
+暂停::
 
     telnet localhost 6023
     >>> engine.pause()
     >>>
 
-To resume::
+恢复::
 
     telnet localhost 6023
     >>> engine.unpause()
     >>>
 
-To stop::
+停止::
 
     telnet localhost 6023
     >>> engine.stop()
     Connection closed by foreign host.
 
-Telnet Console signals
+Telnet终端信号
 ======================
 
 .. signal:: update_telnet_vars
 .. function:: update_telnet_vars(telnet_vars)
 
-    Sent just before the telnet console is opened. You can hook up to this
-    signal to add, remove or update the variables that will be available in the
-    telnet local namespace. In order to do that, you need to update the
-    ``telnet_vars`` dict in your handler.
+    在telnet终端开启前发送该信号。您可以挂载(hook up)该信号来添加，移除或更新
+    telnet本地命名空间可用的变量。
+    您可以通过在您的处理函数(handler)中更新 ``telnet_vars`` 字典来实现该修改。
 
-    :param telnet_vars: the dict of telnet variables
+    :param telnet_vars: telnet变量的字典
     :type telnet_vars: dict
 
-Telnet settings
+Telnet设定
 ===============
 
-These are the settings that control the telnet console's behaviour:
+以下是终端的一些设定:
 
 .. setting:: TELNETCONSOLE_PORT
 
@@ -147,8 +142,8 @@ TELNETCONSOLE_PORT
 
 Default: ``[6023, 6073]``
 
-The port range to use for the telnet console. If set to ``None`` or ``0``, a
-dynamically assigned port is used.
+telnet终端使用的端口范围。如果设为 ``None`` 或 ``0`` ，
+则动态分配端口。
 
 
 .. setting:: TELNETCONSOLE_HOST
@@ -158,5 +153,5 @@ TELNETCONSOLE_HOST
 
 Default: ``'0.0.0.0'``
 
-The interface the telnet console should listen on
+telnet终端监听的接口(interface)。
 
