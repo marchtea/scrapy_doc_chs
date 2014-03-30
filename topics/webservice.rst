@@ -4,50 +4,44 @@
 Web Service
 ===========
 
-Scrapy comes with a built-in web service for monitoring and controlling a
-running crawler. The service exposes most resources using the `JSON-RPC 2.0`_
-protocol, but there are also other (read-only) resources which just output JSON
-data.
+Scrapy提供用于监控及控制运行中的爬虫的web服务(service)。
+服务通过 `JSON-RPC 2.0`_ 协议提供大部分的资源，不过也有些(只读)资源仅仅输出JSON数据。
 
-Provides an extensible web service for managing a Scrapy process. It's enabled
-by the :setting:`WEBSERVICE_ENABLED` setting. The web server will listen in the
-port specified in :setting:`WEBSERVICE_PORT`, and will log to the file
-specified in :setting:`WEBSERVICE_LOGFILE`.
+Scrapy为管理Scrapy进程提供了一个可扩展的web服务。
+您可以通过 :setting:`WEBSERVICE_ENABLED` 来启用服务。
+服务将会监听 :setting:`WEBSERVICE_PORT` 的端口，并将记录写入到
+:setting:`WEBSERVICE_LOGFILE` 指定的文件中。
 
-The web service is a :ref:`built-in Scrapy extension <topics-extensions-ref>`
-which comes enabled by default, but you can also disable it if you're running
-tight on memory.
+web服务是默认启用的 :ref:`内置Scrapy扩展 <topics-extensions-ref>` ，
+不过如果您运行的环境内存紧张的话，也可以关闭该扩展。
 
 .. _topics-webservice-resources:
 
-Web service resources
-=====================
+Web Service资源(resources)
+===========================
 
-The web service contains several resources, defined in the
-:setting:`WEBSERVICE_RESOURCES` setting. Each resource provides a different
-functionality. See :ref:`topics-webservice-resources-ref` for a list of
-resources available by default.
+web service提供多种资源，定义在
+:setting:`WEBSERVICE_RESOURCES` 设置中。 每个资源提供了不同的功能。参考
+:ref:`topics-webservice-resources-ref` 来查看默认可用的资源。
 
-Although you can implement your own resources using any protocol, there are
-two kinds of resources bundled with Scrapy:
+虽然您可以使用任何协议来实现您的资源，但有两种资源是和Scrapy绑定的:
 
-* Simple JSON resources - which are read-only and just output JSON data
-* JSON-RPC resources - which provide direct access to certain Scrapy objects
-  using the `JSON-RPC 2.0`_ protocol
+* Simple JSON resources - 只读，输出JSON数据
+* JSON-RPC resources - 通过使用 `JSON-RPC 2.0`_ 协议支持对一些Scrapy对象的直接访问
 
 .. module:: scrapy.contrib.webservice
    :synopsis: Built-in web service resources
 
 .. _topics-webservice-resources-ref:
 
-Available JSON-RPC resources
+可用JSON-RPC对象
 ----------------------------
 
-These are the JSON-RPC resources available by default in Scrapy:
+Scrapy默认支持以下JSON-RPC资源:
 
 .. _topics-webservice-crawler:
 
-Crawler JSON-RPC resource
+Crawler JSON-RPC资源
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: scrapy.contrib.webservice.crawler
@@ -55,41 +49,43 @@ Crawler JSON-RPC resource
 
 .. class:: CrawlerResource
 
-    Provides access to the main Crawler object that controls the Scrapy
-    process.
+    提供对主Crawler对象的访问，来控制Scrapy进程。
 
-    Available by default at: http://localhost:6080/crawler
+    默认访问地址: http://localhost:6080/crawler
 
-Stats Collector JSON-RPC resource
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+状态收集器(Stats Collector)JSON-RPC资源
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: scrapy.contrib.webservice.stats
    :synopsis: Stats JSON-RPC resource
 
 .. class:: StatsResource
 
-    Provides access to the Stats Collector used by the crawler.
+    提供对crawler使用的状态收集器(Stats Collector)的访问。
 
-    Available by default at: http://localhost:6080/stats
+    默认访问地址: http://localhost:6080/stats
 
-Spider Manager JSON-RPC resource
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+爬虫管理器(Spider Manager)JSON-RPC资源
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can access the spider manager JSON-RPC resource through the
-:ref:`topics-webservice-crawler` at: http://localhost:6080/crawler/spiders
+您可以通过
+:ref:`topics-webservice-crawler` 来访问
+爬虫管理器JSON-RPC资源。地址为:
+http://localhost:6080/crawler/spiders
 
-Extension Manager JSON-RPC resource
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+扩展管理器(Extension Manager)JSON-RPC资源
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can access the extension manager JSON-RPC resource through the
-:ref:`topics-webservice-crawler` at: http://localhost:6080/crawler/spiders
+您可以通过
+:ref:`topics-webservice-crawler` 来访问
+扩展管理器JSON-RPC资源。地址为:
 
-Available JSON resources
+可用JSON资源
 ------------------------
 
-These are the JSON resources available by default:
+Scrapy默认提供下列JSON资源:
 
-Engine status JSON resource
+引擎状态JSON资源
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: scrapy.contrib.webservice.enginestatus
@@ -97,14 +93,14 @@ Engine status JSON resource
 
 .. class:: EngineStatusResource
 
-    Provides access to engine status metrics.
+    提供了对引擎状态数据的访问
 
-    Available by default at: http://localhost:6080/enginestatus
+    默认访问地址: http://localhost:6080/enginestatus
 
-Web service settings
+Web服务设置
 ====================
 
-These are the settings that control the web service behaviour:
+您可以通过下列选项来设置web服务:
 
 .. setting:: WEBSERVICE_ENABLED
 
@@ -113,8 +109,7 @@ WEBSERVICE_ENABLED
 
 Default: ``True``
 
-A boolean which specifies if the web service will be enabled (provided its
-extension is also enabled).
+布尔值。确定web服务是否启用(以及说该扩展是否启用)。
 
 .. setting:: WEBSERVICE_LOGFILE
 
@@ -123,8 +118,7 @@ WEBSERVICE_LOGFILE
 
 Default: ``None``
 
-A file to use for logging HTTP requests made to the web service. If unset web
-the log is sent to standard scrapy log.
+记录对该web服务的http请求的文件。如果未设置，则记录将写到标准scrapy的log中。
 
 .. setting:: WEBSERVICE_PORT
 
@@ -133,8 +127,7 @@ WEBSERVICE_PORT
 
 Default: ``[6080, 7030]``
 
-The port range to use for the web service. If set to ``None`` or ``0``, a
-dynamically assigned port is used.
+web服务的端口范围。如果设置为 ``None`` 或 ``0`` ，则使用动态分配的端口。
 
 .. setting:: WEBSERVICE_HOST
 
@@ -143,16 +136,16 @@ WEBSERVICE_HOST
 
 Default: ``'0.0.0.0'``
 
-The interface the web service should listen on
+web服务监听的接口(interface)
 
 WEBSERVICE_RESOURCES
 --------------------
 
 Default: ``{}``
 
-The list of web service resources enabled for your project. See
-:ref:`topics-webservice-resources`. These are added to the ones available by
-default in Scrapy, defined in the :setting:`WEBSERVICE_RESOURCES_BASE` setting.
+您的项目所启用的web服务资源的列表(list)。请参考
+:ref:`topics-webservice-resources` 。该列表将会添加/覆盖
+:setting:`WEBSERVICE_RESOURCES_BASE` 中定义的Scrpay默认启用的资源的值。
 
 WEBSERVICE_RESOURCES_BASE
 -------------------------
@@ -165,60 +158,55 @@ Default::
         'scrapy.contrib.webservice.stats.StatsResource': 1,
     }
 
-The list of web service resources available by default in Scrapy. You shouldn't
-change this setting in your project, change :setting:`WEBSERVICE_RESOURCES`
-instead. If you want to disable some resource set its value to ``None`` in
-:setting:`WEBSERVICE_RESOURCES`.
+Scrapy默认提供的web服务资源的列表。
+您不应该对您的项目修改这个设置，而是修改 :setting:`WEBSERVICE_RESOURCES` 。
+如果您想要关闭某些资源，您可以在
+:setting:`WEBSERVICE_RESOURCES` 设置其的值为 ``None`` 。
 
-Writing a web service resource
+编写web服务资源(resource)
 ==============================
 
-Web service resources are implemented using the Twisted Web API. See this
-`Twisted Web guide`_ for more information on Twisted web and Twisted web
-resources.
+web服务资源的实现采用了Twisted Web API。
+Twisted web及Twisted web资源的更多详情请参考 `Twisted Web guide`_ 。
 
-To write a web service resource you should subclass the :class:`JsonResource` or
-:class:`JsonRpcResource` classes and implement the :class:`renderGET` method. 
+编写web服务资源您需要继承 :class:`JsonResource` 或 :class:`JsonRpcResource`
+并实现 :class:`renderGET` 方法。
 
 .. class:: scrapy.webservice.JsonResource
 
-    A subclass of `twisted.web.resource.Resource`_ that implements a JSON web
-    service resource. See 
+    `twisted.web.resource.Resource`_ 的子类，实现了一个JSON web服务资源。参考
 
     .. attribute:: ws_name
 
-        The name by which the Scrapy web service will known this resource, and
-        also the path where this resource will listen. For example, assuming
-        Scrapy web service is listening on http://localhost:6080/ and the
-        ``ws_name`` is ``'resource1'`` the URL for that resource will be:
+        Scrapy web服务的名字，同时也是该资源监听的路径。举个例子，
+        假设Scrapy web服务监听 http://localhost:6080/ ，``ws_name`` 是
+        ``'resource1'`` ，则该资源的URL为:
 
             http://localhost:6080/resource1/
 
 .. class:: scrapy.webservice.JsonRpcResource(crawler, target=None)
 
-    This is a subclass of :class:`JsonResource` for implementing JSON-RPC
-    resources. JSON-RPC resources wrap Python (Scrapy) objects around a
-    JSON-RPC API. The resource wrapped must be returned by the
-    :meth:`get_target` method, which returns the target passed in the
-    constructor by default
+    :class:`JsonResource` 的子类，实现了JSON-RPC资源。
+    JSON-RPC资源为Python(Scrapy)对象做了一层JSON-RPC API封装。
+    被封装的资源必须通过
+    :meth:`get_target` 方法返回。该方法默认返回构造器传入的目标(target)。
 
     .. method:: get_target()
         
-        Return the object wrapped by this JSON-RPC resource. By default, it
-        returns the object passed on the constructor.
+        返回JSON-RPC所封装的对象。默认情况下，返回构造器传入的对象。
 
-Examples of web service resources
+web服务资源例子
 =================================
 
 StatsResource (JSON-RPC resource)
 ---------------------------------
 
-.. literalinclude:: ../../scrapy/contrib/webservice/stats.py
+.. literalinclude:: ../scrapy/contrib/webservice/stats.py
 
 EngineStatusResource (JSON resource)
 -------------------------------------
 
-.. literalinclude:: ../../scrapy/contrib/webservice/enginestatus.py
+.. literalinclude:: ../scrapy/contrib/webservice/enginestatus.py
 
 Example of web service client
 =============================
@@ -226,7 +214,7 @@ Example of web service client
 scrapy-ws.py script
 -------------------
 
-.. literalinclude:: ../../extras/scrapy-ws.py
+.. literalinclude:: ../extras/scrapy-ws.py
 
 .. _Twisted Web guide: http://jcalderone.livejournal.com/50562.html 
 .. _JSON-RPC 2.0: http://www.jsonrpc.org/
