@@ -1,23 +1,21 @@
 .. _faq:
 
-Frequently Asked Questions
+常见问题(FAQ)
 ==========================
 
-How does Scrapy compare to BeautifulSoup or lxml?
+Scrapy相BeautifulSoup或lxml比较,如何呢？
 -------------------------------------------------
 
-`BeautifulSoup`_ and `lxml`_ are libraries for parsing HTML and XML. Scrapy is
-an application framework for writing web spiders that crawl web sites and
-extract data from them.
+`BeautifulSoup`_ 及 `lxml`_ 是HTML和XML的分析库。Scrapy则是
+编写爬虫，爬取网页并获取数据的应用框架(application framework)。
 
-Scrapy provides a built-in mechanism for extracting data (called
-:ref:`selectors <topics-selectors>`) but you can easily use `BeautifulSoup`_
-(or `lxml`_) instead, if you feel more comfortable working with them. After
-all, they're just parsing libraries which can be imported and used from any
-Python code.
+Scrapy提供了内置的机制来提取数据(叫做
+:ref:`选择器(selectors) <topics-selectors>`)。 
+但如果您觉得使用更为方便，也可以使用 `BeautifulSoup`_ (或 `lxml`_)。
+总之，它们仅仅是分析库，可以在任何Python代码中被导入及使用。
 
-In other words, comparing `BeautifulSoup`_ (or `lxml`_) to Scrapy is like
-comparing `jinja2`_ to `Django`_.
+换句话说，拿Scrapy与 `BeautifulSoup`_ (或 `lxml`_) 比较就好像是拿
+`jinja2`_ 与 `Django`_ 相比。
 
 .. _BeautifulSoup: http://www.crummy.com/software/BeautifulSoup/
 .. _lxml: http://codespeak.net/lxml/
@@ -26,155 +24,145 @@ comparing `jinja2`_ to `Django`_.
 
 .. _faq-python-versions:
 
-What Python versions does Scrapy support?
+Scrapy支持那些Python版本？
 -----------------------------------------
 
-Scrapy is supported under Python 2.7 only.
-Python 2.6 support was dropped starting at Scrapy 0.20.
+Scrapy仅仅支持Python 2.7。
+Python2.6的支持从Scrapy 0.20开始被废弃了。
 
-Does Scrapy work with Python 3?
+Scrapy支持Python 3么？
 ---------------------------------
 
-No, but there are plans to support Python 3.3+.
-At the moment, Scrapy works with Python 2.7.
+不。但是Python 3.3+的支持已经在计划中了。
+现在，Scrapy支持Python 2.7。
 
 .. seealso:: :ref:`faq-python-versions`.
 
-Did Scrapy "steal" X from Django?
+Scrapy是否从Django中"剽窃"了X呢？
 ---------------------------------
 
-Probably, but we don't like that word. We think Django_ is a great open source
-project and an example to follow, so we've used it as an inspiration for
-Scrapy. 
+也许吧，不过我们不喜欢这个词。我们认为 Django_ 是一个很好的开源项目，同时也是
+一个很好的参考对象，所以我们把其作为Scrapy的启发对象。
 
-We believe that, if something is already done well, there's no need to reinvent
-it. This concept, besides being one of the foundations for open source and free
-software, not only applies to software but also to documentation, procedures,
-policies, etc. So, instead of going through each problem ourselves, we choose
-to copy ideas from those projects that have already solved them properly, and
-focus on the real problems we need to solve.
+我们坚信，如果有些事情已经做得很好了，那就没必要再重复制造轮子。这个想法，作为
+开源项目及免费软件的基石之一，不仅仅针对软件，也包括文档，过程，政策等等。
+所以，与其自行解决每个问题，我们选择从其他已经很好地解决问题的项目中复制想法(copy idea)
+，并把注意力放在真正需要解决的问题上。
 
-We'd be proud if Scrapy serves as an inspiration for other projects. Feel free
-to steal from us!
+如果Scrapy能启发其他的项目，我们将为此而自豪。欢迎来抄(steal)我们！
 
 .. _Django: http://www.djangoproject.com
 
-Does Scrapy work with HTTP proxies?
+Scrapy支持HTTP代理么？
 -----------------------------------
 
-Yes. Support for HTTP proxies is provided (since Scrapy 0.8) through the HTTP
-Proxy downloader middleware. See
+是的。H(从Scrapy 0.8开始)通过HTTP代理下载中间件对HTTP代理提供了支持。参考
 :class:`~scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware`.
 
-How can I scrape an item with attributes in different pages?
+如何爬取属性在不同页面的item呢？
 ------------------------------------------------------------
 
-See :ref:`topics-request-response-ref-request-callback-arguments`.
+参考 :ref:`topics-request-response-ref-request-callback-arguments`.
 
 
-Scrapy crashes with: ImportError: No module named win32api
+Scrapy退出，ImportError: Nomodule named win32api
 ----------------------------------------------------------
 
-You need to install `pywin32`_ because of `this Twisted bug`_.
+`这是个Twisted bug`_ ，您需要安装 `pywin32`_ 。
 
 .. _pywin32: http://sourceforge.net/projects/pywin32/
-.. _this Twisted bug: http://twistedmatrix.com/trac/ticket/3707
+.. _这是个Twisted bug: http://twistedmatrix.com/trac/ticket/3707
 
-How can I simulate a user login in my spider?
+我要如何在spider里模拟用户登录呢?
 ---------------------------------------------
 
-See :ref:`topics-request-response-ref-request-userlogin`.
+参考 :ref:`topics-request-response-ref-request-userlogin`.
 
-Does Scrapy crawl in breadth-first or depth-first order?
+Scrapy是以广度优先还是深度优先进行爬取的呢？
 --------------------------------------------------------
 
-By default, Scrapy uses a `LIFO`_ queue for storing pending requests, which
-basically means that it crawls in `DFO order`_. This order is more convenient
-in most cases. If you do want to crawl in true `BFO order`_, you can do it by
-setting the following settings::
+默认情况下，Scrapy使用 `LIFO`_ 队列来存储等待的请求。简单的说，就是
+`深度优先顺序`_ 。深度优先对大多数情况下是更方便的。如果您想以
+`广度优先顺序`_ 进行爬取，你可以设置以下的设定::
 
     DEPTH_PRIORITY = 1
     SCHEDULER_DISK_QUEUE = 'scrapy.squeue.PickleFifoDiskQueue'
     SCHEDULER_MEMORY_QUEUE = 'scrapy.squeue.FifoMemoryQueue'
 
-My Scrapy crawler has memory leaks. What can I do?
+我的Scrapy爬虫有内存泄露，怎么办?
 --------------------------------------------------
 
-See :ref:`topics-leaks`.
+参考 :ref:`topics-leaks`.
 
-Also, Python has a builtin memory leak issue which is described in
-:ref:`topics-leaks-without-leaks`.
+另外，Python自己也有内存泄露，在
+:ref:`topics-leaks-without-leaks` 有所描述。
 
-How can I make Scrapy consume less memory?
+如何让Scrapy减少内存消耗?
 ------------------------------------------
 
-See previous question.
+参考上一个问题
 
-Can I use Basic HTTP Authentication in my spiders?
+我能在spider中使用基本HTTP认证么？
 --------------------------------------------------
 
-Yes, see :class:`~scrapy.contrib.downloadermiddleware.httpauth.HttpAuthMiddleware`.
+可以。参考 :class:`~scrapy.contrib.downloadermiddleware.httpauth.HttpAuthMiddleware`.
 
-Why does Scrapy download pages in English instead of my native language?
+为什么Scrapy下载了英文的页面，而不是我的本国语言？
 ------------------------------------------------------------------------
 
-Try changing the default `Accept-Language`_ request header by overriding the
-:setting:`DEFAULT_REQUEST_HEADERS` setting.
+尝试通过覆盖 :setting:`DEFAULT_REQUEST_HEADERS` 设置来修改默认的 `Accept-Language`_ 请求头。
 
 .. _Accept-Language: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
 
-Where can I find some example Scrapy projects?
+我能在哪里找到Scrapy项目的例子？
 ----------------------------------------------
 
-See :ref:`intro-examples`.
+参考 :ref:`intro-examples`.
 
-Can I run a spider without creating a project?
-----------------------------------------------
+我能在不创建Scrapy项目的情况下运行一个爬虫(spider)么？
+------------------------------------------------------
 
-Yes. You can use the :command:`runspider` command. For example, if you have a
-spider written in a ``my_spider.py`` file you can run it with::
+是的。您可以使用 :command:`runspider` 命令。例如，如果您有个
+spider写在 ``my_spider.py`` 文件中，您可以运行::
 
     scrapy runspider my_spider.py
 
-See :command:`runspider` command for more info.
+详情请参考 :command:`runspider` 命令。
 
-I get "Filtered offsite request" messages. How can I fix them?
+我收到了 "Filtered offsite request" 消息。如何修复？
 --------------------------------------------------------------
 
-Those messages (logged with ``DEBUG`` level) don't necessarily mean there is a
-problem, so you may not need to fix them.
+这些消息(以 ``DEBUG`` 所记录)并不意味着有问题，所以你可以不修复它们。
 
-Those message are thrown by the Offsite Spider Middleware, which is a spider
-middleware (enabled by default) whose purpose is to filter out requests to
-domains outside the ones covered by the spider.
+这些消息由Offsite Spider中间件(Middleware)所抛出。
+该(默认启用的)中间件筛选出了不属于当前spider的站点请求。
 
-For more info see:
+更多详情请参见:
 :class:`~scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware`.
 
-What is the recommended way to deploy a Scrapy crawler in production?
+发布Scrapy爬虫到生产环境的推荐方式？
 ---------------------------------------------------------------------
 
-See :ref:`topics-scrapyd`.
+参见 :ref:`topics-scrapyd`.
 
-Can I use JSON for large exports?
----------------------------------
+我能对大数据(large exports)使用JSON么？
+------------------------------------------
 
-It'll depend on how large your output is. See :ref:`this warning
-<json-with-large-data>` in :class:`~scrapy.contrib.exporter.JsonItemExporter`
-documentation.
+这取决于您的输出有多大。参考
+:class:`~scrapy.contrib.exporter.JsonItemExporter` 文档中的
+:ref:`这个警告 <json-with-large-data>` 
 
-Can I return (Twisted) deferreds from signal handlers?
-------------------------------------------------------
+我能在信号处理器(signal handler)中返回(Twisted)引用么？
+---------------------------------------------------------
 
-Some signals support returning deferreds from their handlers, others don't. See
-the :ref:`topics-signals-ref` to know which ones.
+有些信号支持从处理器中返回引用，有些不行。参考
+:ref:`topics-signals-ref` 来了解详情。
 
-What does the response status code 999 means?
+reponse返回的状态值999代表了什么?
 ---------------------------------------------
 
-999 is a custom response status code used by Yahoo sites to throttle requests.
-Try slowing down the crawling speed by using a download delay of ``2`` (or
-higher) in your spider::
+999是雅虎用来控制请求量所定义的返回值。
+试着减慢爬取速度，将spider的下载延迟改为 ``2`` 或更高::
 
     class MySpider(CrawlSpider):
 
@@ -184,110 +172,100 @@ higher) in your spider::
 
         # [ ... rest of the spider code ... ]
 
-Or by setting a global download delay in your project with the
-:setting:`DOWNLOAD_DELAY` setting.
+或在 :setting:`DOWNLOAD_DELAY` 中设置项目的全局下载延迟。
 
-Can I call ``pdb.set_trace()`` from my spiders to debug them?
+我能在spider中调用 ``pdb.set_trace()`` 来调试么？
 -------------------------------------------------------------
 
-Yes, but you can also use the Scrapy shell which allows you too quickly analyze
-(and even modify) the response being processed by your spider, which is, quite
-often, more useful than plain old ``pdb.set_trace()``.
+可以，但你也可以使用Scrapy终端。这能让你快速分析(甚至修改)
+spider处理返回的返回(response)。通常来说，比老旧的 ``pdb.set_trace()`` 有用多了。
 
-For more info see :ref:`topics-shell-inspect-response`.
+更多详情请参考 :ref:`topics-shell-inspect-response`.
 
-Simplest way to dump all my scraped items into a JSON/CSV/XML file?
+将所有爬取到的item转存(dump)到JSON/CSV/XML文件的最简单的方法?
 -------------------------------------------------------------------
 
-To dump into a JSON file::
+dump到JSON文件::
 
     scrapy crawl myspider -o items.json -t json
 
-To dump into a CSV file::
+dump到CSV文件::
 
     scrapy crawl myspider -o items.csv -t csv
 
-To dump into a XML file::
+dump到XML文件::
 
     scrapy crawl myspider -o items.xml -t xml
 
-For more information see :ref:`topics-feed-exports`
+更多详情请参考 :ref:`topics-feed-exports`
 
-What's this huge cryptic ``__VIEWSTATE`` parameter used in some forms?
+在某些表单中巨大神秘的 ``__VIEWSTATE`` 参数是什么？
 ----------------------------------------------------------------------
 
-The ``__VIEWSTATE`` parameter is used in sites built with ASP.NET/VB.NET. For
-more info on how it works see `this page`_. Also, here's an `example spider`_
-which scrapes one of these sites.
+``__VIEWSTATE`` 参数存在于ASP.NET/VB.NET建立的站点中。关于这个参数的作用请参考
+`这篇文章`_ 。这里有一个爬取这种站点的
+`样例爬虫`_ 。
 
-.. _this page: http://search.cpan.org/~ecarroll/HTML-TreeBuilderX-ASP_NET-0.09/lib/HTML/TreeBuilderX/ASP_NET.pm
-.. _example spider: http://github.com/AmbientLighter/rpn-fas/blob/master/fas/spiders/rnp.py
+.. _这篇文章: http://search.cpan.org/~ecarroll/HTML-TreeBuilderX-ASP_NET-0.09/lib/HTML/TreeBuilderX/ASP_NET.pm
+.. _样例爬虫: http://github.com/AmbientLighter/rpn-fas/blob/master/fas/spiders/rnp.py
 
-What's the best way to parse big XML/CSV data feeds?
+分析大XML/CSV数据源的最好方法是?
 ----------------------------------------------------
 
-Parsing big feeds with XPath selectors can be problematic since they need to
-build the DOM of the entire feed in memory, and this can be quite slow and
-consume a lot of memory.
+使用XPath选择器来分析大数据源可能会有问题。选择器需要在内存中对数据建立完整的
+DOM树，这过程速度很慢且消耗大量内存。
 
-In order to avoid parsing all the entire feed at once in memory, you can use
-the functions ``xmliter`` and ``csviter`` from ``scrapy.utils.iterators``
-module. In fact, this is what the feed spiders (see :ref:`topics-spiders`) use
-under the cover.
+为了避免一次性读取整个数据源，您可以使用
+``scrapy.utils.iterators`` 中的 ``xmliter`` 及 ``csviter`` 方法。
+实际上，这也是feed spider(参考 :ref:`topics-spiders`)中的处理方法。
 
-Does Scrapy manage cookies automatically?
+Scrapy自动管理cookies么？
 -----------------------------------------
 
-Yes, Scrapy receives and keeps track of cookies sent by servers, and sends them
-back on subsequent requests, like any regular web browser does.
+是的，Scrapy接收并保持服务器返回来的cookies，在之后的请求会发送回去，就像正常的网页浏览器做的那样。
 
-For more info see :ref:`topics-request-response` and :ref:`cookies-mw`.
+更多详情请参考 :ref:`topics-request-response` 及 :ref:`cookies-mw` 。
 
-How can I see the cookies being sent and received from Scrapy?
+如何才能看到Scrapy发出及接收到的Scrapy呢？
 --------------------------------------------------------------
 
-Enable the :setting:`COOKIES_DEBUG` setting.
+启用 :setting:`COOKIES_DEBUG` 选项。
 
-How can I instruct a spider to stop itself?
+要怎么停止爬虫呢?
 -------------------------------------------
 
-Raise the :exc:`~scrapy.exceptions.CloseSpider` exception from a callback. For
-more info see: :exc:`~scrapy.exceptions.CloseSpider`.
+在回调函数中raise :exc:`~scrapy.exceptions.CloseSpider` 异常。
+更多详情请参见: :exc:`~scrapy.exceptions.CloseSpider` 。
 
-How can I prevent my Scrapy bot from getting banned?
+如何避免我的Scrapy机器人(bot)被禁止(ban)呢？
 ----------------------------------------------------
 
-See :ref:`bans`.
+参考 :ref:`bans`.
 
-Should I use spider arguments or settings to configure my spider?
+我应该使用spider参数(arguments)还是设置(settings)来配置spider呢？
 -----------------------------------------------------------------
 
-Both :ref:`spider arguments <spiderargs>` and :ref:`settings <topics-settings>`
-can be used to configure your spider. There is no strict rule that mandates to
-use one or the other, but settings are more suited for parameters that, once
-set, don't change much, while spider arguments are meant to change more often,
-even on each spider run and sometimes are required for the spider to run at all
-(for example, to set the start url of a spider).
+:ref:`spider参数 <spiderargs>` 及 :ref:`设置(settings) <topics-settings>` 都可以用来配置您的spider。
+没有什么强制的规则来限定要使用哪个，但设置(settings)更适合那些一旦设置就不怎么会修改的参数，
+而spider参数则意味着修改更为频繁，在每次spider运行都有修改，甚至是spider运行所必须的元素
+(例如，设置spider的起始url)。
 
-To illustrate with an example, assuming you have a spider that needs to log
-into a site to scrape data, and you only want to scrape data from a certain
-section of the site (which varies each time). In that case, the credentials to
-log in would be settings, while the url of the section to scrape would be a
-spider argument.
+这里以例子来说明这个问题。假设您有一个spider需要登录某个网站来
+爬取数据，并且仅仅想爬取特定网站的特定部分(每次都不一定相同)。
+在这个情况下，认证的信息将写在设置中，而爬取的特定部分的url将是spider参数。
 
-I'm scraping a XML document and my XPath selector doesn't return any items
+我爬取了一个XML文档但是XPath选择器不返回任何的item
 --------------------------------------------------------------------------
 
-You may need to remove namespaces. See :ref:`removing-namespaces`.
+也许您需要移除命名空间(namespace)。参见 :ref:`removing-namespaces`.
 
 
-I'm getting an error: "cannot import name crawler"
+我得到错误: "不能导入name crawler“
 --------------------------------------------------
 
-This is caused by Scrapy changes due to the singletons removal. The error is
-most likely raised by a module (extension, middleware, pipeline or spider) in
-your Scrapy project that imports ``crawler`` from ``scrapy.project``. For
-example::
+这是由于Scrapy修改，去掉了单例模式(singletons)所引起的。
+这个错误一般是由从 ``scrapy.project`` 导入 ``crawler`` 的模块引起的(扩展，中间件，pipeline或spider)。
+例如::
 
     from scrapy.project import crawler
 
@@ -296,8 +274,8 @@ example::
             self.crawler = crawler
             # ...
 
-This way to access the crawler object is deprecated, the code should be ported
-to use ``from_crawler`` class method, for example::
+这种访问crawler对象的方式已经被舍弃了，新的代码应该使用
+``from_crawler`` 类方法来移植，例如::
 
     class SomeExtension(object):
 
@@ -307,11 +285,10 @@ to use ``from_crawler`` class method, for example::
             o.crawler = crawler
             return o
 
-Scrapy command line tool has some backwards compatibility in place to support
-the old import mechanism (with a deprecation warning), but this mechanism may
-not work if you use Scrapy differently (for example, as a library).
+Scrapy终端工具(command line tool)针对旧的导入机制提供了一些支持(给出了废弃警告)，
+但如果您以不同方式使用Scrapy(例如，作为类库)，该机制可能会失效。
 
 .. _user agents: http://en.wikipedia.org/wiki/User_agent
 .. _LIFO: http://en.wikipedia.org/wiki/LIFO
-.. _DFO order: http://en.wikipedia.org/wiki/Depth-first_search
-.. _BFO order: http://en.wikipedia.org/wiki/Breadth-first_search
+.. _深度优先顺序: http://en.wikipedia.org/wiki/Depth-first_search
+.. _广度优先顺序: http://en.wikipedia.org/wiki/Breadth-first_search
