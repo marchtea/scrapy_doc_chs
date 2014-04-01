@@ -1,11 +1,11 @@
 .. _topics-debug:
 
-=================
-Debugging Spiders
-=================
+==========================
+调试(Debugging)Spiders
+==========================
 
-This document explains the most common techniques for debugging spiders.
-Consider the following scrapy spider below::
+本篇介绍了调试spider的常用技术。
+考虑下面的spider::
 
     class MySpider(Spider):
         name = 'myspider'
@@ -30,21 +30,18 @@ Consider the following scrapy spider below::
             # populate more `item` fields
             return item
 
-Basically this is a simple spider which parses two pages of items (the
-start_urls). Items also have a details page with additional information, so we
-use the ``meta`` functionality of :class:`~scrapy.http.Request` to pass a
-partially populated item.
+简单地说，该spider分析了两个包含item的页面(start_urls)。Item有详情页面，
+所以我们使用 :class:`~scrapy.http.Request` 的 ``meta`` 功能来传递已经部分获取的item。
 
 
-Parse Command
+Parse命令
 =============
 
-The most basic way of checking the output of your spider is to use the
-:command:`parse` command. It allows to check the behaviour of different parts
-of the spider at the method level. It has the advantage of being flexible and
-simple to use, but does not allow debugging code inside a method.
+检查spier输出的最基本方法是使用
+:command:`parse` 命令。这能让你在函数层(method level)上检查spider
+各个部分的效果。其十分灵活并且易用，不过不能在代码中调试。
 
-In order to see the item scraped from a specific url::
+查看特定url爬取到的item::
 
     $ scrapy parse --spider=myspider -c parse_item -d 2 <item_url>
     [ ... scrapy log lines crawling example.com spider ... ]
@@ -56,7 +53,7 @@ In order to see the item scraped from a specific url::
     # Requests  -----------------------------------------------------------------
     []
 
-Using the ``--verbose`` or ``-v`` option we can see the status at each depth level::
+使用 ``--verbose`` 或 ``-v`` 选项，查看各个层次的状态::
 
     $ scrapy parse --spider=myspider -c parse_item -d 2 -v <item_url>
     [ ... scrapy log lines crawling example.com spider ... ]
@@ -76,21 +73,19 @@ Using the ``--verbose`` or ``-v`` option we can see the status at each depth lev
     # Requests  -----------------------------------------------------------------
     []
 
-Checking items scraped from a single start_url, can also be easily achieved
-using::
+检查从单个start_url爬取到的item也是很简单的::
 
     $ scrapy parse --spider=myspider -d 3 'http://example.com/page1'
 
 
-Scrapy Shell
-============
+Scrapy终端(Shell)
+=======================
 
-While the :command:`parse` command is very useful for checking behaviour of a
-spider, it is of little help to check what happens inside a callback, besides
-showing the response received and the output. How to debug the situation when
-``parse_details`` sometimes receives no item?
+尽管 :command:`parse` 命令对检查spider的效果十分有用，但除了显示收到的response及输出外，
+其对检查回调函数内部的过程并没有提供什么便利。
+如何调试 ``parse_detail`` 没有收到item的情况呢？
 
-Fortunately, the :command:`shell` is your bread and butter in this case (see
+幸运的是，救世主 :command:`shell` 出现了(参考
 :ref:`topics-shell-inspect-response`)::
 
     from scrapy.shell import inspect_response
@@ -103,14 +98,13 @@ Fortunately, the :command:`shell` is your bread and butter in this case (see
         else:
             inspect_response(response, self)
 
-See also: :ref:`topics-shell-inspect-response`.
+参考 :ref:`topics-shell-inspect-response` 。
 
-Open in browser
+在浏览器中打开
 ===============
 
-Sometimes you just want to see how a certain response looks in a browser, you
-can use the ``open_in_browser`` function for that. Here is an example of how
-you would use it::
+有时候您想查看某个response在浏览器中显示的效果，这是可以使用
+``open_in_browser`` 功能。下面是使用的例子::
 
     from scrapy.utils.response import open_in_browser
 
@@ -118,16 +112,14 @@ you would use it::
         if "item name" not in response.body:
             open_in_browser(response)
 
-``open_in_browser`` will open a browser with the response received by Scrapy at
-that point, adjusting the `base tag`_ so that images and styles are displayed
-properly.
+``open_in_browser`` 将会使用Scrapy获取到的response来打开浏览器，并且调整
+`base tag`_ 使得图片及样式(style)能正常显示。
 
 Logging
 =======
 
-Logging is another useful option for getting information about your spider run.
-Although not as convenient, it comes with the advantage that the logs will be
-available in all future runs should they be necessary again::
+记录(logging)是另一个获取到spider运行信息的方法。虽然不是那么方便，
+但好处是log的内容在以后的运行中也可以看到::
 
     from scrapy import log
 
@@ -140,6 +132,6 @@ available in all future runs should they be necessary again::
             self.log('No item received for %s' % response.url,
                 level=log.WARNING)
 
-For more information, check the :ref:`topics-logging` section.
+更多内容请参见 :ref:`topics-logging` 部分。
 
 .. _base tag: http://www.w3schools.com/tags/tag_base.asp

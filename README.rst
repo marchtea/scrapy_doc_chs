@@ -32,6 +32,7 @@ Scrapy中文文档翻译计划
   * topics/email.rst
   * topics/telnetconsole.rst
   * topics/webservice.rst
+  * topics/debug.rst
 
 
 加入我们吧
