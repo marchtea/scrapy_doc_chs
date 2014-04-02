@@ -1,29 +1,26 @@
 .. _topics-practices:
 
-================
-Common Practices
-================
+===========================
+实践经验(Common Practices)
+===========================
 
-This section documents common practices when using Scrapy. These are things
-that cover many topics and don't often fall into any other specific section.
+本章节记录了使用Scrapy的一些实践经验(common practices)。
+这包含了很多使用不会包含在其他特定章节的的内容。
 
 .. _run-from-script:
 
-Run Scrapy from a script
+在脚本中运行Scrapy
 ========================
 
-You can use the :ref:`API <topics-api>` to run Scrapy from a script, instead of
-the typical way of running Scrapy via ``scrapy crawl``.
+除了常用的 ``scrapy crawl`` 来启动Scrapy，您也可以使用 :ref:`API <topics-api>` 在脚本中启动Scrapy。
 
-Remember that Scrapy is built on top of the Twisted
-asynchronous networking library, so you need to run it inside the Twisted reactor.
+需要注意的是，Scrapy是在Twisted异步网络库上构建的，
+因此其必须在Twisted reactor里运行。
 
-Note that you will also have to shutdown the Twisted reactor yourself after the
-spider is finished. This can be achieved by connecting a handler to the
-``signals.spider_closed`` signal.
+另外，在spider运行结束后，您必须自行关闭Twisted reactor。
+这可以通过设置 ``signals.spider_closed`` 信号的处理器(handler)来实现。
 
-What follows is a working example of how to do that, using the `testspiders`_
-project as example.
+下面给出了如何实现的例子，使用 `testspiders`_ 项目作为例子。
 
 ::
 
@@ -45,14 +42,15 @@ project as example.
 
 .. seealso:: `Twisted Reactor Overview`_.
 
-Running multiple spiders in the same process
+同一进程运行多个spider
 ============================================
 
-By default, Scrapy runs a single spider per process when you run ``scrapy
-crawl``. However, Scrapy supports running multiple spiders per process using
-the :ref:`internal API <topics-api>`.
+默认情况下，当您执行 ``scrapy crawl`` 时，Scrapy每个进程运行一个spider。
+当然，Scrapy通过
+:ref:`内部(internal)API <topics-api>`
+也支持单进程多个spider。
 
-Here is an example, using the `testspiders`_ project:
+下面以 `testspiders`_ 作为例子:
 
 ::
 
@@ -79,30 +77,25 @@ Here is an example, using the `testspiders`_ project:
 
 .. _distributed-crawls:
 
-Distributed crawls
-==================
+分布式爬虫(Distributed crawls)
+=================================
 
-Scrapy doesn't provide any built-in facility for running crawls in a distribute
-(multi-server) manner. However, there are some ways to distribute crawls, which
-vary depending on how you plan to distribute them.
+Scrapy并没有提供内置的机制支持分布式(多服务器)爬取。不过还是有办法进行分布式爬取，
+取决于您要怎么分布了。
 
-If you have many spiders, the obvious way to distribute the load is to setup
-many Scrapyd instances and distribute spider runs among those.
+如果您有很多spider，那分布负载最简单的办法就是启动多个Scrapyd，并分配到不同机器上。
 
-If you instead want to run a single (big) spider through many machines, what
-you usually do is partition the urls to crawl and send them to each separate
-spider. Here is a concrete example:
+如果想要在多个机器上运行一个单独的spider，那您可以将要爬取的url进行分块，并发送给spider。
+例如:
 
-First, you prepare the list of urls to crawl and put them into separate
-files/urls::
+首先，准备要爬取的url列表，并分配到不同的文件\url里::
 
     http://somedomain.com/urls-to-crawl/spider1/part1.list
     http://somedomain.com/urls-to-crawl/spider1/part2.list
     http://somedomain.com/urls-to-crawl/spider1/part3.list
 
-Then you fire a spider run on 3 different Scrapyd servers. The spider would
-receive a (spider) argument ``part`` with the number of the partition to
-crawl::
+接着在3个不同的Scrapd服务器中启动spider。spider会接收一个(spider)参数 ``part`` ，
+该参数表示要爬取的分块::
 
     curl http://scrapy1.mycompany.com:6800/schedule.json -d project=myproject -d spider=spider1 -d part=1
     curl http://scrapy2.mycompany.com:6800/schedule.json -d project=myproject -d spider=spider1 -d part=2
@@ -110,34 +103,28 @@ crawl::
 
 .. _bans:
 
-Avoiding getting banned
+避免被禁止(ban)
 =======================
 
-Some websites implement certain measures to prevent bots from crawling them,
-with varying degrees of sophistication. Getting around those measures can be
-difficult and tricky, and may sometimes require special infrastructure. Please
-consider contacting `commercial support`_ if in doubt.
+有些网站实现了特定的机制，以一定规则来避免被爬虫爬取。
+与这些规则打交道并不容易，需要技巧，有时候也需要些特别的基础。
+如果有疑问请考虑联系 `商业支持`_ 。
 
-Here are some tips to keep in mind when dealing with these kind of sites:
+下面是些处理这些站点的建议(tips):
 
-* rotate your user agent from a pool of well-known ones from browsers (google
-  around to get a list of them)
-* disable cookies (see :setting:`COOKIES_ENABLED`) as some sites may use
-  cookies to spot bot behaviour
-* use download delays (2 or higher). See :setting:`DOWNLOAD_DELAY` setting.
-* if possible, use `Google cache`_ to fetch pages, instead of hitting the sites
-  directly
-* use a pool of rotating IPs. For example, the free `Tor project`_ or paid
-  services like `ProxyMesh`_
-* use a highly distributed downloader that circumvents bans internally, so you
-  can just focus on parsing clean pages. One example of such downloaders is
+* 使用user agent池，轮流选择之一来作为user agent。池中包含常见的浏览器的user agent(google一下一大堆)
+* 禁止cookies(参考 :setting:`COOKIES_ENABLED`)，有些站点会使用cookies来发现爬虫的轨迹。
+* 设置下载延迟(2或更高)。参考 :setting:`DOWNLOAD_DELAY` 设置。
+* 如果可行，使用 `Google cache`_ 来爬取数据，而不是直接访问站点。
+* 使用IP池。例如免费的 `Tor项目`_ 或付费服务(`ProxyMesh`_)。
+* 使用高度分布式的下载器(downloader)来绕过禁止(ban)，您就只需要专注分析处理页面。这样的例子有:
   `Crawlera`_
 
-If you are still unable to prevent your bot getting banned, consider contacting
-`commercial support`_.
+如果您仍然无法避免被ban，考虑联系
+`商业支持`_.
 
-.. _Tor project: https://www.torproject.org/
-.. _commercial support: http://scrapy.org/support/
+.. _Tor项目: https://www.torproject.org/
+.. _商业支持: http://scrapy.org/support/
 .. _ProxyMesh: http://proxymesh.com/
 .. _Google cache: http://www.googleguide.com/cached_pages.html
 .. _testspiders: https://github.com/scrapinghub/testspiders
@@ -146,12 +133,10 @@ If you are still unable to prevent your bot getting banned, consider contacting
 
 .. _dynamic-item-classes:
 
-Dynamic Creation of Item Classes
+动态创建Item类
 ================================
 
-For applications in which the structure of item class is to be determined by 
-user input, or other changing conditions, you can dynamically create item
-classes instead of manually coding them.
+对于有些应用，item的结构由用户输入或者其他变化的情况所控制。您可以动态创建class。
 
 ::
 

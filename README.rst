@@ -34,6 +34,7 @@ Scrapy中文文档翻译计划
   * topics/webservice.rst
   * topics/debug.rst
   * topics/contracts.rst
+  * topics/practices.rst
 
 
 加入我们吧
