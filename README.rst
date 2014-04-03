@@ -36,6 +36,7 @@ Scrapy中文文档翻译计划
   * topics/contracts.rst
   * topics/practices.rst
   * topics/broad-crawls.rst
+  * topics/firefox.rst
 
 
 加入我们吧
