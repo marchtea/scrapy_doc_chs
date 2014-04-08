@@ -1,35 +1,31 @@
 .. _topics-ubuntu:
 
 ===============
-Ubuntu packages
+Ubuntu 软件包
 ===============
 
 .. versionadded:: 0.10
 
-`Scrapinghub`_ publishes apt-gettable packages which are generally fresher than
-those in Ubuntu, and more stable too since they're continuously built from
-`Github repo`_ (master & stable branches) and so they contain the latest bug
-fixes.
+`Scrapinghub`_ 发布的apt-get可获取的版本通常比Ubuntu自己的更新，并且也比 `Github 仓库`_
+(master & stable branches) 的稳定同时他还包括了最新的漏洞修复。
 
-To use the packages:
+用法:
 
-1. Import the GPG key used to sign Scrapy packages into APT keyring::
+1. 把Scrapy签名的GPG密钥添加到APT的钥匙环中::
 
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 627220E7
 
-2. Create `/etc/apt/sources.list.d/scrapy.list` file using the following command::
+2. 执行如下命令，创建 `/etc/apt/sources.list.d/scrapy.list` 文件::
 
     echo 'deb http://archive.scrapy.org/ubuntu scrapy main' | sudo tee /etc/apt/sources.list.d/scrapy.list
 
-3. Update package lists and install `scrapy-VERSION`, replace `VERSION` by a
-   known Scrapy version (i.e.: `scrapy-0.22`::
+3. 更新包列表并安装 `scrapy-VERSION`, 用Scrapy的版本号(如: `scrapy-0.22`等)替换 `VERSION` ::
 
     sudo apt-get update && sudo apt-get install scrapy-VERSION
 
-.. note:: Repeat step 3 if you are trying to upgrade Scrapy.
+.. note:: 如果你要升级Scrapy，请重复步骤3。
 
-.. warning:: `python-scrapy` is a different package provided by official debian
-   repositories, it's very outdated and it isn't supported by Scrapy team.
+.. warning:: debian官方源提供的`python-scrapy` 是一个非常老的版本了并且Scrapy团队已经不再支持了。
 
 .. _Scrapinghub: http://scrapinghub.com/
-.. _Github repo: https://github.com/scrapy/scrapy
+.. _Github 仓库: https://github.com/scrapy/scrapy
