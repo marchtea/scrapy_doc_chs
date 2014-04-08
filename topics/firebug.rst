@@ -1,85 +1,74 @@
 .. _topics-firebug:
 
 ==========================
-Using Firebug for scraping
+使用Firebug进行爬取
 ==========================
 
-.. note:: Google Directory, the example website used in this guide is no longer
-   available as it `has been shut down by Google`_. The concepts in this guide
-   are still valid though. If you want to update this guide to use a new
-   (working) site, your contribution will be more than welcome!. See :ref:`topics-contributing`
-   for information on how to do so.
+.. note:: 本教程所使用的样例站Google Directory已经 `被Google关闭`_ 了。不过教程中的概念任然适用。
+   如果您打算使用一个新的网站来更新本教程，您的贡献是再欢迎不过了。
+   详细信息请参考 :ref:`topics-contributing` 。
 
-Introduction
+介绍
 ============
 
-This document explains how to use `Firebug`_ (a Firefox add-on) to make the
-scraping process easier and more fun. For other useful Firefox add-ons see
-:ref:`topics-firefox-addons`. There are some caveats with using Firefox add-ons
-to inspect pages, see :ref:`topics-firefox-livedom`.
+本文档介绍了如何适用 `Firebug`_ (一个Firefox的插件)来使得爬取更为简单，有趣。
+更多有意思的Firefox插件请参考 :ref:`topics-firefox-addons` 。
+使用Firefox插件检查页面需要有些注意事项: :ref:`topics-firefox-livedom` 。
 
-In this example, we'll show how to use `Firebug`_ to scrape data from the
-`Google Directory`_, which contains the same data as the `Open Directory
-Project`_ used in the :ref:`tutorial <intro-tutorial>` but with a different
-face.
+在本样例中将展现如何使用 `Firebug`_ 从 `Google Directory`_ 来爬取数据。
+`Google Directory`_ 包含了 :ref:`入门教程 <intro-tutorial>` 里所使用的 
+`Open Directory Project`_ 中一样的数据，不过有着不同的结构。
 
 .. _Firebug: http://getfirebug.com
 .. _Google Directory: http://directory.google.com/
 .. _Open Directory Project: http://www.dmoz.org
 
-Firebug comes with a very useful feature called `Inspect Element`_ which allows
-you to inspect the HTML code of the different page elements just by hovering
-your mouse over them. Otherwise you would have to search for the tags manually
-through the HTML body which can be a very tedious task.
+Firebug提供了非常实用的 `检查元素`_ 功能。该功能允许您将鼠标悬浮在不同的页面元素上，
+显示相应元素的HTML代码。否则，您只能十分痛苦的在HTML的body中手动搜索标签。
 
-.. _Inspect Element: http://www.youtube.com/watch?v=-pT_pDe54aA
+.. _检查元素: http://www.youtube.com/watch?v=-pT_pDe54aA
 
-In the following screenshot you can see the `Inspect Element`_ tool in action.
+在下列截图中，您将看到 `检查元素`_ 的执行效果。
 
 .. image:: _images/firebug1.png
    :width: 913
    :height: 600
    :alt: Inspecting elements with Firebug
 
-At first sight, we can see that the directory is divided in categories, which
-are also divided in subcategories.
+首先我们能看到目录根据种类进行分类的同时，还划分了子类。
 
-However, it seems that there are more subcategories than the ones being shown
-in this page, so we'll keep looking:
+不过，看起来子类还有更多的子类，而不仅仅是页面显示的这些，所以我们接着查找:
 
 .. image:: _images/firebug2.png
    :width: 819
    :height: 629
    :alt: Inspecting elements with Firebug
 
-As expected, the subcategories contain links to other subcategories, and also
-links to actual websites, which is the purpose of the directory.
+正如路径的概念那样，子类包含了其他子类的链接，同时也链接到实际的网站中。
 
-Getting links to follow
-=======================
+获取到跟进(follow)的链接
+=========================
 
-By looking at the category URLs we can see they share a pattern:
+查看路径的URL，我们可以看到URL的通用模式(pattern):
 
     http://directory.google.com/Category/Subcategory/Another_Subcategory
     
-Once we know that, we are able to construct a regular expression to follow
-those links. For example, the following one::
+了解到这个消息，我们可以构建一个跟进的链接的正则表达式::
 
     directory\.google\.com/[A-Z][a-zA-Z_/]+$
 
-So, based on that regular expression we can create the first crawling rule::
+因此，根据这个表达式，我们创建第一个爬取规则::
 
     Rule(SgmlLinkExtractor(allow='directory.google.com/[A-Z][a-zA-Z_/]+$', ),
         'parse_category',
         follow=True,
     ),
 
-The :class:`~scrapy.contrib.spiders.Rule` object instructs
-:class:`~scrapy.contrib.spiders.CrawlSpider` based spiders how to follow the
-category links. ``parse_category`` will be a method of the spider which will
-process and extract data from those pages.
+:class:`~scrapy.contrib.spiders.Rule` 对象指导基于
+:class:`~scrapy.contrib.spiders.CrawlSpider` 的spider如何跟进目录链接。
+``parse_category`` 是spider的方法，用于从页面中处理也提取数据。
 
-This is how the spider would look so far::
+spider的代码如下::
 
    from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
    from scrapy.contrib.spiders import CrawlSpider, Rule
@@ -100,50 +89,40 @@ This is how the spider would look so far::
            pass
 
 
-Extracting the data
+提取数据
 ===================
 
-Now we're going to write the code to extract data from those pages. 
+现在我们来编写提取数据的代码。
 
-With the help of Firebug, we'll take a look at some page containing links to
-websites (say http://directory.google.com/Top/Arts/Awards/) and find out how we can
-extract those links using :ref:`Selectors <topics-selectors>`. We'll also
-use the :ref:`Scrapy shell <topics-shell>` to test those XPath's and make sure
-they work as we expect.
+在Firebug的帮助下，我们将查看一些包含网站链接的网页(以 http://directory.google.com/Top/Arts/Awards/ 为例)，
+找到使用 :ref:`Selectors <topics-selectors>` 提取链接的方法。
+我们也将使用 :ref:`Scrapy shell <topics-shell>` 来测试得到的XPath表达式，确保表达式工作符合预期。
 
 .. image:: _images/firebug3.png
    :width: 965
    :height: 751
    :alt: Inspecting elements with Firebug
 
-As you can see, the page markup is not very descriptive: the elements don't
-contain ``id``, ``class`` or any attribute that clearly identifies them, so
-we''ll use the ranking bars as a reference point to select the data to extract
-when we construct our XPaths.
+正如您所看到的那样，页面的标记并不是十分明显: 元素并不包含
+``id`` ， ``class`` 或任何可以区分的属性。所以我们将使用等级槽(rank bar)作为指示点来选择提取的数据，创建XPath。
 
-After using FireBug, we can see that each link is inside a ``td`` tag, which is
-itself inside a ``tr`` tag that also contains the link's ranking bar (in
-another ``td``).
+使用Firebug，我们可以看到每个链接都在 ``td`` 标签中。该标签存在于同时(在另一个 ``td``)包含链接的等级槽(ranking bar)的 ``tr`` 中。
 
-So we can select the ranking bar, then find its parent (the ``tr``), and then
-finally, the link's ``td`` (which contains the data we want to scrape).
+所以我们选择等级槽(ranking bar)，接着找到其父节点(``tr``)，最后是(包含我们要爬取数据的)链接的 ``td`` 。
 
-This results in the following XPath::
+对应的XPath::
 
     //td[descendant::a[contains(@href, "#pagerank")]]/following-sibling::td//a
 
-It's important to use the :ref:`Scrapy shell <topics-shell>` to test these
-complex XPath expressions and make sure they work as expected.
+使用 :ref:`Scrapy终端 <topics-shell>` 来测试这些复杂的XPath表达式，确保其工作符合预期。
 
-Basically, that expression will look for the ranking bar's ``td`` element, and
-then select any ``td`` element who has a descendant ``a`` element whose
-``href`` attribute contains the string ``#pagerank``"
+简单来说，该表达式会查找等级槽的 ``td`` 元素，接着选择所有 ``td`` 元素，该元素拥有子孙 ``a`` 元素，且 ``a`` 元素的属性 ``href`` 包含字符串
+``#pagerank`` 。
 
-Of course, this is not the only XPath, and maybe not the simpler one to select
-that data. Another approach could be, for example, to find any ``font`` tags
-that have that grey colour of the links,
+当然，这不是唯一的XPath，也许也不是选择数据的最简单的那个。
+其他的方法也可能是，例如，选择灰色的链接的 ``font`` 标签。
 
-Finally, we can write our ``parse_category()`` method::
+最终，我们编写 ``parse_category()`` 方法::
 
     def parse_category(self, response):
         sel = Selector(response)
@@ -159,11 +138,12 @@ Finally, we can write our ``parse_category()`` method::
             yield item
 
 
-Be aware that you may find some elements which appear in Firebug but
-not in the original HTML, such as the typical case of ``<tbody>``
-elements.
-
+注意，您可能会遇到有些在Firebug找到，但是在原始HTML中找不到的元素，
+例如典型的 ``<tbody>`` 元素，
+或者Firebug检查活动DOM(live DOM)所看到的元素，但元素由javascript动态生成，并不在HTML源码中。
+(原文语句乱了,上面为意译- -:
 or tags which Therefer   in page HTML
 sources may on Firebug inspects the live DOM 
+)
 
-.. _has been shut down by Google: http://searchenginewatch.com/article/2096661/Google-Directory-Has-Been-Shut-Down
+.. _被Google关闭: http://searchenginewatch.com/article/2096661/Google-Directory-Has-Been-Shut-Down
