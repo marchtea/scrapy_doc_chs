@@ -39,6 +39,7 @@ Scrapy中文文档翻译计划
   * topics/firefox.rst
   * topics/firebug.rst
   * topics/autothrottle.rst
+  * topics/ubuntu.rst
 
 
 加入我们吧
