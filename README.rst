@@ -38,6 +38,7 @@ Scrapy中文文档翻译计划
   * topics/broad-crawls.rst
   * topics/firefox.rst
   * topics/firebug.rst
+  * topics/leaks.rst
   * topics/autothrottle.rst
   * topics/ubuntu.rst
 

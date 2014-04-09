@@ -1,64 +1,51 @@
 .. _topics-leaks:
 
 ======================
-Debugging memory leaks
+调试内存溢出
 ======================
 
-In Scrapy, objects such as Requests, Responses and Items have a finite
-lifetime: they are created, used for a while, and finally destroyed.
+在Scrapy中，类似Requests, Response及Items的对象具有有限的生命周期:
+他们被创建，使用，最后被销毁。
 
-From all those objects, the Request is probably the one with the longest
-lifetime, as it stays waiting in the Scheduler queue until it's time to process
-it. For more info see :ref:`topics-architecture`.
+这些对象中，Request的生命周期应该是最长的，其会在调度队列(Scheduler queue)中一直等待，直到被处理。
+更多内容请参考 :ref:`topics-architecture` 。
 
-As these Scrapy objects have a (rather long) lifetime, there is always the risk
-of accumulating them in memory without releasing them properly and thus causing
-what is known as a "memory leak".
+由于这些Scrapy对象拥有很长的生命，因此将这些对象存储在内存而没有正确释放的危险总是存在。
+而这导致了所谓的"内存泄露"。
 
-To help debugging memory leaks, Scrapy provides a built-in mechanism for
-tracking objects references called :ref:`trackref <topics-leaks-trackrefs>`,
-and you can also use a third-party library called :ref:`Guppy
-<topics-leaks-guppy>` for more advanced memory debugging (see below for more
-info). Both mechanisms must be used from the :ref:`Telnet Console
-<topics-telnetconsole>`.
+为了帮助调试内存泄露，Scrapy提供了跟踪对象引用的机制，叫做 :ref:`trackref <topics-leaks-trackrefs>` ，
+或者您也可以使用第三方提供的更先进内存调试库 :ref:`Guppy <topics-leaks-guppy>` 
+(更多内容请查看下面)。而这都必须在 :ref:`Telnet终端 <topics-telnetconsole>` 中使用。
 
-Common causes of memory leaks
+内存泄露的常见原因
 =============================
 
-It happens quite often (sometimes by accident, sometimes on purpose) that the
-Scrapy developer passes objects referenced in Requests (for example, using the
-:attr:`~scrapy.http.Request.meta` attribute or the request callback function)
-and that effectively bounds the lifetime of those referenced objects to the
-lifetime of the Request. This is, by far, the most common cause of memory leaks
-in Scrapy projects, and a quite difficult one to debug for newcomers.
+内存泄露经常是由于Scrapy开发者在Requests中(有意或无意)传递对象的引用(例如，使用
+:attr:`~scrapy.http.Request.meta` 属性或request回调函数)，使得该对象的生命周期与
+Request的生命周期所绑定。这是目前为止最常见的内存泄露的原因，
+同时对新手来说也是一个比较难调试的问题。
 
-In big projects, the spiders are typically written by different people and some
-of those spiders could be "leaking" and thus affecting the rest of the other
-(well-written) spiders when they get to run concurrently, which, in turn,
-affects the whole crawling process. 
+在大项目中，spider是由不同的人所编写的。而这其中有的spider可能是有"泄露的"，
+当所有的爬虫同时运行时，这些影响了其他(写好)的爬虫，最终，影响了整个爬取进程。
 
-At the same time, it's hard to avoid the reasons that cause these leaks
-without restricting the power of the framework, so we have decided not to
-restrict the functionally but provide useful tools for debugging these leaks,
-which quite often consist in an answer to the question: *which spider is leaking?*.
+与此同时，在不限制框架的功能的同时避免造成这些造成泄露的原因是十分困难的。因此，
+我们决定不限制这些功能而是提供调试这些泄露的实用工具。这些工具回答了一个问题: 
+*哪个spider在泄露* 。
 
-The leak could also come from a custom middleware, pipeline or extension that
-you have written, if you are not releasing the (previously allocated) resources
-properly. For example, if you're allocating resources on
-:signal:`spider_opened` but not releasing them on :signal:`spider_closed`.
+内存泄露可能存在与一个您编写的中间件，管道(pipeline) 或扩展，在代码中您没有正确释放
+(之前分配的)资源。例如，您在 :signal:`spider_opened` 中分配资源但在
+:signal:`spider_closed` 中没有释放它们。
 
 .. _topics-leaks-trackrefs:
 
-Debugging memory leaks with ``trackref``
+使用 ``trackref`` 调试内存泄露
 ========================================
 
-``trackref`` is a module provided by Scrapy to debug the most common cases of
-memory leaks. It basically tracks the references to all live Requests,
-Responses, Item and Selector objects. 
+``trackref`` 是Scrapy提供用于调试大部分内存泄露情况的模块。
+简单来说，其追踪了所有活动(live)的Request, Request, Item及Selector对象的引用。
 
-You can enter the telnet console and inspect how many objects (of the classes
-mentioned above) are currently alive using the ``prefs()`` function which is an
-alias to the :func:`~scrapy.utils.trackref.print_live_refs` function::
+您可以进入telnet终端并通过 ``prefs()`` 功能来检查多少(上面所提到的)活跃(alive)对象。
+``pref()`` 是 :func:`~scrapy.utils.trackref.print_live_refs` 功能的引用::
 
     telnet localhost 6023
 
@@ -70,19 +57,16 @@ alias to the :func:`~scrapy.utils.trackref.print_live_refs` function::
     Selector                            2   oldest: 0s ago
     FormRequest                       878   oldest: 7s ago
 
-As you can see, that report also shows the "age" of the oldest object in each
-class. 
+正如所见，报告也展现了每个类中最老的对象的时间(age)。
 
-If you do have leaks, chances are you can figure out which spider is leaking by
-looking at the oldest request or response. You can get the oldest object of
-each class using the :func:`~scrapy.utils.trackref.get_oldest` function like
-this (from the telnet console).
+如果您有内存泄露，那您能找到哪个spider正在泄露的机会是查看最老的request或response。
+您可以使用 :func:`~scrapy.utils.trackref.get_oldest` 方法来获取每个类中最老的对象，
+正如此所示(在终端中)(原文档没有样例)。
 
-Which objects are tracked?
+哪些对象被追踪了?
 --------------------------
 
-The objects tracked by ``trackrefs`` are all from these classes (and all its
-subclasses):
+``trackref`` 追踪的对象包括以下类(及其子类)的对象:
 
 * ``scrapy.http.Request``
 * ``scrapy.http.Response``
@@ -90,26 +74,23 @@ subclasses):
 * ``scrapy.selector.Selector``
 * ``scrapy.spider.Spider``
 
-A real example
+真实例子
 --------------
 
-Let's see a concrete example of an hypothetical case of memory leaks.
+让我们来看一个假设的具有内存泄露的准确例子。
 
-Suppose we have some spider with a line similar to this one::
+假如我们有些spider的代码中有一行类似于这样的代码::
 
     return Request("http://www.somenastyspider.com/product.php?pid=%d" % product_id,
         callback=self.parse, meta={referer: response}")
 
-That line is passing a response reference inside a request which effectively
-ties the response lifetime to the requests' one, and that would definitely
-cause memory leaks.
+代码中在request中传递了一个response的引用，使得reponse的生命周期与request所绑定，
+进而造成了内存泄露。
 
-Let's see how we can discover which one is the nasty spider (without knowing it
-a-priori, of course) by using the ``trackref`` tool.
+让我们来看看如何使用 ``trackref`` 工具来发现哪一个是有问题的spider(当然是在不知道任何的前提的情况下)。
 
-After the crawler is running for a few minutes and we notice its memory usage
-has grown a lot, we can enter its telnet console and check the live
-references::
+当crawler运行了一小阵子后，我们发现内存占用增长了很多。
+这时候我们进入telnet终端，查看活跃(live)的引用::
 
     >>> prefs()
     Live References
@@ -119,22 +100,19 @@ references::
     Selector                            2   oldest: 0s ago
     Request                          3878   oldest: 250s ago
 
-The fact that there are so many live responses (and that they're so old) is
-definitely suspicious, as responses should have a relatively short lifetime
-compared to Requests. So let's check the oldest response::
+
+上面具有非常多的活跃(且运行时间很长)的response，而其比Request的时间还要长的现象肯定是有问题的。
+因此，查看最老的response::
 
     >>> from scrapy.utils.trackref import get_oldest
     >>> r = get_oldest('HtmlResponse')
     >>> r.url
     'http://www.somenastyspider.com/product.php?pid=123'
 
-There it is. By looking at the URL of the oldest response we can see it belongs
-to the ``somenastyspider.com`` spider. We can now go and check the code of that
-spider to discover the nasty line that is generating the leaks (passing
-response references inside requests).
+就这样，通过查看最老的response的URL，我们发现其属于 ``somenastyspider.com`` spider。
+现在我们可以查看该spider的代码并发现导致泄露的那行代码(在request中传递response的引用)。
 
-If you want to iterate over all objects, instead of getting the oldest one, you
-can use the :func:`iter_all` function::
+如果您想要遍历所有而不是最老的对象，您可以使用 :func:`iter_all` 方法::
 
     >>> from scrapy.utils.trackref import iter_all
     >>> [r.url for r in iter_all('HtmlResponse')]
@@ -142,75 +120,65 @@ can use the :func:`iter_all` function::
      'http://www.somenastyspider.com/product.php?pid=584',
     ...
 
-Too many spiders?
+很多spider?
 -----------------
 
-If your project has too many spiders, the output of ``prefs()`` can be
-difficult to read. For this reason, that function has a ``ignore`` argument
-which can be used to ignore a particular class (and all its subclases). For
-example, using::
+如果您的项目有很多的spider，``prefs()`` 的输出会变得很难阅读。针对于此，
+该方法具有 ``ignore`` 参数，用于忽略特定的类(及其子类)。例如::
 
     >>> from scrapy.spider import Spider
     >>> prefs(ignore=Spider)
 
-Won't show any live references to spiders.
+将不会展现任何spider的活跃引用。
 
 .. module:: scrapy.utils.trackref
    :synopsis: Track references of live objects
 
-scrapy.utils.trackref module
+scrapy.utils.trackref模块
 ----------------------------
 
-Here are the functions available in the :mod:`~scrapy.utils.trackref` module.
+以下是 :mod:`~scrapy.utils.trackref` 模块中可用的方法。
 
 .. class:: object_ref
 
-    Inherit from this class (instead of object) if you want to track live
-    instances with the ``trackref`` module.
+    如果您想通过 ``trackref`` 模块追踪活跃的实例，继承该类(而不是对象)。
 
 .. function:: print_live_refs(class_name, ignore=NoneType)
 
-    Print a report of live references, grouped by class name.
+    打印活跃引用的报告，以类名分类。 
 
-    :param ignore: if given, all objects from the specified class (or tuple of
-        classes) will be ignored.
-    :type ignore: class or classes tuple
+    :param ignore: 如果给定，所有指定类(或者类的元组)的对象将会被忽略。
+    :type ignore: 类或者类的元组
 
 .. function:: get_oldest(class_name)
 
-    Return the oldest object alive with the given class name, or ``None`` if
-    none is found. Use :func:`print_live_refs` first to get a list of all
-    tracked live objects per class name.
+    返回给定类名的最老活跃(alive)对象，如果没有则返回 ``None`` 。首先使用
+    :func:`print_live_refs` 来获取每个类所跟踪的所有活跃(live)对象的列表。
 
 .. function:: iter_all(class_name)
 
-    Return an iterator over all objects alive with the given class name, or
-    ``None`` if none is found. Use :func:`print_live_refs` first to get a list
-    of all tracked live objects per class name.
+    返回一个能给定类名的所有活跃对象的迭代器，如果没有则返回 ``None`` 。首先使用
+    :func:`print_live_refs` 来获取每个类所跟踪的所有活跃(live)对象的列表。
 
 .. _topics-leaks-guppy:
 
-Debugging memory leaks with Guppy
+使用Guppy调试内存泄露
 =================================
 
-``trackref`` provides a very convenient mechanism for tracking down memory
-leaks, but it only keeps track of the objects that are more likely to cause
-memory leaks (Requests, Responses, Items, and Selectors). However, there are
-other cases where the memory leaks could come from other (more or less obscure)
-objects. If this is your case, and you can't find your leaks using ``trackref``,
-you still have another resource: the `Guppy library`_. 
+``trackref`` 提供了追踪内存泄露非常方便的机制，其仅仅追踪了比较可能导致内存泄露的对象
+(Requests, Response, Items及Selectors)。然而，内存泄露也有可能来自其他(更为隐蔽的)对象。
+如果是因为这个原因，通过 ``trackref`` 则无法找到泄露点，您仍然有其他工具: `Guppy library`_ 。
 
 .. _Guppy library: http://pypi.python.org/pypi/guppy
 
-If you use ``setuptools``, you can install Guppy with the following command::
+如果使用 ``setuptools`` , 您可以通过下列命令安装Guppy::
 
     easy_install guppy
 
 .. _setuptools: http://pypi.python.org/pypi/setuptools
 
-The telnet console also comes with a built-in shortcut (``hpy``) for accessing
-Guppy heap objects. Here's an example to view all Python objects available in
-the heap using Guppy::
+telnet终端也提供了快捷方式(``hpy``)来访问Guppy堆对象(heap objects)。
+下面给出了查看堆中所有可用的Python对象的例子::
 
     >>> x = hpy.heap()
     >>> x.bytype
@@ -228,8 +196,8 @@ the heap using Guppy::
          9   1209   0   456936   1  49872920  95 scrapy.http.headers.Headers
     <1676 more rows. Type e.g. '_.more' to view.>
 
-You can see that most space is used by dicts. Then, if you want to see from
-which attribute those dicts are referenced, you could do::
+您可以看到大部分的空间被字典所使用。接着，如果您想要查看哪些属性引用了这些字典，
+您可以::
 
     >>> x.bytype[0].byvia
     Partition of a set of 22307 objects. Total size = 16423880 bytes.
@@ -246,8 +214,7 @@ which attribute those dicts are referenced, you could do::
          9     27   0   155016   1  14841328  90 '[1]'
     <333 more rows. Type e.g. '_.more' to view.>
 
-As you can see, the Guppy module is very powerful but also requires some deep
-knowledge about Python internals. For more info about Guppy, refer to the
+如上所示，Guppy模块十分强大，不过也需要一些关于Python内部的知识。关于Guppy的更多内容请参考
 `Guppy documentation`_.
 
 .. _Guppy documentation: http://guppy-pe.sourceforge.net/
@@ -257,29 +224,24 @@ knowledge about Python internals. For more info about Guppy, refer to the
 Leaks without leaks
 ===================
 
-Sometimes, you may notice that the memory usage of your Scrapy process will
-only increase, but never decrease. Unfortunately, this could happen even
-though neither Scrapy nor your project are leaking memory. This is due to a
-(not so well) known problem of Python, which may not return released memory to
-the operating system in some cases. For more information on this issue see:
+有时候，您可能会注意到Scrapy进程的内存占用只在增长，从不下降。不幸的是，
+有时候这并不是Scrapy或者您的项目在泄露内存。这是由于一个已知(但不有名)的Python问题。
+Python在某些情况下可能不会返回已经释放的内存到操作系统。关于这个问题的更多内容请看:
 
 * `Python Memory Management <http://evanjones.ca/python-memory.html>`_
 * `Python Memory Management Part 2 <http://evanjones.ca/python-memory-part2.html>`_
 * `Python Memory Management Part 3 <http://evanjones.ca/python-memory-part3.html>`_
 
-The improvements proposed by Evan Jones, which are detailed in `this paper`_,
-got merged in Python 2.5, but this only reduces the problem, it doesn't fix it
-completely. To quote the paper:
+改进方案由Evan Jones提出，在 `这篇文章`_ 中详细介绍，在Python 2.5中合并。
+不过这仅仅减小了这个问题，并没有完全修复。引用这片文章:
 
-    *Unfortunately, this patch can only free an arena if there are no more
-    objects allocated in it anymore. This means that fragmentation is a large
-    issue. An application could have many megabytes of free memory, scattered
-    throughout all the arenas, but it will be unable to free any of it. This is
-    a problem experienced by all memory allocators. The only way to solve it is
-    to move to a compacting garbage collector, which is able to move objects in
-    memory. This would require significant changes to the Python interpreter.*
+    *不幸的是，这个patch仅仅会释放没有在其内部分配对象的区域(arena)。这意味着
+    碎片化是一个大问题。某个应用可以拥有很多空闲内存，分布在所有的区域(arena)中，
+    但是没法释放任何一个。这个问题存在于所有内存分配器中。解决这个问题的唯一办法是
+    转化到一个更为紧凑(compact)的垃圾回收器，其能在内存中移动对象。
+    这需要对Python解析器做一个显著的修改。*
 
-This problem will be fixed in future Scrapy releases, where we plan to adopt a
-new process model and run spiders in a pool of recyclable sub-processes.
+这个问题将会在未来Scrapy发布版本中得到解决。我们打算转化到一个新的进程模型，
+并在可回收的子进程池中运行spider。
 
-.. _this paper: http://evanjones.ca/memoryallocator/
+.. _这篇文章: http://evanjones.ca/memoryallocator/
