@@ -6,17 +6,15 @@ Benchmarking
 
 .. versionadded:: 0.17
 
-Scrapy comes with a simple benchmarking suite that spawns a local HTTP server
-and crawls it at the maximum possible speed. The goal of this benchmarking is
-to get an idea of how Scrapy performs in your hardware, in order to have a
-common baseline for comparisons. It uses a simple spider that does nothing and
-just follows links.
+Scrapy提供了一个简单的性能测试工具。其创建了一个本地HTTP服务器，并以最大可能的速度进行爬取。
+该测试性能工具目的是测试Scrapy在您的硬件上的效率，来获得一个基本的底线用于对比。
+其使用了一个简单的spider，仅跟进链接，不做任何处理。
 
-To run it use::
+运行::
 
     scrapy bench
 
-You should see an output like this::
+您能看到类似的输出::
 
     2013-05-16 13:08:46-0300 [scrapy] INFO: Scrapy 0.17.0 started (bot: scrapybot)
     2013-05-16 13:08:47-0300 [follow] INFO: Spider opened
@@ -51,11 +49,8 @@ You should see an output like this::
          'start_time': datetime.datetime(2013, 5, 16, 16, 8, 47, 676539)}
     2013-05-16 13:08:57-0300 [follow] INFO: Spider closed (closespider_timeout)
 
-That tells you that Scrapy is able to crawl about 3900 pages per minute in the
-hardware where you run it. Note that this is a very simple spider intended to
-follow links, any custom spider you write will probably do more stuff which
-results in slower crawl rates. How slower depends on how much your spider does
-and how well it's written.
+这说明了您的Scrapy能以3900页面/分钟的速度爬取。注意，这是一个非常简单，仅跟进链接的spider。
+任何您所编写的spider会做更多处理，从而减慢爬取的速度。
+减慢的程度取决于spider做的处理以及其是如何被编写的。
 
-In the future, more cases will be added to the benchmarking suite to cover
-other common scenarios.
+未来会有更多的用例会被加入到性能测试套装中，以覆盖更多常见的情景。

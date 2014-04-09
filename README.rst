@@ -42,6 +42,7 @@ Scrapy中文文档翻译计划
   * topics/autothrottle.rst
   * topics/scrapyd.rst
   * topics/ubuntu.rst
+  * topics/benchmark.rst
 
 
 加入我们吧
