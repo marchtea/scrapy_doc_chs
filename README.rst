@@ -40,6 +40,7 @@ Scrapy中文文档翻译计划
   * topics/firebug.rst
   * topics/leaks.rst
   * topics/autothrottle.rst
+  * topics/scrapyd.rst
   * topics/ubuntu.rst
 
 

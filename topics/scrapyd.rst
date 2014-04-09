@@ -4,8 +4,7 @@
 Scrapyd
 =======
 
-Scrapyd has been moved into a separate project.
-
-Its documentation is now hosted at:
+Scrapyd被移动成为一个单独的项目。
+其文档当前被托管在:
 
     http://scrapyd.readthedocs.org/
