@@ -45,6 +45,7 @@ Scrapy中文文档翻译计划
   * topics/ubuntu.rst
   * topics/benchmark.rst
   * topics/djangoitem.rst
+  * topics/architecture.rst
 
 
 加入我们吧
