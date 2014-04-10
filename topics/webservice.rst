@@ -201,12 +201,12 @@ web服务资源例子
 StatsResource (JSON-RPC resource)
 ---------------------------------
 
-.. literalinclude:: ../scrapy/contrib/webservice/stats.py
+.. literalinclude:: src_used/stats.py
 
 EngineStatusResource (JSON resource)
 -------------------------------------
 
-.. literalinclude:: ../scrapy/contrib/webservice/enginestatus.py
+.. literalinclude:: src_used/enginestatus.py
 
 Example of web service client
 =============================
@@ -214,7 +214,7 @@ Example of web service client
 scrapy-ws.py script
 -------------------
 
-.. literalinclude:: ../extras/scrapy-ws.py
+.. literalinclude:: src_used/scrapy-ws.py
 
 .. _Twisted Web guide: http://jcalderone.livejournal.com/50562.html 
 .. _JSON-RPC 2.0: http://www.jsonrpc.org/
