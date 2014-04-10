@@ -10,7 +10,7 @@ Link Extractors 是那些目的仅仅是从网页(:class:`scrapy.http.Response` 
 Scrapy默认提供2种可用的 Link Extractor, 但你通过实现一个简单的接口创建自己定制的Link Extractor来满足需求｡
 
 
-每个LinkExtractor有唯一的公共方法是 ``extract_links`` ,它接收一个:class:`~scrapy.http.Response` 对象,并返回一个 :class:`scrapy.link.Link` 对象｡Link Extractors,要实例化一次并且 ``extract_links`` 方法会根据不同的response调用多次提取链接｡
+每个LinkExtractor有唯一的公共方法是 ``extract_links`` ,它接收一个 :class:`~scrapy.http.Response` 对象,并返回一个 :class:`scrapy.link.Link` 对象｡Link Extractors,要实例化一次并且 ``extract_links`` 方法会根据不同的response调用多次提取链接｡
 
 
 Link Extractors在 :class:`~scrapy.contrib.spiders.CrawlSpider` 类(在Scrapy可用)中使用, 通过一套规则,但你也可以用它在你的Spider中,即使你不是从 :class:`~scrapy.contrib.spiders.CrawlSpider` 继承的子类, 因为它的目的很简单: 提取链接｡
@@ -84,7 +84,7 @@ BaseSgmlLinkExtractor
     
     该构造函数的参数是:
 
-    :param tag: 是一个字符串(带标签的名称)或接收一个标签名, 如果链接应该从标签中提取返回 ``True`` 的函数或 ``False``如果他们不应该｡默认为 ``'a'`` ｡请求(一旦它被下载)作为其第一个参数｡欲了解更多信息, 请参阅 :ref:`topics-request-response-ref-request-callback-arguments`｡
+    :param tag: 是一个字符串(带标签的名称)或接收一个标签名, 如果链接应该从标签中提取返回 ``True`` 的函数或 ``False`` 如果他们不应该｡默认为 ``'a'`` ｡请求(一旦它被下载)作为其第一个参数｡欲了解更多信息, 请参阅 :ref:`topics-request-response-ref-request-callback-arguments`｡
     :type tag: str or callable
 
     :param attr:  无论是字符串(带有tag属性的名称), 或接收到一个属性名称, 如果链接应该从中提取返回 ``True`` 的函数或 ``False`` 如果他们不应该｡默认设置为 ``href`` ｡
