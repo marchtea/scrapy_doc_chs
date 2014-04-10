@@ -43,6 +43,7 @@ Scrapy中文文档翻译计划
   * topics/scrapyd.rst
   * topics/ubuntu.rst
   * topics/benchmark.rst
+  * topics/djangoitem.rst
 
 
 加入我们吧
