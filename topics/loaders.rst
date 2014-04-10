@@ -7,7 +7,7 @@ Item Loaders
 .. module:: scrapy.contrib.loader
    :synopsis: Item Loader class
 
-Item Loaders provide a convenient mechanism for populating scraped :ref:`Items
+Item Loaders 提供了一种便捷的 convenient mechanism for populating scraped :ref:`Items
 <topics-items>`. Even though Items can be populated using their own
 dictionary-like API, the Item Loaders provide a much more convenient API for
 populating them from a scraping process, by automating some common tasks like
@@ -24,20 +24,13 @@ or by source format (HTML, XML, etc) without becoming a nightmare to maintain.
 Using Item Loaders to populate items
 ====================================
 
-To use an Item Loader, you must first instantiate it. You can either
-instantiate it with an dict-like object (e.g. Item or dict) or without one, in
-which case an Item is automatically instantiated in the Item Loader constructor
-using the Item class specified in the :attr:`ItemLoader.default_item_class`
-attribute.
+要使用Item Loader, 你必须先将它实例化. 你可以使用类似字典的对象(例如: Item or dict)来进行实例化, 或者不使用对象也可以, 当不用对象进行实例化的时候,Item会自动使用 :attr:`ItemLoader.default_item_class`
+属性中指定的Item 类在Item Loader constructor中实例化.
 
-Then, you start collecting values into the Item Loader, typically using
-:ref:`Selectors <topics-selectors>`. You can add more than one value to
-the same item field; the Item Loader will know how to "join" those values later
-using a proper processing function.
+然后,你开始收集数值到Item Loader时,通常使用
+:ref:`Selectors <topics-selectors>`. 你可以在同一个item field 里面添加多个数值;Item Loader将知道如何用合适的处理函数来“添加”这些数值.
 
-Here is a typical Item Loader usage in a :ref:`Spider <topics-spiders>`, using
-the :ref:`Product item <topics-items-declaring>` declared in the :ref:`Items
-chapter <topics-items>`::
+下面是在 :ref:`Spider <topics-spiders>` 中典型的Item Loader的用法, 使用 :ref:`Items chapter <topics-items>` 中声明的 :ref:`Product item <topics-items-declaring>`::
 
     from scrapy.contrib.loader import ItemLoader
     from myproject.items import Product
@@ -51,44 +44,33 @@ chapter <topics-items>`::
         l.add_value('last_updated', 'today') # you can also use literal values
         return l.load_item()
 
-By quickly looking at that code, we can see the ``name`` field is being
-extracted from two different XPath locations in the page:
+快速查看这些代码之后,我们可以看到发现 ``name``  字段被从页面中两个不同的XPath位置提取:
 
 1. ``//div[@class="product_name"]``
 2. ``//div[@class="product_title"]``
 
-In other words, data is being collected by extracting it from two XPath
-locations, using the :meth:`~ItemLoader.add_xpath` method. This is the
-data that will be assigned to the ``name`` field later.
+换言之,数据通过用 :meth:`~ItemLoader.add_xpath` 的方法,把从两个不同的XPath位置提取的数据收集起来. 这是将在以后分配给 ``name`` 字段中的数据｡
 
-Afterwords, similar calls are used for ``price`` and ``stock`` fields
-(the later using a CSS selector with the :meth:`~ItemLoader.add_css` method),
-and finally the ``last_update`` field is populated directly with a literal value
-(``today``) using a different method: :meth:`~ItemLoader.add_value`.
 
-Finally, when all data is collected, the :meth:`ItemLoader.load_item` method is
-called which actually populates and returns the item populated with the data
-previously extracted and collected with the :meth:`~ItemLoader.add_xpath`,
-:meth:`~ItemLoader.add_css`, and :meth:`~ItemLoader.add_value` calls.
+之后,类似的请求被用于 ``price`` 和 ``stock`` 字段
+(后者使用 CSS selector 和 :meth:`~ItemLoader.add_css` 方法),
+最后使用不同的方法 :meth:`~ItemLoader.add_value` 对 ``last_update`` 填充文本值( ``today`` ).
+
+最终, 当所有数据被收集起来之后, 调用 :meth:`ItemLoader.load_item` 方法, 实际上填充并且返回了之前通过调用 :meth:`~ItemLoader.add_xpath`,
+:meth:`~ItemLoader.add_css`, and :meth:`~ItemLoader.add_value` 所提取和收集到的数据的Item.
 
 .. _topics-loaders-processors:
 
 Input and Output processors
 ===========================
 
-An Item Loader contains one input processor and one output processor for each
-(item) field. The input processor processes the extracted data as soon as it's
-received (through the :meth:`~ItemLoader.add_xpath`, :meth:`~ItemLoader.add_css` or
-:meth:`~ItemLoader.add_value` methods) and the result of the input processor is
-collected and kept inside the ItemLoader. After collecting all data, the
-:meth:`ItemLoader.load_item` method is called to populate and get the populated
-:class:`~scrapy.item.Item` object.  That's when the output processor is
-called with the data previously collected (and processed using the input
-processor). The result of the output processor is the final value that gets
-assigned to the item.
+Item Loader在每个(Item)字段中都包含了一个输入处理器和一个输出处理器｡ 输入处理器收到数据时立刻提取数据 (通过 :meth:`~ItemLoader.add_xpath`, :meth:`~ItemLoader.add_css` 或者
+:meth:`~ItemLoader.add_value` 方法) 之后输入处理器的结果被收集起来并且保存在ItemLoader内. 收集到所有的数据后, 调用
+:meth:`ItemLoader.load_item` 方法来填充,并得到填充后的
+:class:`~scrapy.item.Item` 对象.  这是当输出处理器被和之前收集到的数据(和用输入处理器处理的)被调用.输出处理器的结果是被分配到Item的最终值｡
 
-Let's see an example to illustrate how the input and output processors are
-called for a particular field (the same applies for any other field)::
+
+让我们看一个例子来说明如何输入和输出处理器被一个特定的字段调用(同样适用于其他field):::
 
     l = ItemLoader(Product(), some_selector)
     l.add_xpath('name', xpath1) # (1)
@@ -97,15 +79,11 @@ called for a particular field (the same applies for any other field)::
     l.add_value('name', 'test') # (4)
     return l.load_item() # (5)
 
-So what happens is:
+发生了这些事情:
 
-1. Data from ``xpath1`` is extracted, and passed through the *input processor* of
-   the ``name`` field. The result of the input processor is collected and kept in
-   the Item Loader (but not yet assigned to the item).
+1. 从 ``xpath1`` 提取出的数据,传递给 *输入处理器* 的 ``name`` 字段.输入处理器的结果被收集和保存在Item Loader中(但尚未分配给该Item)｡
 
-2. Data from ``xpath2`` is extracted, and passed through the same *input
-   processor* used in (1). The result of the input processor is appended to the
-   data collected in (1) (if any).
+2. 从 ``xpath2`` 提取出来的数据,传递给(1)中使用的相同的 *输入处理器* .输入处理器的结果被附加到在(1)中收集的数据(如果有的话) ｡
 
 3. This case is similar to the previous ones, except that the data is extracted
    from the ``css`` CSS selector, and passed through the same *input
