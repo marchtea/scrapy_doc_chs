@@ -1,32 +1,29 @@
 .. _topics-api:
 
 ========
-Core API
+核心API
 ========
 
 .. versionadded:: 0.15
 
-This section documents the Scrapy core API, and it's intended for developers of
-extensions and middlewares.
+该节文档讲述Scrapy核心API，目标用户是开发Scrapy扩展(extensions)和中间件(middlewares)的开发人员。
 
 .. _topics-api-crawler:
 
-Crawler API
+爬虫(Crawler) API
 ===========
 
-The main entry point to Scrapy API is the :class:`~scrapy.crawler.Crawler`
-object, passed to extensions through the ``from_crawler`` class method. This
-object provides access to all Scrapy core components, and it's the only way for
-extensions to access them and hook their functionality into Scrapy.
+Scrapy API的主要入口是 :class:`~scrapy.crawler.Crawler` 的实例对象，
+通过类方法 ``from_crawler`` 将它传递给扩展(extensions)。
+该对象提供对所有Scrapy核心组件的访问，
+也是扩展访问Scrapy核心组件和挂载功能到Scrapy的唯一途径。
 
 .. module:: scrapy.crawler
    :synopsis: The Scrapy crawler
 
-The Extension Manager is responsible for loading and keeping track of installed
-extensions and it's configured through the :setting:`EXTENSIONS` setting which
-contains a dictionary of all available extensions and their order similar to
-how you :ref:`configure the downloader middlewares
-<topics-downloader-middleware-setting>`.
+Extension Manager负责加载和跟踪已经安装的扩展，
+它通过 :setting:`EXTENSIONS` 配置，包含一个所有可用扩展的字典，
+字典的顺序跟你在 :ref:`configure the downloader middlewares <topics-downloader-middlewares-settings>` 配置的顺序一致。
 
 .. class:: Crawler(settings)
 
@@ -103,7 +100,7 @@ how you :ref:`configure the downloader middlewares
         Start the crawler. This calls :meth:`configure` if it hasn't been called yet.
         Returns a deferred that is fired when the crawl is finished.
 
-Settings API
+设置(Settings) API
 ============
 
 .. module:: scrapy.settings
@@ -184,7 +181,7 @@ Settings API
 
 .. _topics-api-signals:
 
-Signals API
+信号(Signals) API
 ===========
 
 .. module:: scrapy.signalmanager
@@ -238,13 +235,11 @@ Signals API
 
 .. _topics-api-stats:
 
-Stats Collector API
+状态收集器(Stats Collector) API
 ===================
 
-There are several Stats Collectors available under the
-:mod:`scrapy.statscol` module and they all implement the Stats
-Collector API defined by the :class:`~scrapy.statscol.StatsCollector`
-class (which they all inherit from).
+模块 `scrapy.statscol` 下有好几种状态收集器，
+它们都实现了状态收集器API对应的类 :class:`~scrapy.statscol.Statscollector` (即它们都继承至该类)。
 
 .. module:: scrapy.statscol
    :synopsis: Stats Collectors
