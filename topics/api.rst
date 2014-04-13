@@ -10,7 +10,7 @@
 
 .. _topics-api-crawler:
 
-爬虫(Crawler) API
+Crawler API
 ===========
 
 Scrapy API的主要入口是 :class:`~scrapy.crawler.Crawler` 的实例对象，
@@ -31,7 +31,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
     .. attribute:: settings
 
-        该爬虫的配置管理器。
+        crawler的配置管理器。
 
         扩展(extensions)和中间件(middlewares)使用它用来访问Scrapy的配置。
 
@@ -41,7 +41,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
     .. attribute:: signals
 
-        该爬虫的信号管理器。
+        crawler的信号管理器。
 
         扩展和中间件使用它将自己的功能挂载到Scrapy。
 
@@ -51,7 +51,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
     .. attribute:: stats
 
-        该爬虫的统计信息收集器。
+        crawler的统计信息收集器。
 
         扩展和中间件使用它记录操作的统计信息，或者访问由其他扩展收集的统计信息。
 
@@ -69,27 +69,27 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
     .. attribute:: spiders
 
-        爬虫管理器(spider manager)，加载和实例化爬虫。
+        spider管理器，加载和实例化spiders。
 
         大多数扩展不需要访问该属性。
 
     .. attribute:: engine
 
-        执行引擎，协调核心爬虫的核心逻辑，包括调度，下载和爬虫(spider)。
+        执行引擎，协调crawler的核心逻辑，包括调度，下载和spider。
 
         某些扩展可能需要访问Scrapy的引擎属性，以修改检查(modify inspect)或修改下载器和调度器的行为，
         这是该API的高级使用，但还不稳定。
 
     .. method:: configure()
 
-        配置爬虫(crawler)。
+        配置crawler。
 
-        该方法加载扩展、中间件和爬虫(spiders)，使爬虫(crawler)处于ready状态。
+        该方法加载扩展、中间件和spiders，使crawler处于ready状态。
         同时，它还配置好了执行引擎。
 
     .. method:: start()
 
-        启动爬虫(crawler)。如果 :meth: `configure` 方法还未被调用过，该方法会调用它。
+        启动crawler。如果 :meth: `configure` 方法还未被调用过，该方法会调用它。
         返回一个延迟deferred对象，当爬取结束是触发它。
 
 设置(Settings) API
@@ -105,7 +105,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
     .. attribute:: overrides
 
        全局overrides具有最高优先级，通常由命令行选项计算得来。
-       overrides应该在配置爬虫对象(通过 :meth:`~scrapy.crawler.Crawler.configure` 方法) *之前*
+       overrides应该在配置Crawler对象(通过 :meth:`~scrapy.crawler.Crawler.configure` 方法) *之前*
        就计算好，否则它们不会起任何作用。通常来说你不需要担心overrides，
        除非你在实现自己的Scrapy命令。
 
