@@ -23,7 +23,7 @@ Scrapy API的主要入口是 :class:`~scrapy.crawler.Crawler` 的实例对象，
 
 Extension Manager负责加载和跟踪已经安装的扩展，
 它通过 :setting:`EXTENSIONS` 配置，包含一个所有可用扩展的字典，
-字典的顺序跟你在 :ref:`configure the downloader middlewares <topics-downloader-middlewares-settings>` 配置的顺序一致。
+字典的顺序跟你在 :ref:`configure the downloader middlewares <topics-downloader-middleware-setting>` 配置的顺序一致。
 
 .. class:: Crawler(settings)
 
@@ -93,7 +93,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
         返回一个延迟deferred对象，当爬取结束是触发它。
 
 设置(Settings) API
-============
+=======================
 
 .. module:: scrapy.settings
    :synopsis: Settings manager
@@ -121,7 +121,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
     .. method:: getbool(name, default=False)
 
-       eturn ``False````
+       return ``False``
        将某项配置的值以布尔值形式返回。比如，``1`` 和 ``'1'``，``True`` 都返回``True``，
        而 ``0``，``'0'``，``False`` 和 ``None`` 返回 ``False``。
 
@@ -145,7 +145,6 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
     .. method:: getfloat(name, default=0.0)
 
-       Get a setting value as a float
        将某项配置的值以浮点数形式返回
 
        :param name: 配置名
@@ -170,7 +169,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 .. _topics-api-signals:
 
 信号(Signals) API
-===========
+=====================
 
 .. module:: scrapy.signalmanager
    :synopsis: The signal manager
@@ -192,24 +191,22 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
     .. method:: send_catch_log(signal, \*\*kwargs)
 
-        Send a signal, catch exceptions and log them.
         发送一个信号，捕获异常并记录日志。
 
-        关键字参数会传递给信号处理者(signal handlers)(通过方法 :meth: `connect` 关联)。
+        关键字参数会传递给信号处理者(signal handlers)(通过方法 :meth:`connect` 关联)。
 
     .. method:: send_catch_log_deferred(signal, \*\*kwargs)
 
-        跟 :meth:`send_catch_log` 相似但支持返回`deferreds`_ 形式的信号处理器。
+        跟 :meth:`send_catch_log` 相似但支持返回 `deferreds`_ 形式的信号处理器。
 
         返回一个 `deferred`_ ，当所有的信号处理器的延迟被触发时调用。
         发送一个信号，处理异常并记录日志。
 
-        hrough the :meth:`connect` method).
-        关键字参数会传递给信号处理者(signal handlers)(通过方法 :meth: `connect` 关联)。
+        关键字参数会传递给信号处理者(signal handlers)(通过方法 :meth:`connect` 关联)。
 
     .. method:: disconnect(receiver, signal)
 
-        解除一个接收器函数和一个信号的关联。这跟方法 :meth: `connect` 有相反的作用，
+        解除一个接收器函数和一个信号的关联。这跟方法 :meth:`connect` 有相反的作用，
         参数也相同。
 
     .. method:: disconnect_all(signal)
@@ -222,7 +219,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 .. _topics-api-stats:
 
 状态收集器(Stats Collector) API
-===================
+===================================
 
 模块 `scrapy.statscol` 下有好几种状态收集器，
 它们都实现了状态收集器API对应的类 :class:`~scrapy.statscol.Statscollector` (即它们都继承至该类)。
