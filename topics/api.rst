@@ -1,109 +1,98 @@
 .. _topics-api:
 
 ========
-Core API
+核心API
 ========
 
 .. versionadded:: 0.15
 
-This section documents the Scrapy core API, and it's intended for developers of
-extensions and middlewares.
+该节文档讲述Scrapy核心API，目标用户是开发Scrapy扩展(extensions)和中间件(middlewares)的开发人员。
 
 .. _topics-api-crawler:
 
 Crawler API
 ===========
 
-The main entry point to Scrapy API is the :class:`~scrapy.crawler.Crawler`
-object, passed to extensions through the ``from_crawler`` class method. This
-object provides access to all Scrapy core components, and it's the only way for
-extensions to access them and hook their functionality into Scrapy.
+Scrapy API的主要入口是 :class:`~scrapy.crawler.Crawler` 的实例对象，
+通过类方法 ``from_crawler`` 将它传递给扩展(extensions)。
+该对象提供对所有Scrapy核心组件的访问，
+也是扩展访问Scrapy核心组件和挂载功能到Scrapy的唯一途径。
 
 .. module:: scrapy.crawler
    :synopsis: The Scrapy crawler
 
-The Extension Manager is responsible for loading and keeping track of installed
-extensions and it's configured through the :setting:`EXTENSIONS` setting which
-contains a dictionary of all available extensions and their order similar to
-how you :ref:`configure the downloader middlewares
-<topics-downloader-middleware-setting>`.
+Extension Manager负责加载和跟踪已经安装的扩展，
+它通过 :setting:`EXTENSIONS` 配置，包含一个所有可用扩展的字典，
+字典的顺序跟你在 :ref:`configure the downloader middlewares <topics-downloader-middlewares-settings>` 配置的顺序一致。
 
 .. class:: Crawler(settings)
 
-    The Crawler object must be instantiated with a
-    :class:`scrapy.settings.Settings` object.
+    Crawler必须使用 :class:`scrapy.settings.Settings` 的对象进行实例化
 
     .. attribute:: settings
 
-        The settings manager of this crawler.
+        crawler的配置管理器。
 
-        This is used by extensions & middlewares to access the Scrapy settings
-        of this crawler.
+        扩展(extensions)和中间件(middlewares)使用它用来访问Scrapy的配置。
 
-        For an introduction on Scrapy settings see :ref:`topics-settings`.
+        关于Scrapy配置的介绍参考这里 :ref:`topics-settings`。
 
-        For the API see :class:`~scrapy.settings.Settings` class.
+        API参考 :class:`~scrapy.settings.Settings`。
 
     .. attribute:: signals
 
-        The signals manager of this crawler.
+        crawler的信号管理器。
 
-        This is used by extensions & middlewares to hook themselves into Scrapy
-        functionality.
+        扩展和中间件使用它将自己的功能挂载到Scrapy。
 
-        For an introduction on signals see :ref:`topics-signals`.
+        关于信号的介绍参考 :ref:`topics-signals`。
 
-        For the API see :class:`~scrapy.signalmanager.SignalManager` class.
+        API参考 :class:`~scrapy.signalmanager.SignalManager`。
 
     .. attribute:: stats
 
-        The stats collector of this crawler.
+        crawler的统计信息收集器。
 
-        This is used from extensions & middlewares to record stats of their
-        behaviour, or access stats collected by other extensions.
+        扩展和中间件使用它记录操作的统计信息，或者访问由其他扩展收集的统计信息。
 
-        For an introduction on stats collection see :ref:`topics-stats`.
+        关于统计信息收集器的介绍参考 :ref:`topics-stats`。
 
-        For the API see :class:`~scrapy.statscol.StatsCollector` class.
+        API参考类 :class:`~scrapy.statscol.StatsCollector` class。
 
     .. attribute:: extensions
 
-        The extension manager that keeps track of enabled extensions.
+        扩展管理器，跟踪所有开启的扩展。
 
-        Most extensions won't need to access this attribute.
+        大多数扩展不需要访问该属性。
 
-        For an introduction on extensions and a list of available extensions on
-        Scrapy see :ref:`topics-extensions`.
+        关于扩展和可用扩展列表器的介绍参考 :ref:`topics-extensions`。
 
     .. attribute:: spiders
 
-        The spider manager which takes care of loading and instantiating
-        spiders.
+        spider管理器，加载和实例化spiders。
 
-        Most extensions won't need to access this attribute.
+        大多数扩展不需要访问该属性。
 
     .. attribute:: engine
 
-        The execution engine, which coordinates the core crawling logic
-        between the scheduler, downloader and spiders.
+        执行引擎，协调crawler的核心逻辑，包括调度，下载和spider。
 
-        Some extension may want to access the Scrapy engine, to modify inspect
-        or modify the downloader and scheduler behaviour, although this is an
-        advanced use and this API is not yet stable.
+        某些扩展可能需要访问Scrapy的引擎属性，以修改检查(modify inspect)或修改下载器和调度器的行为，
+        这是该API的高级使用，但还不稳定。
 
     .. method:: configure()
 
-        Configure the crawler.
+        配置crawler。
 
-        This loads extensions, middlewares and spiders, leaving the crawler
-        ready to be started. It also configures the execution engine.
+        该方法加载扩展、中间件和spiders，使crawler处于ready状态。
+        同时，它还配置好了执行引擎。
 
     .. method:: start()
 
-        Start the crawler. This calls :meth:`configure` if it hasn't been called yet.
-        Returns a deferred that is fired when the crawl is finished.
+        启动crawler。如果 :meth: `configure` 方法还未被调用过，该方法会调用它。
+        返回一个延迟deferred对象，当爬取结束是触发它。
 
-Settings API
+设置(Settings) API
 ============
 
 .. module:: scrapy.settings
@@ -111,80 +100,76 @@ Settings API
 
 .. class:: Settings()
 
-    This object that provides access to Scrapy settings.
+    该对象提供对Scrapy配置的访问。
 
     .. attribute:: overrides
 
-       Global overrides are the ones that take most precedence, and are usually
-       populated by command-line options.
-
-       Overrides should be populated *before* configuring the Crawler object
-       (through the :meth:`~scrapy.crawler.Crawler.configure` method),
-       otherwise they won't have any effect. You don't typically need to worry
-       about overrides unless you are implementing your own Scrapy command.
+       全局overrides具有最高优先级，通常由命令行选项计算得来。
+       overrides应该在配置Crawler对象(通过 :meth:`~scrapy.crawler.Crawler.configure` 方法) *之前*
+       就计算好，否则它们不会起任何作用。通常来说你不需要担心overrides，
+       除非你在实现自己的Scrapy命令。
 
     .. method:: get(name, default=None)
 
-       Get a setting value without affecting its original type.
+       获取某项配置的值，且不修改其原有的值。
 
-       :param name: the setting name
-       :type name: string
+       :param name: 配置名
+       :type name: 字符串
 
-       :param default: the value to return if no setting is found
-       :type default: any
+       :param default: 如果没有该项配置时返回的缺省值
+       :type default: 任何
 
     .. method:: getbool(name, default=False)
 
-       Get a setting value as a boolean. For example, both ``1`` and ``'1'``, and
-       ``True`` return ``True``, while ``0``, ``'0'``, ``False`` and ``None``
-       return ``False````
+       eturn ``False````
+       将某项配置的值以布尔值形式返回。比如，``1`` 和 ``'1'``，``True`` 都返回``True``，
+       而 ``0``，``'0'``，``False`` 和 ``None`` 返回 ``False``。
 
-       For example, settings populated through environment variables set to ``'0'``
-       will return ``False`` when using this method.
+       比如，通过环境变量计算将某项配置设置为 ``'0'``，通过该方法获取得到 ``False``。
 
-       :param name: the setting name
-       :type name: string
+       :param name: 配置名
+       :type name: 字符串
 
-       :param default: the value to return if no setting is found
-       :type default: any
+       :param default: 如果该配置项未设置，返回的缺省值
+       :type default: 任何
 
     .. method:: getint(name, default=0)
 
-       Get a setting value as an int
+       将某项配置的值以整数形式返回
 
-       :param name: the setting name
-       :type name: string
+       :param name: 配置名
+       :type name: 字符串
 
-       :param default: the value to return if no setting is found
-       :type default: any
+       :param default: 如果该配置项未设置，返回的缺省值
+       :type default: 任何
 
     .. method:: getfloat(name, default=0.0)
 
        Get a setting value as a float
+       将某项配置的值以浮点数形式返回
 
-       :param name: the setting name
-       :type name: string
+       :param name: 配置名
+       :type name: 字符串
 
-       :param default: the value to return if no setting is found
-       :type default: any
+       :param default: 如果该配置项未设置，返回的缺省值
+       :type default: 任何
 
     .. method:: getlist(name, default=None)
 
-       Get a setting value as a list. If the setting original type is a list it
-       will be returned verbatim. If it's a string it will be split by ",".
+       将某项配置的值以列表形式返回。如果配置值本来就是list则原样返回。
+       如果是字符串，则返回被 "," 分割后的列表。
 
-       For example, settings populated through environment variables set to
-       ``'one,two'`` will return a list ['one', 'two'] when using this method.
+       比如，某项值通过环境变量的计算被设置为 ``'one,two'`` ，该方法返回['one', 'two']。
 
-       :param name: the setting name
-       :type name: string
+       :param name: 配置名
+       :type name: 字符串
 
-       :param default: the value to return if no setting is found
-       :type default: any
+       :param default: 如果该配置项未设置，返回的缺省值
+       :type default: 任何
 
 .. _topics-api-signals:
 
-Signals API
+信号(Signals) API
 ===========
 
 .. module:: scrapy.signalmanager
@@ -194,57 +179,53 @@ Signals API
 
     .. method:: connect(receiver, signal)
 
-        Connect a receiver function to a signal.
+        链接一个接收器函数(receiver function) 到一个信号(signal)。
 
-        The signal can be any object, although Scrapy comes with some
-        predefined signals that are documented in the :ref:`topics-signals`
-        section.
+        signal可以是任何对象，虽然Scrapy提供了一些预先定义好的信号，
+        参考文档 :ref:`topics-signals`。
 
-        :param receiver: the function to be connected
-        :type receiver: callable
+        :param receiver: 被链接到的函数
+        :type receiver: 可调用对象
 
-        :param signal: the signal to connect to
-        :type signal: object
+        :param signal: 链接的信号
+        :type signal: 对象
 
     .. method:: send_catch_log(signal, \*\*kwargs)
 
         Send a signal, catch exceptions and log them.
+        发送一个信号，捕获异常并记录日志。
 
-        The keyword arguments are passed to the signal handlers (connected
-        through the :meth:`connect` method).
+        关键字参数会传递给信号处理者(signal handlers)(通过方法 :meth: `connect` 关联)。
 
     .. method:: send_catch_log_deferred(signal, \*\*kwargs)
 
-        Like :meth:`send_catch_log` but supports returning `deferreds`_ from
-        signal handlers.
+        跟 :meth:`send_catch_log` 相似但支持返回`deferreds`_ 形式的信号处理器。
 
-        Returns a `deferred`_ that gets fired once all signal handlers
-        deferreds were fired. Send a signal, catch exceptions and log them.
+        返回一个 `deferred`_ ，当所有的信号处理器的延迟被触发时调用。
+        发送一个信号，处理异常并记录日志。
 
-        The keyword arguments are passed to the signal handlers (connected
-        through the :meth:`connect` method).
+        hrough the :meth:`connect` method).
+        关键字参数会传递给信号处理者(signal handlers)(通过方法 :meth: `connect` 关联)。
 
     .. method:: disconnect(receiver, signal)
 
-        Disconnect a receiver function from a signal. This has the opposite
-        effect of the :meth:`connect` method, and the arguments are the same.
+        解除一个接收器函数和一个信号的关联。这跟方法 :meth: `connect` 有相反的作用，
+        参数也相同。
 
     .. method:: disconnect_all(signal)
 
-        Disconnect all receivers from the given signal.
+        取消给定信号绑定的所有接收器。
 
-        :param signal: the signal to disconnect from
+        :param signal: 要取消绑定的信号
         :type signal: object
 
 .. _topics-api-stats:
 
-Stats Collector API
+状态收集器(Stats Collector) API
 ===================
 
-There are several Stats Collectors available under the
-:mod:`scrapy.statscol` module and they all implement the Stats
-Collector API defined by the :class:`~scrapy.statscol.StatsCollector`
-class (which they all inherit from).
+模块 `scrapy.statscol` 下有好几种状态收集器，
+它们都实现了状态收集器API对应的类 :class:`~scrapy.statscol.Statscollector` (即它们都继承至该类)。
 
 .. module:: scrapy.statscol
    :synopsis: Stats Collectors
@@ -253,52 +234,48 @@ class (which they all inherit from).
 
     .. method:: get_value(key, default=None)
 
-        Return the value for the given stats key or default if it doesn't exist.
+        返回指定key的统计值，如果key不存在则返回缺省值。
 
     .. method:: get_stats()
 
-        Get all stats from the currently running spider as a dict.
+        以dict形式返回当前spider的所有统计值。
 
     .. method:: set_value(key, value)
 
-        Set the given value for the given stats key.
+        设置key所指定的统计值为value。
 
     .. method:: set_stats(stats)
 
-        Override the current stats with the dict passed in ``stats`` argument.
+        使用dict形式的 ``stats`` 参数覆盖当前的统计值。
 
     .. method:: inc_value(key, count=1, start=0)
 
-        Increment the value of the given stats key, by the given count,
-        assuming the start value given (when it's not set).
+        增加key所对应的统计值，增长值由count指定。
+        如果key未设置，则使用start的值设置为初始值。
 
     .. method:: max_value(key, value)
 
-        Set the given value for the given key only if current value for the
-        same key is lower than value. If there is no current value for the
-        given key, the value is always set. 
+        如果key所对应的当前value小于参数所指定的value，则设置value。
+        如果没有key所对应的value，设置value。
 
     .. method:: min_value(key, value)
 
-        Set the given value for the given key only if current value for the
-        same key is greater than value. If there is no current value for the
-        given key, the value is always set.
+        如果key所对应的当前value大于参数所指定的value，则设置value。
+        如果没有key所对应的value，设置value。
 
     .. method:: clear_stats()
 
-        Clear all stats.
+        清除所有统计信息。
 
-    The following methods are not part of the stats collection api but instead
-    used when implementing custom stats collectors:
+    以下方法不是统计收集api的一部分，但实现自定义的统计收集器时会使用到：
 
     .. method:: open_spider(spider)
 
-        Open the given spider for stats collection.
+        打开指定spider进行统计信息收集。
 
     .. method:: close_spider(spider)
 
-        Close the given spider. After this is called, no more specific stats
-        can be accessed or collected.
+        关闭指定spider。调用后，不能访问和收集统计信息。
 
 .. _deferreds: http://twistedmatrix.com/documents/current/core/howto/defer.html
 .. _deferred: http://twistedmatrix.com/documents/current/core/howto/defer.html
