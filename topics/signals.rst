@@ -1,38 +1,35 @@
 .. _topics-signals:
 
-=======
-Signals
-=======
+================
+信号(Signals)
+================
 
-Scrapy uses signals extensively to notify when certain events occur. You can
-catch some of those signals in your Scrapy project (using an :ref:`extension
-<topics-extensions>`, for example) to perform additional tasks or extend Scrapy
-to add functionality not provided out of the box.
+Scrapy使用信号来通知事情发生。您可以在您的Scrapy项目中捕捉一些信号(使用
+:ref:`extension <topics-extensions>`)来完成额外的工作或添加额外的功能，扩展Scrapy。
 
-Even though signals provide several arguments, the handlers that catch them
-don't need to accept all of them - the signal dispatching mechanism will only
-deliver the arguments that the handler receives.
+虽然信号提供了一些参数，不过处理函数不用接收所有的参数 -
+信号分发机制(singal dispatching mechanism)仅仅提供处理器(handler)接受的参数。
 
-You can connect to signals (or send your own) through the
-:ref:`topics-api-signals`.
+您可以通过
+:ref:`topics-api-signals` 来连接(或发送您自己的)信号。
 
-Deferred signal handlers
-========================
+延迟的信号处理器(Deferred signal handlers)
+=================================================
 
-Some signals support returning `Twisted deferreds`_ from their handlers, see
-the :ref:`topics-signals-ref` below to know which ones.
+有些信号支持从处理器返回 `Twisted deferreds`_ ，参考下边的
+:ref:`topics-signals-ref` 来了解哪些支持。
 
 .. _Twisted deferreds: http://twistedmatrix.com/documents/current/core/howto/defer.html
 
 .. _topics-signals-ref:
 
-Built-in signals reference
-==========================
+内置信号参考手册(Built-in signals reference)
+=============================================
 
 .. module:: scrapy.signals
    :synopsis: Signals definitions
 
-Here's the list of Scrapy built-in signals and their meaning.
+以下给出Scrapy内置信号的列表及其意义。
 
 engine_started
 --------------
@@ -40,13 +37,12 @@ engine_started
 .. signal:: engine_started
 .. function:: engine_started()
 
-    Sent when the Scrapy engine has started crawling.
+    当Scrapy引擎启动爬取时发送该信号。
 
-    This signal supports returning deferreds from their handlers.
+    该信号支持返回deferreds。
 
-.. note:: This signal may be fired *after* the :signal:`spider_opened` signal,
-    depending on how the spider was started. So **don't** rely on this signal
-    getting fired before :signal:`spider_opened`.
+.. note:: 该信号可能会在信号 :signal:`spider_opened` 之后被发送，取决于spider的启动方式。
+    所以不要 **依赖** 该信号会比 :signal:`spider-opened` 更早被发送。
 
 engine_stopped
 --------------
@@ -54,10 +50,9 @@ engine_stopped
 .. signal:: engine_stopped
 .. function:: engine_stopped()
 
-    Sent when the Scrapy engine is stopped (for example, when a crawling
-    process has finished).
+    当Scrapy引擎停止时发送该信号(例如，爬取结束)。
 
-    This signal supports returning deferreds from their handlers.
+    该信号支持返回deferreds。
 
 item_scraped
 ------------
@@ -65,19 +60,19 @@ item_scraped
 .. signal:: item_scraped
 .. function:: item_scraped(item, spider, response)
 
-    Sent when an item has been scraped, after it has passed all the
-    :ref:`topics-item-pipeline` stages (without being dropped).
+    当item被爬取，并通过所有
+    :ref:`topics-item-pipeline` 后(没有被丢弃(dropped)，发送该信号。
 
-    This signal supports returning deferreds from their handlers.
+    该信号支持返回deferreds。
 
-    :param item: the item scraped
-    :type item: :class:`~scrapy.item.Item` object
+    :param item: 爬取到的item
+    :type item: :class:`~scrapy.item.Item` 对象
 
-    :param spider: the spider which scraped the item
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: 爬取item的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
-    :param response: the response from where the item was scraped
-    :type response: :class:`~scrapy.http.Response` object
+    :param response: 提取item的response
+    :type response: :class:`~scrapy.http.Response` 对象
 
 item_dropped
 ------------
@@ -85,21 +80,20 @@ item_dropped
 .. signal:: item_dropped
 .. function:: item_dropped(item, spider, exception)
 
-    Sent after an item has been dropped from the :ref:`topics-item-pipeline`
-    when some stage raised a :exc:`~scrapy.exceptions.DropItem` exception.
+    当item通过 :ref:`topics-item-pipeline` ，有些pipeline抛出
+    :exc:`~scrapy.exceptions.DropItem` 异常，丢弃item时，该信号被发送。
 
-    This signal supports returning deferreds from their handlers.
+    该信号支持返回deferreds。
 
-    :param item: the item dropped from the :ref:`topics-item-pipeline`
-    :type item: :class:`~scrapy.item.Item` object
+    :param item: :ref:`topics-item-pipeline` 丢弃的item
+    :type item: :class:`~scrapy.item.Item` 对象
 
-    :param spider: the spider which scraped the item
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: 爬取item的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
-    :param exception: the exception (which must be a
-        :exc:`~scrapy.exceptions.DropItem` subclass) which caused the item
-        to be dropped
-    :type exception: :exc:`~scrapy.exceptions.DropItem` exception
+    :param exception: 导致item被丢弃的异常(必须是
+        :exc:`~scrapy.exceptions.DropItem` 的子类)
+    :type exception: :exc:`~scrapy.exceptions.DropItem` 异常
 
 spider_closed
 -------------
@@ -107,21 +101,18 @@ spider_closed
 .. signal:: spider_closed
 .. function:: spider_closed(spider, reason)
 
-    Sent after a spider has been closed. This can be used to release per-spider
-    resources reserved on :signal:`spider_opened`.
+    当某个spider被关闭时，该信号被发送。该信号可以用来释放每个spider在
+    :signal:`spider_opened` 时占用的资源。
 
-    This signal supports returning deferreds from their handlers.
+    该信号支持返回deferreds。
 
-    :param spider: the spider which has been closed
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: 关闭的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
-    :param reason: a string which describes the reason why the spider was closed. If
-        it was closed because the spider has completed scraping, the reason
-        is ``'finished'``. Otherwise, if the spider was manually closed by
-        calling the ``close_spider`` engine method, then the reason is the one
-        passed in the ``reason`` argument of that method (which defaults to
-        ``'cancelled'``). If the engine was shutdown (for example, by hitting
-        Ctrl-C to stop it) the reason will be ``'shutdown'``.
+    :param reason: 描述spider被关闭的原因的字符串。如果spider是由于完成爬取而被关闭，则其为
+        ``'finished'`` 。否则，如果spider是被引擎的 ``close_spider`` 方法所关闭，则其为调用该方法时传入的
+        ``reason`` 参数(默认为 ``'cancelled'``)。如果引擎被关闭(例如，
+        输入Ctrl-C)，则其为 ``'shutdown'`` 。
     :type reason: str
 
 spider_opened
@@ -130,14 +121,12 @@ spider_opened
 .. signal:: spider_opened
 .. function:: spider_opened(spider)
 
-    Sent after a spider has been opened for crawling. This is typically used to
-    reserve per-spider resources, but can be used for any task that needs to be
-    performed when a spider is opened.
+    当spider开始爬取时发送该信号。该信号一般用来分配spider的资源，不过其也能做任何事。
 
-    This signal supports returning deferreds from their handlers.
+    该信号支持返回deferreds。
 
-    :param spider: the spider which has been opened
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: 开启的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
 spider_idle
 -----------
@@ -145,23 +134,21 @@ spider_idle
 .. signal:: spider_idle
 .. function:: spider_idle(spider)
 
-    Sent when a spider has gone idle, which means the spider has no further:
+    当spider进入空闲(idle)状态时该信号被发送。空闲意味着:
 
-        * requests waiting to be downloaded
-        * requests scheduled
-        * items being processed in the item pipeline
+        * requests正在等待被下载
+        * requests被调度
+        * items正在item pipeline中被处理
 
-    If the idle state persists after all handlers of this signal have finished,
-    the engine starts closing the spider. After the spider has finished
-    closing, the :signal:`spider_closed` signal is sent.
+    当该信号的所有处理器(handler)被调用后，如果spider仍然保持空闲状态，
+    引擎将会关闭该spider。当spider被关闭后， :signal:`spider_closed` 信号将被发送。
 
-    You can, for example, schedule some requests in your :signal:`spider_idle`
-    handler to prevent the spider from being closed.
+    您可以，比如，在 :signal:`spider_idle` 处理器中调度某些请求来避免spider被关闭。
 
-    This signal does not support returning deferreds from their handlers.
+    该信号 **不支持** 返回deferreds。
 
-    :param spider: the spider which has gone idle
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: 空闲的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
 spider_error
 ------------
@@ -169,16 +156,16 @@ spider_error
 .. signal:: spider_error
 .. function:: spider_error(failure, response, spider)
 
-    Sent when a spider callback generates an error (ie. raises an exception).
+    当spider的回调函数产生错误时(例如，抛出异常)，该信号被发送。
 
-    :param failure: the exception raised as a Twisted `Failure`_ object
-    :type failure: `Failure`_ object
+    :param failure: 以Twisted `Failure`_ 对象抛出的异常
+    :type failure: `Failure`_ 对象
 
-    :param response: the response being processed when the exception was raised
-    :type response: :class:`~scrapy.http.Response` object
+    :param response: 当异常被抛出时被处理的response
+    :type response: :class:`~scrapy.http.Response` 对象
 
-    :param spider: the spider which raised the exception
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: 抛出异常的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
 
 response_received
@@ -187,19 +174,18 @@ response_received
 .. signal:: response_received
 .. function:: response_received(response, request, spider)
 
-    Sent when the engine receives a new :class:`~scrapy.http.Response` from the
-    downloader.
+    当引擎从downloader获取到一个新的 :class:`~scrapy.http.Response` 时发送该信号。
 
-    This signal does not support returning deferreds from their handlers.
+    该信号 **不支持** 返回deferreds。
 
-    :param response: the response received
-    :type response: :class:`~scrapy.http.Response` object
+    :param response: 接收到的response
+    :type response: :class:`~scrapy.http.Response` 对象
 
-    :param request: the request that generated the response
-    :type request: :class:`~scrapy.http.Request` object
+    :param request: 生成response的request
+    :type request: :class:`~scrapy.http.Request` 对象
 
-    :param spider: the spider for which the response is intended
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: response所对应的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
 response_downloaded
 -------------------
@@ -207,17 +193,17 @@ response_downloaded
 .. signal:: response_downloaded
 .. function:: response_downloaded(response, request, spider)
 
-    Sent by the downloader right after a ``HTTPResponse`` is downloaded.
+    当一个 ``HTTPResponse`` 被下载时，由downloader发送该信号。
 
-    This signal does not support returning deferreds from their handlers.
+    该信号 **不支持** 返回deferreds。
 
-    :param response: the response downloaded
-    :type response: :class:`~scrapy.http.Response` object
+    :param response: 下载的response
+    :type response: :class:`~scrapy.http.Response` 对象
 
-    :param request: the request that generated the response
-    :type request: :class:`~scrapy.http.Request` object
+    :param request: 生成response的request
+    :type request: :class:`~scrapy.http.Request` 对象
 
-    :param spider: the spider for which the response is intended
-    :type spider: :class:`~scrapy.spider.Spider` object
+    :param spider: response所对应的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
 .. _Failure: http://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html
