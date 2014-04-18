@@ -50,6 +50,7 @@ Scrapy中文文档翻译计划
   * topics/download-middleware.rst
   * topics/spider-middleware.rst
   * topics/signals.rst
+  * topics/exceptions.rst
 
 
 加入我们吧
