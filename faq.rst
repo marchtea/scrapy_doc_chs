@@ -56,7 +56,7 @@ Scrapy是否从Django中"剽窃"了X呢？
 Scrapy支持HTTP代理么？
 -----------------------------------
 
-是的。H(从Scrapy 0.8开始)通过HTTP代理下载中间件对HTTP代理提供了支持。参考
+是的。(从Scrapy 0.8开始)通过HTTP代理下载中间件对HTTP代理提供了支持。参考
 :class:`~scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware`.
 
 如何爬取属性在不同页面的item呢？
