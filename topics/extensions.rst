@@ -1,15 +1,15 @@
 .. _topics-extensions:
 
-==========
+===================
 扩展(Extensions)
-==========
+===================
 
 扩展框架提供一个机制，使得你能将自定义功能绑定到Scrapy。
 
 扩展只是正常的类，它们在Scrapy启动时被实例化、初始化。
 
 扩展设置(Extension settings)
-==================
+============================
 
 扩展使用 :ref:`Scrapy settings <topics-settings>` 管理它们的设置，这跟其他Scrapy代码一样。
 
@@ -46,16 +46,16 @@
 (它包括了所有内置且开启的扩展)定义所有扩展的顺序都相同 (``500``)。
 
 可用的(Available)、开启的(enabled)和禁用的(disabled)的扩展
-==========================================
+==============================================================
 
 并不是所有可用的扩展都会被开启。一些扩展经常依赖一些特别的配置。
 比如，HTTP Cache扩展是可用的但默认是禁用的，除非 :setting:`HTTPCACHE_ENABLED` 配置项设置了。
 
 禁用扩展(Disabling an extension)
-======================
+===================================
 
-为了禁用一个默认开启的扩展(比如，包含在 :setting:`EXTENSIONS_BASE`中的扩展)，
-需要将其顺序(order)设置为``None``。比如::
+为了禁用一个默认开启的扩展(比如，包含在 :setting:`EXTENSIONS_BASE` 中的扩展)，
+需要将其顺序(order)设置为 ``None`` 。比如::
 
     EXTENSIONS = {
         'scrapy.contrib.corestats.CoreStats': None,
@@ -76,7 +76,7 @@ Scrapy扩展(包括middlewares和pipelines)的主要入口是 ``from_crawler`` �
 扩展会被禁用。否则，扩展会被开启。
 
 扩展例子(Sample extension)
-----------------
+------------------------------
 
 这里我们将实现一个简单的扩展来演示上面描述到的概念。
 该扩展会在以下事件时记录一条日志：
@@ -88,7 +88,7 @@ Scrapy扩展(包括middlewares和pipelines)的主要入口是 ``from_crawler`` �
 该扩展通过 ``MYEXT_ENABLED`` 配置项开启，
 items的数量通过 ``MYEXT_ITEMCOUNT`` 配置项设置。
 
-以下是扩展的代码：
+以下是扩展的代码::
 
     from scrapy import signals
     from scrapy.exceptions import NotConfigured
@@ -154,7 +154,7 @@ items的数量通过 ``MYEXT_ITEMCOUNT`` 配置项设置。
 --------------------------
 
 记录统计扩展(Log Stats extension)
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: scrapy.contrib.logstats
    :synopsis: 记录基本统计(stats)
@@ -164,7 +164,7 @@ items的数量通过 ``MYEXT_ITEMCOUNT`` 配置项设置。
 记录基本的统计信息，比如爬取的页面和条目(items)。
 
 核心统计扩展(Core Stats extension)
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: scrapy.contrib.corestats
    :synopsis: Core stats collection
@@ -183,7 +183,7 @@ Web service 扩展
 
 .. class:: scrapy.webservice.WebService
 
-参考 `topics-webservice`。
+参考 :ref:`webservice <topics-webservice>` 。
 
 .. _topics-extensions-ref-telnetconsole:
 
@@ -204,7 +204,7 @@ telnet控制台通过 :setting:`TELNETCONSOLE_ENABLED` 配置项开启，
 .. _topics-extensions-ref-memusage:
 
 内存使用扩展(Memory usage extension)
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: scrapy.contrib.memusage
    :synopsis: Memory usage extension
@@ -230,7 +230,7 @@ Scrapy进程退出。
 * :setting:`MEMUSAGE_REPORT`
 
 内存调试扩展(Memory debugger extension)
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: scrapy.contrib.memdebug
    :synopsis: Memory debugger extension
@@ -336,7 +336,7 @@ Stack trace dump extension
 当收到 `SIGQUIT` 或 `SIGUSR2` 信号，spider进程的信息将会被存储下来。
 存储的信息包括：
 
-1. engin状态(使用``scrapy.utils.engin.get_engine_status()``)
+1. engine状态(使用 ``scrapy.utils.engin.get_engine_status()``)
 2. 所有存活的引用(live references)(参考 :ref:`topics-leaks-trackrefs`)
 3. 所有线程的堆栈信息
 
@@ -345,10 +345,10 @@ Stack trace dump extension
 该扩展只在POSIX兼容的平台上可运行（比如不能在Windows运行），
 因为 `SIGQUIT` 和 `SIGUSR2` 信号在Windows上不可用。
 
-至少有两种方式可以向Scrapy发送 `SIGQUIT`_ 信号：
-ess)::
+至少有两种方式可以向Scrapy发送 `SIGQUIT`_ 信号:
+
 1. 在Scrapy进程运行时通过按Ctrl-\ (仅Linux可行?)
-2. 运行该命令(假设``<pid>``是Scrapy运行的进程)::
+2. 运行该命令(``<pid>`` 是Scrapy运行的进程)::
 
     kill -QUIT <pid>
 
@@ -356,14 +356,14 @@ ess)::
 .. _SIGQUIT: http://en.wikipedia.org/wiki/SIGQUIT
 
 调试扩展(Debugger extension)
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. class:: scrapy.contrib.debug.Debugger
 
-当收到 `SIGUSR2` 信号，将会在Scrapy进程中调用 `Python debugger`_。
+当收到 `SIGUSR2` 信号，将会在Scrapy进程中调用 `Python debugger`_ 。
 debugger退出后，Scrapy进程继续正常运行。
 
-更多信息参考 `Debugging in Python`。
+更多信息参考 `Debugging in Python` 。
 
 该扩展只在POSIX兼容平台上工作(比如不能再Windows上运行)。
 
