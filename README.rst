@@ -52,6 +52,7 @@ Scrapy中文文档翻译计划
   * topics/signals.rst
   * topics/exceptions.rst
   * topics/extensions.rst
+  * topics/settings.rst
 
 
 加入我们吧

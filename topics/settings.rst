@@ -4,89 +4,78 @@
 Settings
 ========
 
-The Scrapy settings allows you to customize the behaviour of all Scrapy
-components, including the core, extensions, pipelines and spiders themselves.
+Scrapy设定(settings)提供了定制Scrapy组件的方法。您可以控制包括核心(core)，插件(extension)，pipeline及spider组件。
 
-The infrastructure of the settings provides a global namespace of key-value mappings
-that the code can use to pull configuration values from. The settings can be
-populated through different mechanisms, which are described below.
+设定为代码提供了提取以key-value映射的配置值的的全局命名空间(namespace)。
+设定可以通过下面介绍的多种机制进行设置。
 
-The settings are also the mechanism for selecting the currently active Scrapy
-project (in case you have many).
+设定(settings)同时也是选择当前激活的Scrapy项目的方法(如果您有多个的话)。
 
-For a list of available built-in settings see: :ref:`topics-settings-ref`.
+内置设定列表请参考 :ref:`topics-settings-ref` 。
 
-Designating the settings
-========================
+指定设定(Designating the settings)
+====================================
 
-When you use Scrapy, you have to tell it which settings you're using. You can
-do this by using an environment variable, ``SCRAPY_SETTINGS_MODULE``.
+当您使用Scrapy时，您需要声明您所使用的设定。这可以通过使用环境变量: 
+``SCRAPY_SETTINGS_MODULE`` 来完成。
 
-The value of ``SCRAPY_SETTINGS_MODULE`` should be in Python path syntax, e.g.
-``myproject.settings``. Note that the settings module should be on the
-Python `import search path`_.
+``SCRAPY_SETTINGS_MODULE`` 必须以Python路径语法编写, 如 ``myproject.settings`` 。
+注意，设定模块应该在 Python `import search path`_ 中。
 
 .. _import search path: http://docs.python.org/2/tutorial/modules.html#the-module-search-path
 
-Populating the settings
-=======================
+获取设定值(Populating the settings)
+====================================
 
-Settings can be populated using different mechanisms, each of which having a
-different precedence. Here is the list of them in decreasing order of
-precedence:
+设定可以通过多种方式设置，每个方式具有不同的优先级。
+下面以优先级降序的方式给出方式列表:
 
- 1. Global overrides (most precedence)
- 2. Project settings module
- 3. Default settings per-command
- 4. Default global settings (less precedence)
+ 1. 全局覆盖(Global overrides) (最高优先级)
+ 2. 项目设定模块(Project settings module)
+ 3. 命令默认设定模块(Default settings per-command)
+ 4. 全局默认设定(Default global settings) (最低优先级)
 
-These mechanisms are described in more detail below.
+这些机制将在下面详细介绍。
 
-1. Global overrides
--------------------
+1. 全局覆盖(Global overrides)
+--------------------------------
 
-Global overrides are the ones that take most precedence, and are usually
-populated by command-line options. You can also override one (or more) settings
-from command line using the ``-s`` (or ``--set``) command line option.
+全局覆盖具有最高的优先级，一般由command-line选项传入。
+您可以使用command line 选项 ``-s`` (或 ``--set``) 来覆盖一个(或更多)选项。
 
-For more information see the :attr:`~scrapy.settings.Settings.overrides`
-Settings attribute.
+更多内容请参考设定的 :attr:`~scrapy.settings.Settings.overrides` 属性。
 
 .. highlight:: sh
 
-Example::
+样例::
 
     scrapy crawl myspider -s LOG_FILE=scrapy.log
 
-2. Project settings module
---------------------------
+2. 项目设定模块(Project settings module)
+------------------------------------------
 
-The project settings module is the standard configuration file for your Scrapy
-project.  It's where most of your custom settings will be populated. For
-example:: ``myproject.settings``.
+项目设定模块是您Scrapy项目的标准配置文件。
+其是获取大多数设定的方法。例如:: ``myproject.settings`` 。
 
-3. Default settings per-command
--------------------------------
+3. 命令默认设定(Default settings per-command)
+-----------------------------------------------
 
-Each :doc:`Scrapy tool </topics/commands>` command can have its own default
-settings, which override the global default settings. Those custom command
-settings are specified in the ``default_settings`` attribute of the command
-class.
+每个 :doc:`Scrapy tool </topics/commands>` 命令拥有其默认设定，并覆盖了全局默认的设定。
+这些设定在命令的类的 ``default_settings`` 属性中指定。
 
-4. Default global settings
---------------------------
+4. 默认全局设定(Default global settings)
+-------------------------------------------
 
-The global defaults are located in the ``scrapy.settings.default_settings``
-module and documented in the :ref:`topics-settings-ref` section.
+全局默认设定存储在 ``scrapy.settings.default_settings`` 模块，
+并在 :ref:`topics-settings-ref` 部分有所记录。
 
-How to access settings
-======================
+如何访问设定(How to access settings)
+=====================================
 
 .. highlight:: python
 
-Settings can be accessed through the :attr:`scrapy.crawler.Crawler.settings`
-attribute of the Crawler that is passed to ``from_crawler`` method in
-extensions and middlewares::
+设定可以通过Crawler的 :attr:`scrapy.crawler.Crawler.settings`
+属性进行访问。其由插件及中间件的 ``from_crawler`` 方法所传入::
 
     class MyExtension(object):
 
@@ -96,85 +85,80 @@ extensions and middlewares::
             if settings['LOG_ENABLED']:
                 print "log is enabled!"
 
-In other words, settings can be accessed like a dict, but it's usually preferred
-to extract the setting in the format you need it to avoid type errors. In order
-to do that you'll have to use one of the methods provided the
-:class:`~scrapy.settings.Settings` API.
+另外，设定可以以字典方式进行访问。不过为了避免类型错误，
+通常更希望返回需要的格式。
+这可以通过 :class:`~scrapy.settings.Settings` API
+提供的方法来实现。
 
-Rationale for setting names
+设定名字的命名规则
 ===========================
 
-Setting names are usually prefixed with the component that they configure. For
-example, proper setting names for a fictional robots.txt extension would be
-``ROBOTSTXT_ENABLED``, ``ROBOTSTXT_OBEY``, ``ROBOTSTXT_CACHEDIR``, etc.
+设定的名字以要配置的组件作为前缀。
+例如，一个robots.txt插件的合适设定应该为
+``ROBOTSTXT_ENABLED``, ``ROBOTSTXT_OBEY``, ``ROBOTSTXT_CACHEDIR`` 等等。
 
 
 .. _topics-settings-ref:
 
-Built-in settings reference
-===========================
+内置设定参考手册
+=================================================
 
-Here's a list of all available Scrapy settings, in alphabetical order, along
-with their default values and the scope where they apply.
+这里以字母序给出了所有可用的Scrapy设定及其默认值和应用范围。
 
-The scope, where available, shows where the setting is being used, if it's tied
-to any particular component. In that case the module of that component will be
-shown, typically an extension, middleware or pipeline. It also means that the
-component must be enabled in order for the setting to have any effect.
+如果给出可用范围，并绑定了特定的组件，则说明了该设定使用的地方。
+这种情况下将给出该组件的模块，通常来说是插件、中间件或pipeline。
+同时也意味着为了使设定生效，该组件必须被启用。
 
 .. setting:: AWS_ACCESS_KEY_ID
 
 AWS_ACCESS_KEY_ID
 -----------------
 
-Default: ``None``
+默认: ``None``
 
-The AWS access key used by code that requires access to `Amazon Web services`_,
-such as the :ref:`S3 feed storage backend <topics-feed-storage-s3>`.
+连接 `Amazon Web services`_ 的AWS access key。
+:ref:`S3 feed storage backend <topics-feed-storage-s3>` 中使用.
 
 .. setting:: AWS_SECRET_ACCESS_KEY
 
 AWS_SECRET_ACCESS_KEY
 ---------------------
 
-Default: ``None``
+默认: ``None``
 
-The AWS secret key used by code that requires access to `Amazon Web services`_,
-such as the :ref:`S3 feed storage backend <topics-feed-storage-s3>`.
+连接 `Amazon Web services`_  的AWS secret key。
+:ref:`S3 feed storage backend <topics-feed-storage-s3>` 中使用。
 
 .. setting:: BOT_NAME
 
 BOT_NAME
 --------
 
-Default: ``'scrapybot'``
+默认: ``'scrapybot'``
 
-The name of the bot implemented by this Scrapy project (also known as the
-project name). This will be used to construct the User-Agent by default, and
-also for logging.
+Scrapy项目实现的bot的名字(也未项目名称)。
+这将用来构造默认 User-Agent，同时也用来log。
 
-It's automatically populated with your project name when you create your
-project with the :command:`startproject` command.
+当您使用 :command:`startproject` 命令创建项目时其也被自动赋值。
 
 .. setting:: CONCURRENT_ITEMS
 
 CONCURRENT_ITEMS
 ----------------
 
-Default: ``100``
+默认: ``100``
 
-Maximum number of concurrent items (per response) to process in parallel in the
-Item Processor (also known as the :ref:`Item Pipeline <topics-item-pipeline>`).
+Item Processor(即 :ref:`Item Pipeline <topics-item-pipeline>`)
+同时处理(每个response的)item的最大值。
 
 .. setting:: CONCURRENT_REQUESTS
 
 CONCURRENT_REQUESTS
 -------------------
 
-Default: ``16``
+默认: ``16``
 
-The maximum number of concurrent (ie. simultaneous) requests that will be
-performed by the Scrapy downloader.
+Scrapy downloader 并发请求(concurrent requests)的最大值。
 
 
 .. setting:: CONCURRENT_REQUESTS_PER_DOMAIN
@@ -182,27 +166,23 @@ performed by the Scrapy downloader.
 CONCURRENT_REQUESTS_PER_DOMAIN
 ------------------------------
 
-Default: ``8``
+默认: ``8``
 
-The maximum number of concurrent (ie. simultaneous) requests that will be
-performed to any single domain.
+对单个网站进行并发请求的最大值。
 
 .. setting:: CONCURRENT_REQUESTS_PER_IP
 
 CONCURRENT_REQUESTS_PER_IP
 --------------------------
 
-Default: ``0``
+默认: ``0``
 
-The maximum number of concurrent (ie. simultaneous) requests that will be
-performed to any single IP. If non-zero, the
-:setting:`CONCURRENT_REQUESTS_PER_DOMAIN` setting is ignored, and this one is
-used instead. In other words, concurrency limits will be applied per IP, not
-per domain.
+对单个IP进行并发请求的最大值。如果非0，则忽略
+:setting:`CONCURRENT_REQUESTS_PER_DOMAIN`  设定， 使用该设定。
+也就是说，并发限制将针对IP，而不是网站。
 
-This setting also affects :setting:`DOWNLOAD_DELAY`:
-if :setting:`CONCURRENT_REQUESTS_PER_IP` is non-zero, download delay is
-enforced per IP, not per domain.
+该设定也影响 :setting:`DOWNLOAD_DELAY`:
+如果 :setting:`CONCURRENT_REQUESTS_PER_IP` 非0，下载延迟应用在IP而不是网站上。
 
 
 .. setting:: DEFAULT_ITEM_CLASS
@@ -210,91 +190,89 @@ enforced per IP, not per domain.
 DEFAULT_ITEM_CLASS
 ------------------
 
-Default: ``'scrapy.item.Item'``
+默认: ``'scrapy.item.Item'``
 
-The default class that will be used for instantiating items in the :ref:`the
-Scrapy shell <topics-shell>`.
+:ref:`the Scrapy shell <topics-shell>` 中实例化item使用的默认类。
 
 .. setting:: DEFAULT_REQUEST_HEADERS
 
 DEFAULT_REQUEST_HEADERS
 -----------------------
 
-Default::
+默认::
 
     {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en',
     }
 
-The default headers used for Scrapy HTTP Requests. They're populated in the
-:class:`~scrapy.contrib.downloadermiddleware.defaultheaders.DefaultHeadersMiddleware`.
+Scrapy HTTP Request使用的默认header。由
+:class:`~scrapy.contrib.downloadermiddleware.defaultheaders.DefaultHeadersMiddleware`
+产生。
 
 .. setting:: DEPTH_LIMIT
 
 DEPTH_LIMIT
 -----------
 
-Default: ``0``
+默认: ``0``
 
-The maximum depth that will be allowed to crawl for any site. If zero, no limit
-will be imposed.
+爬取网站最大允许的深度(depth)值。如果为0，则没有限制。
 
 .. setting:: DEPTH_PRIORITY
 
 DEPTH_PRIORITY
 --------------
 
-Default: ``0``
+默认: ``0``
 
-An integer that is used to adjust the request priority based on its depth.
+整数值。用于根据深度调整request优先级。
 
-If zero, no priority adjustment is made from depth.
+如果为0，则不根据深度进行优先级调整。
 
 .. setting:: DEPTH_STATS
 
 DEPTH_STATS
 -----------
 
-Default: ``True``
+默认: ``True``
 
-Whether to collect maximum depth stats.
+是否收集最大深度数据。
 
 .. setting:: DEPTH_STATS_VERBOSE
 
 DEPTH_STATS_VERBOSE
 -------------------
 
-Default: ``False``
+默认: ``False``
 
-Whether to collect verbose depth stats. If this is enabled, the number of
-requests for each depth is collected in the stats.
+是否收集详细的深度数据。如果启用，每个深度的请求数将会被收集在数据中。
 
 .. setting:: DNSCACHE_ENABLED
 
 DNSCACHE_ENABLED
 ----------------
 
-Default: ``True``
+默认: ``True``
 
-Whether to enable DNS in-memory cache.
+是否启用DNS内存缓存(DNS in-memory cache)。
 
 .. setting:: DOWNLOADER_MIDDLEWARES
 
 DOWNLOADER_MIDDLEWARES
 ----------------------
 
-Default:: ``{}``
+默认:: ``{}``
 
-A dict containing the downloader middlewares enabled in your project, and their
-orders. For more info see :ref:`topics-downloader-middleware-setting`.
+保存项目中启用的下载中间件及其顺序的字典。
+更多内容请查看 :ref:`topics-downloader-middleware-setting` 。
 
 .. setting:: DOWNLOADER_MIDDLEWARES_BASE
 
 DOWNLOADER_MIDDLEWARES_BASE
 ---------------------------
 
-Default::
+默认::
 
     {
         'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware': 100,
@@ -313,9 +291,9 @@ Default::
         'scrapy.contrib.downloadermiddleware.httpcache.HttpCacheMiddleware': 900,
     }
 
-A dict containing the downloader middlewares enabled by default in Scrapy. You
-should never modify this setting in your project, modify
-:setting:`DOWNLOADER_MIDDLEWARES` instead.  For more info see
+包含Scrapy默认启用的下载中间件的字典。
+永远不要在项目中修改该设定，而是修改
+:setting:`DOWNLOADER_MIDDLEWARES` 。更多内容请参考
 :ref:`topics-downloader-middleware-setting`.
 
 .. setting:: DOWNLOADER_STATS
@@ -323,51 +301,46 @@ should never modify this setting in your project, modify
 DOWNLOADER_STATS
 ----------------
 
-Default: ``True``
+默认: ``True``
 
-Whether to enable downloader stats collection.
+是否收集下载器数据。
 
 .. setting:: DOWNLOAD_DELAY
 
 DOWNLOAD_DELAY
 --------------
 
-Default: ``0``
+默认: ``0``
 
-The amount of time (in secs) that the downloader should wait before downloading
-consecutive pages from the same website. This can be used to throttle the
-crawling speed to avoid hitting servers too hard. Decimal numbers are
-supported.  Example::
+下载器在下载同一个网站下一个页面前需要等待的时间。该选项可以用来限制爬取速度，
+减轻服务器压力。同时也支持小数::
 
     DOWNLOAD_DELAY = 0.25    # 250 ms of delay
 
-This setting is also affected by the :setting:`RANDOMIZE_DOWNLOAD_DELAY`
-setting (which is enabled by default). By default, Scrapy doesn't wait a fixed
-amount of time between requests, but uses a random interval between 0.5 and 1.5
-* :setting:`DOWNLOAD_DELAY`.
+该设定影响(默认启用的) :setting:`RANDOMIZE_DOWNLOAD_DELAY` 设定。
+默认情况下，Scrapy在两个请求间不等待一个固定的值，
+而是使用0.5到1.5之间的一个随机值 * :setting:`DOWNLOAD_DELAY` 的结果作为等待间隔。
 
-When :setting:`CONCURRENT_REQUESTS_PER_IP` is non-zero, delays are enforced
-per ip address instead of per domain.
+当 :setting:`CONCURRENT_REQUESTS_PER_IP` 非0时，延迟针对的是每个ip而不是网站。
 
-You can also change this setting per spider by setting ``download_delay``
-spider attribute.
+另外您可以通过spider的 ``download_delay`` 属性为每个spider设置该设定。
 
 .. setting:: DOWNLOAD_HANDLERS
 
 DOWNLOAD_HANDLERS
 -----------------
 
-Default: ``{}``
+默认: ``{}``
 
-A dict containing the request downloader handlers enabled in your project.
-See `DOWNLOAD_HANDLERS_BASE` for example format.
+保存项目中启用的下载处理器(request downloader handler)的字典。
+例子请查看 `DOWNLOAD_HANDLERS_BASE` 。
 
 .. setting:: DOWNLOAD_HANDLERS_BASE
 
 DOWNLOAD_HANDLERS_BASE
 ----------------------
 
-Default::
+默认::
 
     {
         'file': 'scrapy.core.downloader.handlers.file.FileDownloadHandler',
@@ -376,14 +349,13 @@ Default::
         's3': 'scrapy.core.downloader.handlers.s3.S3DownloadHandler',
     }
 
-A dict containing the request download handlers enabled by default in Scrapy.
-You should never modify this setting in your project, modify
-:setting:`DOWNLOAD_HANDLERS` instead.
+保存项目中默认启用的下载处理器(request downloader handler)的字典。
+永远不要在项目中修改该设定，而是修改
+:setting:`DOWNLOADER_HANDLERS` 。
 
-If you want to disable any of the above download handlers you must define them
-in your project's :setting:`DOWNLOAD_HANDLERS` setting and assign `None`
-as their value.  For example, if you want to disable the file download
-handler::
+如果需要关闭上面的下载处理器，您必须在项目中的 
+:setting:`DOWNLOAD_HANDLERS` 设定中设置该处理器，并为其赋值为 `None` 。
+例如，关闭文件下载处理器::
 
     DOWNLOAD_HANDLERS = {
         'file': None,
@@ -394,58 +366,57 @@ handler::
 DOWNLOAD_TIMEOUT
 ----------------
 
-Default: ``180``
+默认: ``180``
 
-The amount of time (in secs) that the downloader will wait before timing out.
+下载器超时时间(单位: 秒)。
 
 .. setting:: DUPEFILTER_CLASS
 
 DUPEFILTER_CLASS
 ----------------
 
-Default: ``'scrapy.dupefilter.RFPDupeFilter'``
+默认: ``'scrapy.dupefilter.RFPDupeFilter'``
 
-The class used to detect and filter duplicate requests.
+用于检测过滤重复请求的类。
 
-The default (``RFPDupeFilter``) filters based on request fingerprint using
-the ``scrapy.utils.request.request_fingerprint`` function.
+默认的 (``RFPDupeFilter``) 过滤器基于
+``scrapy.utils.request.request_fingerprint`` 函数生成的请求指纹。
 
 .. setting:: DUPEFILTER_DEBUG
 
 DUPEFILTER_DEBUG
 ----------------
 
-Default: ``False``
+默认: ``False``
 
-By default, ``RFPDupeFilter`` only logs the first duplicate request.
-Setting :setting:`DUPEFILTER_DEBUG` to ``True`` will make it log all duplicate requests.
+默认情况下， ``RFPDupeFilter`` 只记录第一次重复的请求。
+设置 :setting:`DUPEFILTER_DEBUG` 为 ``True`` 将会使其记录所有重复的requests。
 
 .. setting:: EDITOR
 
 EDITOR
 ------
 
-Default: `depends on the environment`
+默认: `depends on the environment`
 
-The editor to use for editing spiders with the :command:`edit` command. It
-defaults to the ``EDITOR`` environment variable, if set. Otherwise, it defaults
-to ``vi`` (on Unix systems) or the IDLE editor (on Windows).
+执行 :command:`edit` 命令编辑spider时使用的编辑器。
+其默认为 ``EDITOR`` 环境变量。如果该变量未设置，其默认为 ``vi`` (Unix系统) 或者 IDLE编辑器(Windows)。
 
 .. setting:: EXTENSIONS
 
 EXTENSIONS
 ----------
 
-Default:: ``{}``
+默认:: ``{}``
 
-A dict containing the extensions enabled in your project, and their orders.
+保存项目中启用的插件及其顺序的字典。
 
 .. setting:: EXTENSIONS_BASE
 
 EXTENSIONS_BASE
 ---------------
 
-Default::
+默认::
 
     {
         'scrapy.contrib.corestats.CoreStats': 0,
@@ -460,28 +431,25 @@ Default::
         'scrapy.contrib.throttle.AutoThrottle': 0,
     }
 
-The list of available extensions. Keep in mind that some of them need to
-be enabled through a setting. By default, this setting contains all stable
-built-in extensions.
+可用的插件列表。需要注意，有些插件需要通过设定来启用。默认情况下，
+该设定包含所有稳定(stable)的内置插件。
 
-For more information See the :ref:`extensions user guide  <topics-extensions>`
-and the :ref:`list of available extensions <topics-extensions-ref>`.
+更多内容请参考 :ref:`extensions用户手册 <topics-extensions>` 及
+:ref:`所有可用的插件 <topics-extensions-ref>` 。
 
 .. setting:: ITEM_PIPELINES
 
 ITEM_PIPELINES
 --------------
 
-Default: ``{}``
+默认: ``{}``
 
-A dict containing the item pipelines to use, and their orders. The dict is
-empty by default order values are arbitrary but it's customary to define them
-in the 0-1000 range.
+保存项目中启用的pipeline及其顺序的字典。该字典默认为空，值(value)任意。
+不过值(value)习惯设定在0-1000范围内。
 
-Lists are supported in :setting:`ITEM_PIPELINES` for backwards compatibility,
-but they are deprecated.
+为了兼容性，:setting:`ITEM_PIPELINES` 支持列表，不过已经被废弃了。
 
-Example::
+样例::
 
    ITEM_PIPELINES = {
        'mybot.pipelines.validate.ValidateMyItem': 300,
@@ -493,80 +461,78 @@ Example::
 ITEM_PIPELINES_BASE
 -------------------
 
-Default: ``{}``
+默认: ``{}``
 
-A dict containing the pipelines enabled by default in Scrapy. You should never
-modify this setting in your project, modify :setting:`ITEM_PIPELINES` instead.
+保存项目中默认启用的pipeline的字典。
+永远不要在项目中修改该设定，而是修改
+:setting:`ITEM_PIPELINES` 。
 
 .. setting:: LOG_ENABLED
 
 LOG_ENABLED
 -----------
 
-Default: ``True``
+默认: ``True``
 
-Whether to enable logging.
+是否启用logging。
 
 .. setting:: LOG_ENCODING
 
 LOG_ENCODING
 ------------
 
-Default: ``'utf-8'``
+默认: ``'utf-8'``
 
-The encoding to use for logging.
+logging使用的编码。
 
 .. setting:: LOG_FILE
 
 LOG_FILE
 --------
 
-Default: ``None``
+默认: ``None``
 
-File name to use for logging output. If None, standard error will be used.
+logging输出的文件名。如果为None，则使用标准错误输出(standard error)。
 
 .. setting:: LOG_LEVEL
 
 LOG_LEVEL
 ---------
 
-Default: ``'DEBUG'``
+默认: ``'DEBUG'``
 
-Minimum level to log. Available levels are: CRITICAL, ERROR, WARNING,
-INFO, DEBUG. For more info see :ref:`topics-logging`.
+log的最低级别。可选的级别有: CRITICAL、
+ERROR、WARNING、INFO、DEBUG。更多内容请查看 :ref:`topics-logging` 。
 
 .. setting:: LOG_STDOUT
 
 LOG_STDOUT
 ----------
 
-Default: ``False``
+默认: ``False``
 
-If ``True``, all standard output (and error) of your process will be redirected
-to the log. For example if you ``print 'hello'`` it will appear in the Scrapy
-log.
+如果为 ``True`` ，进程所有的标准输出(及错误)将会被重定向到log中。例如，
+执行 ``print 'hello'`` ，其将会在Scrapy log中显示。
 
 .. setting:: MEMDEBUG_ENABLED
 
 MEMDEBUG_ENABLED
 ----------------
 
-Default: ``False``
+默认: ``False``
 
-Whether to enable memory debugging.
+是否启用内存调试(memory debugging)。
 
 .. setting:: MEMDEBUG_NOTIFY
 
 MEMDEBUG_NOTIFY
 ---------------
 
-Default: ``[]``
+默认: ``[]``
 
-When memory debugging is enabled a memory report will be sent to the specified
-addresses if this setting is not empty, otherwise the report will be written to
-the log.
+如果该设置不为空，当启用内存调试时将会发送一份内存报告到指定的地址；否则该报告将写到log中。
 
-Example::
+样例::
 
     MEMDEBUG_NOTIFY = ['user@example.com']
 
@@ -575,13 +541,12 @@ Example::
 MEMUSAGE_ENABLED
 ----------------
 
-Default: ``False``
+默认: ``False``
 
 Scope: ``scrapy.contrib.memusage``
 
-Whether to enable the memory usage extension that will shutdown the Scrapy
-process when it exceeds a memory limit, and also notify by email when that
-happened.
+是否启用内存使用插件。当Scrapy进程占用的内存超出限制时，该插件将会关闭Scrapy进程，
+同时发送email进行通知。
 
 See :ref:`topics-extensions-ref-memusage`.
 
@@ -590,12 +555,12 @@ See :ref:`topics-extensions-ref-memusage`.
 MEMUSAGE_LIMIT_MB
 -----------------
 
-Default: ``0``
+默认: ``0``
 
 Scope: ``scrapy.contrib.memusage``
 
-The maximum amount of memory to allow (in megabytes) before shutting down
-Scrapy  (if MEMUSAGE_ENABLED is True). If zero, no check will be performed.
+在关闭Scrapy之前所允许的最大内存数(单位: MB)(如果 MEMUSAGE_ENABLED为True)。
+如果为0，将不做限制。
 
 See :ref:`topics-extensions-ref-memusage`.
 
@@ -604,11 +569,11 @@ See :ref:`topics-extensions-ref-memusage`.
 MEMUSAGE_NOTIFY_MAIL
 --------------------
 
-Default: ``False``
+默认: ``False``
 
 Scope: ``scrapy.contrib.memusage``
 
-A list of emails to notify if the memory limit has been reached.
+达到内存限制时通知的email列表。
 
 Example::
 
@@ -621,36 +586,36 @@ See :ref:`topics-extensions-ref-memusage`.
 MEMUSAGE_REPORT
 ---------------
 
-Default: ``False``
+默认: ``False``
 
 Scope: ``scrapy.contrib.memusage``
 
-Whether to send a memory usage report after each spider has been closed.
+每个spider被关闭时是否发送内存使用报告。
 
-See :ref:`topics-extensions-ref-memusage`.
+查看 :ref:`topics-extensions-ref-memusage`.
 
 .. setting:: MEMUSAGE_WARNING_MB
 
 MEMUSAGE_WARNING_MB
 -------------------
 
-Default: ``0``
+默认: ``0``
 
 Scope: ``scrapy.contrib.memusage``
 
-The maximum amount of memory to allow (in megabytes) before sending a warning
-email notifying about it. If zero, no warning will be produced.
+在发送警告email前所允许的最大内存数(单位: MB)(如果 MEMUSAGE_ENABLED为True)。
+如果为0，将不发送警告。
 
 .. setting:: NEWSPIDER_MODULE
 
 NEWSPIDER_MODULE
 ----------------
 
-Default: ``''``
+默认: ``''``
 
-Module where to create new spiders using the :command:`genspider` command.
+使用 :command:`genspider` 命令创建新spider的模块。
 
-Example::
+样例::
 
     NEWSPIDER_MODULE = 'mybot.spiders_dev'
 
@@ -659,19 +624,18 @@ Example::
 RANDOMIZE_DOWNLOAD_DELAY
 ------------------------
 
-Default: ``True``
+默认: ``True``
 
-If enabled, Scrapy will wait a random amount of time (between 0.5 and 1.5
-* :setting:`DOWNLOAD_DELAY`) while fetching requests from the same
-website.
+如果启用，当从相同的网站获取数据时，Scrapy将会等待一个随机的值
+(0.5到1.5之间的一个随机值 * :setting:`DOWNLOAD_DELAY`)。
 
-This randomization decreases the chance of the crawler being detected (and
-subsequently blocked) by sites which analyze requests looking for statistically
-significant similarities in the time between their requests.
+该随机值降低了crawler被检测到(接着被block)的机会。某些网站会分析请求，
+查找请求之间时间的相似性。
 
-The randomization policy is the same used by `wget`_ ``--random-wait`` option.
+随机的策略与 `wget`_ ``--random-wait`` 选项的策略相同。
 
-If :setting:`DOWNLOAD_DELAY` is zero (default) this option has no effect.
+若 :setting:`DOWNLOAD_DELAY` 为0(默认值)，该选项将不起作用。
+
 
 .. _wget: http://www.gnu.org/software/wget/manual/wget.html
 
@@ -680,69 +644,69 @@ If :setting:`DOWNLOAD_DELAY` is zero (default) this option has no effect.
 REDIRECT_MAX_TIMES
 ------------------
 
-Default: ``20``
+默认: ``20``
 
-Defines the maximum times a request can be redirected. After this maximum the
-request's response is returned as is. We used Firefox default value for the
-same task.
+定义request允许重定向的最大次数。超过该限制后该request直接返回获取到的结果。
+对某些任务我们使用Firefox默认值。
 
 .. setting:: REDIRECT_MAX_METAREFRESH_DELAY
 
 REDIRECT_MAX_METAREFRESH_DELAY
 ------------------------------
 
-Default: ``100``
+默认: ``100``
 
-Some sites use meta-refresh for redirecting to a session expired page, so we
-restrict automatic redirection to a maximum delay (in seconds)
+有些网站使用 meta-refresh 重定向到session超时页面，
+因此我们限制自动重定向到最大延迟(秒)。
+=>有点不肯定:
 
 .. setting:: REDIRECT_PRIORITY_ADJUST
 
 REDIRECT_PRIORITY_ADJUST
 ------------------------
 
-Default: ``+2``
+默认: ``+2``
 
-Adjust redirect request priority relative to original request.
-A negative priority adjust means more priority.
+修改重定向请求相对于原始请求的优先级。
+负数意味着更多优先级。
 
 .. setting:: ROBOTSTXT_OBEY
 
 ROBOTSTXT_OBEY
 --------------
 
-Default: ``False``
+默认: ``False``
 
 Scope: ``scrapy.contrib.downloadermiddleware.robotstxt``
 
-If enabled, Scrapy will respect robots.txt policies. For more information see
-:ref:`topics-dlmw-robots`
+如果启用，Scrapy将会尊重 robots.txt策略。更多内容请查看
+:ref:`topics-dlmw-robots` 。
 
 .. setting:: SCHEDULER
 
 SCHEDULER
 ---------
 
-Default: ``'scrapy.core.scheduler.Scheduler'``
+默认: ``'scrapy.core.scheduler.Scheduler'``
 
-The scheduler to use for crawling.
+用于爬取的调度器。
 
 .. setting:: SPIDER_CONTRACTS
 
 SPIDER_CONTRACTS
 ----------------
 
-Default:: ``{}``
+默认:: ``{}``
 
-A dict containing the scrapy contracts enabled in your project, used for
-testing spiders. For more info see :ref:`topics-contracts`.
+保存项目中启用用于测试spider的scrapy contract及其顺序的字典。
+更多内容请参考 :ref:`topics-contracts` 。
 
 .. setting:: SPIDER_CONTRACTS_BASE
 
 SPIDER_CONTRACTS_BASE
 ---------------------
 
-Default::
+默认::
 
     {
         'scrapy.contracts.default.UrlContract' : 1,
@@ -750,26 +714,27 @@ Default::
         'scrapy.contracts.default.ScrapesContract': 3,
     }
 
-A dict containing the scrapy contracts enabled by default in Scrapy. You should
-never modify this setting in your project, modify :setting:`SPIDER_CONTRACTS`
-instead. For more info see :ref:`topics-contracts`.
+保存项目中默认启用的scrapy contract的字典。
+永远不要在项目中修改该设定，而是修改
+:setting:`SPIDER_CONTRACTS` 。更多内容请参考
+:ref:`topics-contracts` 。
 
 .. setting:: SPIDER_MIDDLEWARES
 
 SPIDER_MIDDLEWARES
 ------------------
 
-Default:: ``{}``
+默认:: ``{}``
 
-A dict containing the spider middlewares enabled in your project, and their
-orders. For more info see :ref:`topics-spider-middleware-setting`.
+保存项目中启用的下载中间件及其顺序的字典。
+更多内容请参考 :ref:`topics-spider-middleware-setting` 。
 
 .. setting:: SPIDER_MIDDLEWARES_BASE
 
 SPIDER_MIDDLEWARES_BASE
 -----------------------
 
-Default::
+默认::
 
     {
         'scrapy.contrib.spidermiddleware.httperror.HttpErrorMiddleware': 50,
@@ -779,9 +744,9 @@ Default::
         'scrapy.contrib.spidermiddleware.depth.DepthMiddleware': 900,
     }
 
-A dict containing the spider middlewares enabled by default in Scrapy. You
-should never modify this setting in your project, modify
-:setting:`SPIDER_MIDDLEWARES` instead. For more info see
+保存项目中默认启用的spider中间件的字典。
+永远不要在项目中修改该设定，而是修改
+:setting:`SPIDER_MIDDLEWARES` 。更多内容请参考
 :ref:`topics-spider-middleware-setting`.
 
 .. setting:: SPIDER_MODULES
@@ -789,11 +754,11 @@ should never modify this setting in your project, modify
 SPIDER_MODULES
 --------------
 
-Default: ``[]``
+默认: ``[]``
 
-A list of modules where Scrapy will look for spiders.
+Scrapy搜索spider的模块列表。
 
-Example::
+样例::
 
     SPIDER_MODULES = ['mybot.spiders_prod', 'mybot.spiders_dev']
 
@@ -802,9 +767,9 @@ Example::
 STATS_CLASS
 -----------
 
-Default: ``'scrapy.statscol.MemoryStatsCollector'``
+默认: ``'scrapy.statscol.MemoryStatsCollector'``
 
-The class to use for collecting stats, who must implement the
+收集数据的类。该类必须实现
 :ref:`topics-api-stats`.
 
 .. setting:: STATS_DUMP
@@ -812,74 +777,71 @@ The class to use for collecting stats, who must implement the
 STATS_DUMP
 ----------
 
-Default: ``True``
+默认: ``True``
 
-Dump the :ref:`Scrapy stats <topics-stats>` (to the Scrapy log) once the spider
-finishes.
+当spider结束时dump :ref:`Scrapy状态数据 <topics-stats>` (到Scrapy log中)。
 
-For more info see: :ref:`topics-stats`.
+更多内容请查看 :ref:`topics-stats` 。
 
 .. setting:: STATSMAILER_RCPTS
 
 STATSMAILER_RCPTS
 -----------------
 
-Default: ``[]`` (empty list)
+默认: ``[]`` (空list)
 
-Send Scrapy stats after spiders finish scraping. See
-:class:`~scrapy.contrib.statsmailer.StatsMailer` for more info.
+spider完成爬取后发送Scrapy数据。更多内容请查看
+:class:`~scrapy.contrib.statsmailer.StatsMailer` 。
 
 .. setting:: TELNETCONSOLE_ENABLED
 
 TELNETCONSOLE_ENABLED
 ---------------------
 
-Default: ``True``
+默认: ``True``
 
-A boolean which specifies if the :ref:`telnet console <topics-telnetconsole>`
-will be enabled (provided its extension is also enabled).
+表明 :ref:`telnet 终端 <topics-telnetconsole>` (及其插件)是否启用的布尔值。
 
 .. setting:: TELNETCONSOLE_PORT
 
 TELNETCONSOLE_PORT
 ------------------
 
-Default: ``[6023, 6073]``
+默认: ``[6023, 6073]``
 
-The port range to use for the telnet console. If set to ``None`` or ``0``, a
-dynamically assigned port is used. For more info see
-:ref:`topics-telnetconsole`.
+telnet终端使用的端口范围。如果设置为 ``None`` 或 ``0`` ，
+则使用动态分配的端口。更多内容请查看
+:ref:`topics-telnetconsole` 。
 
 .. setting:: TEMPLATES_DIR
 
 TEMPLATES_DIR
 -------------
 
-Default: ``templates`` dir inside scrapy module
+默认:  scrapy模块内部的 ``templates``
 
-The directory where to look for templates when creating new projects with
-:command:`startproject` command.
+使用 :command:`startproject` 命令创建项目时查找模板的目录。
 
 .. setting:: URLLENGTH_LIMIT
 
 URLLENGTH_LIMIT
 ---------------
 
-Default: ``2083``
+默认: ``2083``
 
 Scope: ``contrib.spidermiddleware.urllength``
 
-The maximum URL length to allow for crawled URLs. For more information about
-the default value for this setting see: http://www.boutell.com/newfaq/misc/urllength.html
+爬取URL的最大长度。更多关于该设定的默认值信息请查看: 
+http://www.boutell.com/newfaq/misc/urllength.html
 
 .. setting:: USER_AGENT
 
 USER_AGENT
 ----------
 
-Default: ``"Scrapy/VERSION (+http://scrapy.org)"``
+默认: ``"Scrapy/VERSION (+http://scrapy.org)"``
 
-The default User-Agent to use when crawling, unless overridden.
+爬取的默认User-Agent，除非被覆盖。
 
 .. _Amazon web services: http://aws.amazon.com/
 .. _breadth-first order: http://en.wikipedia.org/wiki/Breadth-first_search
