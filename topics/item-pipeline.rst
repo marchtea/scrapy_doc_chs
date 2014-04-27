@@ -19,7 +19,7 @@ Item Pipeline
 编写你自己的item pipeline
 ==============================
 
-编写你自己的item pipeline很简单，每个item pipiline组件是一个独立的Python类，同时必须实现以下方法：
+编写你自己的item pipeline很简单，每个item pipiline组件是一个独立的Python类，同时必须实现以下方法::
 
 .. method:: process_item(item, spider)
 
@@ -31,7 +31,7 @@ Item Pipeline
    :type spider: :class:`~scrapy.spider.Spider` 对象
 
 
-此外,他们也可以实现以下方法:
+此外,他们也可以实现以下方法::
 
 .. method:: open_spider(spider)
 
