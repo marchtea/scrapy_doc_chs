@@ -10,10 +10,10 @@ Item Pipeline
 
 以下是item pipeline的一些典型应用：
 
-1.清理HTML数据
-2.验证爬取的数据(检查item包含某些字段)
-3.查重(并丢弃)
-4.将爬取结果保存到数据库中
+* 清理HTML数据
+* 验证爬取的数据(检查item包含某些字段)
+* 查重(并丢弃)
+* 将爬取结果保存到数据库中
 
 
 编写你自己的item pipeline
@@ -23,7 +23,10 @@ Item Pipeline
 
 .. method:: process_item(item, spider)
 
-   每个item pipeline组件都需要调用该方法，这个方法必须返回一个:class:`~scrapy.item.Item`(或任何继承类)对象，或是抛出:exc:`~scrapy.exceptions.DropItem`异常，被丢弃的item将不会被之后的pipeline组件所处理。
+   每个item pipeline组件都需要调用该方法，这个方法必须返回一个 :class:`~scrapy.item.Item` (或任何继承类)对象，
+   或是抛出 :exc:`~scrapy.exceptions.DropItem` 异常，被丢弃的item将不会被之后的pipeline组件所处理。
+
+
    :param item: 被爬取的item
    :type item: :class:`~scrapy.item.Item` 对象
 
@@ -54,7 +57,7 @@ Item pipeline 样例
 验证价格，同时丢弃没有价格的item
 --------------------------------------------------
 
-让我们来看一下以下这个假设的pipeline，它为那些不含税(``price_excludes_vat``属性)的item调整了``price``属性，同时丢弃了那些没有价格的item::
+让我们来看一下以下这个假设的pipeline，它为那些不含税(``price_excludes_vat`` 属性)的item调整了 ``price`` 属性，同时丢弃了那些没有价格的item::
 
     from scrapy.exceptions import DropItem
 
@@ -74,7 +77,7 @@ Item pipeline 样例
 将item写入JSON文件
 --------------------------
 
-以下pipeline将所有(从所有spider中)爬取到的item，存储到一个独立地``items.jl``文件，每行包含一个序列化为JSON格式的item::
+以下pipeline将所有(从所有spider中)爬取到的item，存储到一个独立地 ``items.jl`` 文件，每行包含一个序列化为JSON格式的item::
 
    import json
 
@@ -88,7 +91,8 @@ Item pipeline 样例
            self.file.write(line)
            return item
 
-.. note:: JsonWriterPipeline的目的只是为了介绍怎样编写item pipeline，如果你想要将所有爬取的item都保存到同一个JSON文件，你需要使用:ref:`Feed exports <topics-feed-exports>`。
+.. note:: JsonWriterPipeline的目的只是为了介绍怎样编写item pipeline，如果你想要将所有爬取的item都保存到同一个JSON文件，
+    你需要使用 :ref:`Feed exports <topics-feed-exports>` 。
 
 
 去重
@@ -114,7 +118,7 @@ Item pipeline 样例
 启用一个Item Pipeline组件
 =====================================
 
-为了启用一个Item Pipeline组件，你必须将它的类添加到:setting:`ITEM_PIPELINES`配置，就像下面这个例子::
+为了启用一个Item Pipeline组件，你必须将它的类添加到 :setting:`ITEM_PIPELINES` 配置，就像下面这个例子::
 
    ITEM_PIPELINES = {
        'myproject.pipelines.PricePipeline': 300,
