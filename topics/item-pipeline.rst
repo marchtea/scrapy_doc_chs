@@ -4,67 +4,57 @@
 Item Pipeline
 =============
 
-After an item has been scraped by a spider, it is sent to the Item Pipeline
-which process it through several components that are executed sequentially.
+当Item在Spider中被收集之后，它将会被传递到Item Pipeline，一些组件会按照一定的顺序执行对Item的处理。
 
-Each item pipeline component (sometimes referred as just "Item Pipeline") is a
-Python class that implements a simple method. They receive an Item and perform
-an action over it, also deciding if the Item should continue through the
-pipeline or be dropped and no longer processed.
+每个item pipeline组件(有时称之为“Item Pipeline”)是实现了简单方法的Python类。他们接收到Item并通过它执行一些行为，同时也决定此Item是否继续通过pipeline，或是被丢弃而不再进行处理。
 
-Typical use for item pipelines are:
+以下是item pipeline的一些典型应用：
 
-* cleansing HTML data
-* validating scraped data (checking that the items contain certain fields)
-* checking for duplicates (and dropping them)
-* storing the scraped item in a database
+1.清理HTML数据
+2.验证爬取的数据(检查item包含某些字段)
+3.查重(并丢弃)
+4.将爬取结果保存到数据库中
 
 
-Writing your own item pipeline
+编写你自己的item pipeline
 ==============================
 
-Writing your own item pipeline is easy. Each item pipeline component is a
-single Python class that must implement the following method:
+编写你自己的item pipeline很简单，每个item pipiline组件是一个独立的Python类，同时必须实现以下方法:
 
 .. method:: process_item(item, spider)
 
-   This method is called for every item pipeline component and must either return
-   a :class:`~scrapy.item.Item` (or any descendant class) object or raise a
-   :exc:`~scrapy.exceptions.DropItem` exception. Dropped items are no longer
-   processed by further pipeline components.
+   每个item pipeline组件都需要调用该方法，这个方法必须返回一个:class:`~scrapy.item.Item`(或任何继承类)对象，或是抛出:exc:`~scrapy.exceptions.DropItem`异常，被丢弃的item将不会被之后的pipeline组件所处理。
+   :param item: 被爬取的item
+   :type item: :class:`~scrapy.item.Item` 对象
 
-   :param item: the item scraped
-   :type item: :class:`~scrapy.item.Item` object
+   :param spider: 爬取该item的spider
+   :type spider: :class:`~scrapy.spider.Spider` 对象
 
-   :param spider: the spider which scraped the item
-   :type spider: :class:`~scrapy.spider.Spider` object
 
-Additionally, they may also implement the following methods:
+此外,他们也可以实现以下方法:
 
 .. method:: open_spider(spider)
 
-   This method is called when the spider is opened.
+   当spider被开启时，这个方法被调用。
 
-   :param spider: the spider which was opened
-   :type spider: :class:`~scrapy.spider.Spider` object
+   :param spider: 被开启的spider
+   :type spider: :class:`~scrapy.spider.Spider` 对象
 
 .. method:: close_spider(spider)
 
-   This method is called when the spider is closed.
+   当spider被关闭时，这个方法被调用
 
-   :param spider: the spider which was closed
-   :type spider: :class:`~scrapy.spider.Spider` object
+   :param spider: 被关闭的spider
+   :type spider: :class:`~scrapy.spider.Spider` 对象
 
 
-Item pipeline example
+Item pipeline 样例
 =====================
 
-Price validation and dropping items with no prices
+验证价格，同时丢弃没有价格的item
 --------------------------------------------------
 
-Let's take a look at the following hypothetical pipeline that adjusts the ``price``
-attribute for those items that do not include VAT (``price_excludes_vat``
-attribute), and drops those items which don't contain a price::
+让我们来看一下以下这个假设的pipeline，它为那些不含税(``price_excludes_vat``属性)的item调整了``price``属性，同时丢弃了那些没有价格的item::
 
     from scrapy.exceptions import DropItem
 
@@ -81,12 +71,10 @@ attribute), and drops those items which don't contain a price::
                 raise DropItem("Missing price in %s" % item)
 
 
-Write items to a JSON file
+将item写入JSON文件
 --------------------------
 
-The following pipeline stores all scraped items (from all spiders) into a a
-single ``items.jl`` file, containing one item per line serialized in JSON
-format::
+以下pipeline将所有(从所有spider中)爬取到的item，存储到一个独立地``items.jl``文件，每行包含一个序列化为JSON格式的item::
 
    import json
 
@@ -100,16 +88,13 @@ format::
            self.file.write(line)
            return item
 
-.. note:: The purpose of JsonWriterPipeline is just to introduce how to write
-   item pipelines. If you really want to store all scraped items into a JSON
-   file you should use the :ref:`Feed exports <topics-feed-exports>`.
+.. note:: JsonWriterPipeline的目的只是为了介绍怎样编写item pipeline，如果你想要将所有爬取的item都保存到同一个JSON文件，你需要使用:ref:`Feed exports <topics-feed-exports>`。
 
-Duplicates filter
+
+去重
 -----------------
 
-A filter that looks for duplicate items, and drops those items that were
-already processed. Let say that our items have an unique id, but our spider
-returns multiples items with the same id::
+一个用于去重的过滤器，丢弃那些已经被处理过的item。让我们假设我们的item有一个唯一的id，但是我们spider返回的多个item中包含有相同的id::
 
 
     from scrapy.exceptions import DropItem
@@ -126,19 +111,15 @@ returns multiples items with the same id::
                 self.ids_seen.add(item['id'])
                 return item
 
-
-Activating an Item Pipeline component
+启用一个Item Pipeline组件
 =====================================
 
-To activate an Item Pipeline component you must add its class to the
-:setting:`ITEM_PIPELINES` setting, like in the following example::
+为了启用一个Item Pipeline组件，你必须将它的类添加到:setting:`ITEM_PIPELINES`配置，就像下面这个例子::
 
    ITEM_PIPELINES = {
        'myproject.pipelines.PricePipeline': 300,
        'myproject.pipelines.JsonWriterPipeline': 800,
    }
 
-The integer values you assign to classes in this setting determine the
-order they run in- items go through pipelines from order number low to
-high. It's customary to define these numbers in the 0-1000 range.
+分配给每个类的整型值，确定了他们运行的顺序，item按数字从低到高的顺序，通过pipeline，通常将这些数字定义在0-1000范围内。
 
