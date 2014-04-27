@@ -53,6 +53,7 @@ Scrapy中文文档翻译计划
   * topics/exceptions.rst
   * topics/extensions.rst
   * topics/settings.rst
+  * topics/item-pipeline.rst
 
 
 加入我们吧
