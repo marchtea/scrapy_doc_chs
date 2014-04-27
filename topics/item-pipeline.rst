@@ -10,8 +10,6 @@ Item Pipeline
 
 以下是item pipeline的一些典型应用：
 
-
-
 *清理HTML数据
 *验证爬取的数据(检查item包含某些字段)
 *查重(并丢弃)
@@ -34,7 +32,6 @@ Item Pipeline
 
 
 此外,他们也可以实现以下方法:
-Additionally, they may also implement the following methods:
 
 .. method:: open_spider(spider)
 
