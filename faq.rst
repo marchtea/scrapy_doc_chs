@@ -18,7 +18,7 @@ Scrapy提供了内置的机制来提取数据(叫做
 `jinja2`_ 与 `Django`_ 相比。
 
 .. _BeautifulSoup: http://www.crummy.com/software/BeautifulSoup/
-.. _lxml: http://codespeak.net/lxml/
+.. _lxml: http://lxml.de/
 .. _jinja2: http://jinja.pocoo.org/2/
 .. _Django: http://www.djangoproject.com
 

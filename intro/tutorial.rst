@@ -63,20 +63,20 @@ Scrapy由 Python_ 编写。如果您刚接触并且好奇这门语言的特性�
 `Item` 是保存爬取到的数据的容器；其使用方法和python字典类似，
 并且提供了额外保护机制来避免拼写错误导致的未定义字段错误。
 
-类似在ORM中做的一样，您可以通过创建一个 :class:`scrapy.item.Item` 类，
-并且定义类型为 `scrapy.item.Field` 的类属性来定义一个Item。
+类似在ORM中做的一样，您可以通过创建一个 :class:`scrapy.Item <scrapy.item.Item>` 类，
+并且定义类型为 :class:`scrapy.Field <scrapy.item.Field>` 的类属性来定义一个Item。
 (如果不了解ORM, 不用担心，您会发现这个步骤非常简单)
 
 首先根据需要从dmoz.org获取到的数据对item进行建模。
 我们需要从dmoz中获取名字，url，以及网站的描述。
 对此，在item中定义相应的字段。编辑 ``tutorial`` 目录中的 ``items.py`` 文件::
 
-    from scrapy.item import Item, Field
+    import scrapy
 
-    class DmozItem(Item):
-        title = Field()
-        link = Field()
-        desc = Field()
+    class DmozItem(scrapy.Item):
+        title = scrapy.Field()
+        link = scrapy.Field()
+        desc = scrapy.Field()
 
 一开始这看起来可能有点复杂，但是通过定义item，
 您可以很方便的使用Scrapy的其他方法。而这些方法需要知道您的item的定义。
@@ -89,7 +89,7 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 其包含了一个用于下载的初始URL，如何跟进网页中的链接以及如何分析页面中的内容，
 提取生成 :ref:`item <topics-items>` 的方法。
 
-为了创建一个Spider，您必须继承 :class:`scrapy.spider.Spider` 类，
+为了创建一个Spider，您必须继承 :class:`scrapy.Spider <scrapy.spider.Spider>` 类，
 且定义以下三个属性:
 
 * :attr:`~scrapy.spider.Spider.name`: 用于区别Spider。
@@ -106,9 +106,9 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 
 以下为我们的第一个Spider代码，保存在 ``tutorial/spiders`` 目录下的 ``dmoz_spider.py`` 文件中::
 
-   from scrapy.spider import Spider
+   import scrapy
 
-   class DmozSpider(Spider):
+   class DmozSpider(scrapy.Spider):
        name = "dmoz"
        allowed_domains = ["dmoz.org"]
        start_urls = [
@@ -118,7 +118,8 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 
        def parse(self, response):
            filename = response.url.split("/")[-2]
-           open(filename, 'wb').write(response.body)
+           with open(filename, 'wb') as f:
+               f.write(response.body)
 
 爬取
 --------
@@ -148,7 +149,7 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 刚才发生了什么？
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Scrapy为Spider的 ``start_urls`` 属性中的每个URL创建了 :class:`scrapy.http.Request` 对象，并将 ``parse`` 方法作为回调函数(callback)赋值给了Request。
+Scrapy为Spider的 ``start_urls`` 属性中的每个URL创建了 :class:`scrapy.Request <scrapy.http.Request>` 对象，并将 ``parse`` 方法作为回调函数(callback)赋值给了Request。
 
 Request对象经过调度，执行生成 :class:`scrapy.http.Response` 对象并送回给spider :meth:`~scrapy.spider.Spider.parse` 方法。
 
@@ -178,8 +179,8 @@ Selectors选择器简介
 上边仅仅是几个简单的XPath例子，XPath实际上要比这远远强大的多。
 如果您想了解的更多，我们推荐 `这篇XPath教程 <http://www.w3schools.com/XPath/default.asp>`_ 。
 
-Scrapy提供了 :class:`~scrapy.selector.Selector` 类来配合使用XPath。
-您可以使用 :class:`~scrapy.http.HtmlResponse` 或者 :class:`~scrapy.http.XmlResponse` 作为第一个参数来初始化 :class:`~scrapy.selector.Selector` 。
+为了配合XPath，Scrapy除了提供了 :class:`~scrapy.selector.Selector`
+之外，还提供了方法来避免每次从response中提取数据时生成selector的麻烦。
 
 Selector有四个基本的方法(点击相应的方法可以看到详细的API文档):
 
@@ -215,7 +216,6 @@ shell的输出类似::
     [s]   item       {}
     [s]   request    <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
     [s]   response   <200 http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
-    [s]   sel        <Selector xpath=None data=u'<html>\r\n<head>\r\n<meta http-equiv="Conten'>
     [s]   settings   <CrawlerSettings module=None>
     [s]   spider     <Spider 'default' at 0x3cebf50>
     [s] Useful shortcuts:
@@ -226,23 +226,29 @@ shell的输出类似::
     In [1]:
 
 当shell载入后，您将得到一个包含response数据的本地 ``response`` 变量。输入 ``response.body`` 将输出response的包体， 输出 ``response.header`` 可以看到response的包头。
+
+更为重要的是，当输入 ``response.selector`` 时，
+您将获取到一个可以用于查询返回数据的selector(选择器)，
+以及映射到 ``response.selector.xpath()`` 、 ``response.selector.css()`` 的
+快捷方法(shortcut): ``response.xpath()`` 和 ``response.css()`` 。
+
 同时，shell根据response提前初始化了变量 ``sel`` 。该selector根据response的类型自动选择最合适的分析规则(XML vs HTML)。
 
 让我们来试试::
 
-   In [1]: sel.xpath('//title')
+   In [1]: response.xpath('//title')
    Out[1]: [<Selector xpath='//title' data=u'<title>Open Directory - Computers: Progr'>]
 
-   In [2]: sel.xpath('//title').extract()
+   In [2]: response.xpath('//title').extract()
    Out[2]: [u'<title>Open Directory - Computers: Programming: Languages: Python: Books</title>']
 
-   In [3]: sel.xpath('//title/text()')
+   In [3]: response.xpath('//title/text()')
    Out[3]: [<Selector xpath='//title/text()' data=u'Open Directory - Computers: Programming:'>]
 
-   In [4]: sel.xpath('//title/text()').extract()
+   In [4]: response.xpath('//title/text()').extract()
    Out[4]: [u'Open Directory - Computers: Programming: Languages: Python: Books']
 
-   In [5]: sel.xpath('//title/text()').re('(\w+):')
+   In [5]: response.xpath('//title/text()').re('(\w+):')
    Out[5]: [u'Computers', u'Programming', u'Languages', u'Python']
 
 提取数据
@@ -272,11 +278,10 @@ shell的输出类似::
 
 之前提到过，每个 ``.xpath()`` 调用返回selector组成的list，因此我们可以拼接更多的 ``.xpath()`` 来进一步获取某个节点。我们将在下边使用这样的特性::
 
-   sites = sel.xpath('//ul/li')
-   for site in sites:
-       title = site.xpath('a/text()').extract()
-       link = site.xpath('a/@href').extract()
-       desc = site.xpath('text()').extract()
+   for sel in response.xpath('//ul/li')
+       title = sel.xpath('a/text()').extract()
+       link = sel.xpath('a/@href').extract()
+       desc = sel.xpath('text()').extract()
        print title, link, desc
 
 .. note::
@@ -285,10 +290,9 @@ shell的输出类似::
 
 在我们的spider中加入这段代码::
 
-   from scrapy.spider import Spider
-   from scrapy.selector import Selector
+   import scrapy
 
-   class DmozSpider(Spider):
+   class DmozSpider(scrapy.Spider):
        name = "dmoz"
        allowed_domains = ["dmoz.org"]
        start_urls = [
@@ -297,16 +301,12 @@ shell的输出类似::
        ]
 
        def parse(self, response):
-           sel = Selector(response)
-           sites = sel.xpath('//ul/li')
-           for site in sites:
-               title = site.xpath('a/text()').extract()
-               link = site.xpath('a/@href').extract()
-               desc = site.xpath('text()').extract()
+           for sel in response.xpath('//ul/li'):
+               title = sel.xpath('a/text()').extract()
+               link = sel.xpath('a/@href').extract()
+               desc = sel.xpath('text()').extract()
                print title, link, desc
 
-注意代码中是从scrapy.selector中import了Selector，并且初始化了一个Selector对象。
-接着可以使用我们在shell中操作过的XPath表达式。
 现在尝试再次爬取dmoz.org，您将看到爬取到的网站信息被成功输出::
 
    scrapy crawl dmoz
@@ -323,12 +323,11 @@ shell的输出类似::
 
 一般来说，Spider将会将爬取到的数据以 :class:`~scrapy.item.Item` 对象返回。所以为了将爬取的数据返回，我们最终的代码将是::
 
-    from scrapy.spider import Spider
-    from scrapy.selector import Selector
+    import scrapy
 
     from tutorial.items import DmozItem
 
-    class DmozSpider(Spider):
+    class DmozSpider(scrapy.Spider):
         name = "dmoz"
         allowed_domains = ["dmoz.org"]
         start_urls = [
@@ -337,16 +336,12 @@ shell的输出类似::
         ]
 
         def parse(self, response):
-            sel = Selector(response)
-            sites = sel.xpath('//ul/li')
-            items = []
-            for site in sites:
+            for sel in response.xpath('//ul/li'):
                 item = DmozItem()
-                item['title'] = site.xpath('a/text()').extract()
-                item['link'] = site.xpath('a/@href').extract()
-                item['desc'] = site.xpath('text()').extract()
-                items.append(item)
-            return items
+                item['title'] = sel.xpath('a/text()').extract()
+                item['link'] = sel.xpath('a/@href').extract()
+                item['desc'] = sel.xpath('text()').extract()
+                yield item
 
 .. note:: 您可以在 dirbot_ 项目中找到一个具有完整功能的spider。该项目可以通过 https://github.com/scrapy/dirbot 找到。
 

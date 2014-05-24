@@ -38,13 +38,13 @@ Scrapy可以助你一臂之力。
 
 我们定义的Item::
 
-    from scrapy.item import Item, Field
+    import scrapy
 
-    class TorrentItem(Item):
-        url = Field()
-        name = Field()
-        description = Field()
-        size = Field()
+    class TorrentItem(scrapy.Item):
+        url = scrapy.Field()
+        name = scrapy.Field()
+        description = scrapy.Field()
+        size = scrapy.Field()
 
 编写提取数据的Spider
 ==================================
@@ -52,7 +52,7 @@ Scrapy可以助你一臂之力。
 第二步是编写一个spider。其定义了初始URL(http://www.mininova.org/today)、
 针对后续链接的规则以及从页面中提取数据的规则。
 
-通过观察页面的内容可以发现，所有种子的URL都类似http://www.mininova.org/tor/NUMBER 。
+通过观察页面的内容可以发现，所有种子的URL都类似 ``http://www.mininova.org/tor/NUMBER`` 。
 其中， ``NUMBER`` 是一个整数。
 根据此规律，我们可以定义需要进行跟进的链接的正则表达式: ``/tor/\d+`` 。
 
@@ -122,7 +122,6 @@ Scrapy可以助你一臂之力。
 
     from scrapy.contrib.spiders import CrawlSpider, Rule
     from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
-    from scrapy.selector import Selector
 
     class MininovaSpider(CrawlSpider):
 
@@ -132,12 +131,11 @@ Scrapy可以助你一臂之力。
         rules = [Rule(SgmlLinkExtractor(allow=['/tor/\d+']), 'parse_torrent')]
 
         def parse_torrent(self, response):
-            sel = Selector(response)
             torrent = TorrentItem()
             torrent['url'] = response.url
-            torrent['name'] = sel.xpath("//h1/text()").extract()
-            torrent['description'] = sel.xpath("//div[@id='description']").extract()
-            torrent['size'] = sel.xpath("//div[@id='info-left']/p[2]/text()[2]").extract()
+            torrent['name'] = response.xpath("//h1/text()").extract()
+            torrent['description'] = response.xpath("//div[@id='description']").extract()
+            torrent['size'] = response.xpath("//div[@id='info-left']/p[2]/text()[2]").extract()
             return torrent
 
 ``TorrentItem`` 的定义在 :ref:`上面 <intro-overview-item>` 。
