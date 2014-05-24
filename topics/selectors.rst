@@ -1,16 +1,16 @@
 .. _topics-selectors:
 
 ============================
-选择器（Selectors）
+选择器(Selectors)
 ============================
 
 当抓取网页时，你做的最常见的任务是从HTML源码中提取数据。现有的一些库可以达到这个目的：
 
  * `BeautifulSoup`_ 是在程序员间非常流行的网页分析库，它基于HTML代码的结构来构造一个Python对象， 对不良标记的处理也非常合理，但它有一个缺点：慢。
 
- * `lxml`_ 是一个基于 `ElementTree`_ （不是Python标准库的一部分）的python化的XML解析库（也可以解析HTML）。
+ * `lxml`_ 是一个基于 `ElementTree`_ (不是Python标准库的一部分)的python化的XML解析库(也可以解析HTML)。
 
-Scrapy提取数据有自己的一套机制。它们被称作选择器（seletors），因为他们通过特定的 `XPath`_ 或者 `CSS`_ 表达式来“选择” HTML文件中的某个部分。
+Scrapy提取数据有自己的一套机制。它们被称作选择器(seletors)，因为他们通过特定的 `XPath`_ 或者 `CSS`_ 表达式来“选择” HTML文件中的某个部分。
 
 `XPath`_ 是一门用来在XML文件中选择节点的语言，也可以用在HTML上。 `CSS`_ 是一门将HTML文档样式化的语言。选择器由它定义，并与特定的HTML元素的样式相关连。
 
@@ -22,42 +22,52 @@ Scrapy选择器构建于 `lxml`_ 库之上，这意味着它们在速度和解�
 :ref:`Selector reference <topics-selectors-ref>`
 
 .. _BeautifulSoup: http://www.crummy.com/software/BeautifulSoup/
-.. _lxml: http://codespeak.net/lxml/
+.. _lxml: http://lxml.de/
 .. _ElementTree: http://docs.python.org/library/xml.etree.elementtree.html
 .. _cssselect: https://pypi.python.org/pypi/cssselect/
 .. _XPath: http://www.w3.org/TR/xpath
 .. _CSS: http://www.w3.org/TR/selectors
 
 
-使用选择器（selectors）
+使用选择器(selectors)
 ===================================
 
-构造选择器（selectors）
+构造选择器(selectors)
 --------------------------------------
 
 .. highlight:: python
 
-Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通过传入一个 `Response` 对象来构造，该对象作为第一个参数，其主体就是将要“选择”的内容::
+Scrapy selector是以 **文字(text)** 或 :class:`~scrapy.http.TextResponse` 构造的
+:class:`~scrapy.selector.Selector` 实例。
+其根据输入的类型自动选择最优的分析方法(XML vs HTML)::
 
-    from scrapy.spider import Spider
-    from scrapy.selector import Selector
+    >>> from scrapy.selector import Selector
+    >>> from scrapy.http import HtmlResponse
 
-    class MySpider(Spider):
-        # ...
-        def parse(self, response):
-            sel = Selector(response)
-            # Using XPath query
-            print sel.xpath('//p')
-            # Using CSS query
-            print sel.css('p')
-            # Nesting queries
-            print sel.xpath('//div[@foo="bar"]').css('span#bold')
+以文字构造::
+
+    >>> body = '<html><body><span>good</span></body></html>'
+    >>> Selector(text=body).xpath('//span/text()').extract()
+    [u'good']
+
+以response构造::
+
+    >>> response = HtmlResponse(url='http://example.com', body=body)
+    >>> Selector(response=response).xpath('//span/text()').extract()
+    [u'good']
+
+为了方便起见，response对象以 `.selector` 属性提供了一个selector，
+您可以随时使用该快捷方法::
+
+    >>> response.selector.xpath('//span/text()').extract()
+    [u'good']
+    
 
 
-使用选择器（selectors）
+使用选择器(selectors)
 -------------------------------------
 
-我们将使用 `Scrapy shell` （提供交互测试）和位于Scrapy文档服务器的一个样例页面，来解释如何使用选择器：
+我们将使用 `Scrapy shell` (提供交互测试)和位于Scrapy文档服务器的一个样例页面，来解释如何使用选择器：
 
     http://doc.scrapy.org/en/latest/_static/selectors-sample1.html
 
@@ -74,60 +84,69 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 
     scrapy shell http://doc.scrapy.org/en/latest/_static/selectors-sample1.html
 
-接着，在shell载入后，你将拥有一个名为 ``sel`` 的shell变量，它是一个实例化并可用的选择器。
+接着，当shell载入后，您将获得名为 ``response`` 的shell变量，其为响应的response，
+并且在其 ``response.selector`` 属性上绑定了一个selector。
 
 因为我们处理的是HTML，选择器将自动使用HTML语法分析。
 
 .. highlight:: python
 
-那么，通过查看 :ref:`HTML code <topics-selectors-htmlcode>` 该页面的源码，我们构建一个XPath（使用一个HTML选择器）来选择title标签内的文字::
+那么，通过查看 :ref:`HTML code <topics-selectors-htmlcode>` 该页面的源码，我们构建一个XPath来选择title标签内的文字::
 
-    >>> sel.xpath('//title/text()')
+    >>> response.selector.xpath('//title/text()')
     [<Selector (text) xpath=//title/text()>]
 
-如你所见， ``.xpath()`` 方法返回一个类
+由于在response中使用XPath、CSS查询十分普遍，因此，Scrapy提供了两个实用的快捷方式:
+``response.xpath()`` 及 ``response.css()``::
+
+    >>> response.xpath('//title/text()')
+    [<Selector (text) xpath=//title/text()>]
+    >>> response.css('title::text')
+    [<Selector (text) xpath=//title/text()>]
+
+如你所见， ``.xpath()`` 及 ``.css()`` 方法返回一个类
 :class:`~scrapy.selector.SelectorList` 的实例, 它是一个新选择器的列表。这个API可以用来快速的提取嵌套数据。
 
 为了提取真实的原文数据，你需要调用 ``.extract()`` 方法如下::
 
-    >>> sel.xpath('//title/text()').extract()
+    >>> response.xpath('//title/text()').extract()
     [u'Example website']
 
-注意CSS选择器可以使用CSS3伪元素（pseudo-elements）来选择文字或者属性节点::
+注意CSS选择器可以使用CSS3伪元素(pseudo-elements)来选择文字或者属性节点::
 
-    >>> sel.css('title::text').extract()
+    >>> response.css('title::text').extract()
     [u'Example website']
 
-现在我们将得到根URL（base URL）和一些图片链接::
+现在我们将得到根URL(base URL)和一些图片链接::
 
-    >>> sel.xpath('//base/@href').extract()
+    >>> response.xpath('//base/@href').extract()
     [u'http://example.com/']
 
-    >>> sel.css('base::attr(href)').extract()
+    >>> response.css('base::attr(href)').extract()
     [u'http://example.com/']
 
-    >>> sel.xpath('//a[contains(@href, "image")]/@href').extract()
+    >>> response.xpath('//a[contains(@href, "image")]/@href').extract()
     [u'image1.html',
      u'image2.html',
      u'image3.html',
      u'image4.html',
      u'image5.html']
 
-    >>> sel.css('a[href*=image]::attr(href)').extract()
+    >>> response.css('a[href*=image]::attr(href)').extract()
     [u'image1.html',
      u'image2.html',
      u'image3.html',
      u'image4.html',
      u'image5.html']
 
-    >>> sel.xpath('//a[contains(@href, "image")]/img/@src').extract()
+    >>> response.xpath('//a[contains(@href, "image")]/img/@src').extract()
     [u'image1_thumb.jpg',
      u'image2_thumb.jpg',
      u'image3_thumb.jpg',
      u'image4_thumb.jpg',
      u'image5_thumb.jpg']
 
-    >>> sel.css('a[href*=image] img::attr(src)').extract()
+    >>> response.css('a[href*=image] img::attr(src)').extract()
     [u'image1_thumb.jpg',
      u'image2_thumb.jpg',
      u'image3_thumb.jpg',
@@ -136,12 +155,12 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 
 .. _topics-selectors-nesting-selectors:
 
-嵌套选择器（selectors）
+嵌套选择器(selectors)
 --------------------------------------------
 
-选择器方法（ ``.xpath()`` or ``.css()`` ）返回相同类型的选择器列表，因此你也可以对这些选择器调用选择器方法。下面是一个例子::
+选择器方法( ``.xpath()`` or ``.css()`` )返回相同类型的选择器列表，因此你也可以对这些选择器调用选择器方法。下面是一个例子::
 
-    >>> links = sel.xpath('//a[contains(@href, "image")]')
+    >>> links = response.xpath('//a[contains(@href, "image")]')
     >>> links.extract()
     [u'<a href="image1.html">Name: My image 1 <br><img src="image1_thumb.jpg"></a>',
      u'<a href="image2.html">Name: My image 2 <br><img src="image2_thumb.jpg"></a>',
@@ -159,7 +178,7 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
     Link number 3 points to url [u'image4.html'] and image [u'image4_thumb.jpg']
     Link number 4 points to url [u'image5.html'] and image [u'image5_thumb.jpg']
 
-结合正则表达式使用选择器（selectors）
+结合正则表达式使用选择器(selectors)
 -------------------------------------------------------
 
 :class:`~scrapy.selector.Selector` 也有一个 ``.re()`` 方法，用来通过正则表达式来提取数据。然而，不同于使用 ``.xpath()`` 或者 ``.css()`` 方法, ``.re()`` 方法返回unicode字符串的列表。所以你无法构造嵌套式的 ``.re()`` 调用。
@@ -167,7 +186,7 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 下面是一个例子，从上面的 :ref:`HTML code
 <topics-selectors-htmlcode>` 中提取图像名字::
 
-    >>> sel.xpath('//a[contains(@href, "image")]/text()').re(r'Name:\s*(.*)')
+    >>> response.xpath('//a[contains(@href, "image")]/text()').re(r'Name:\s*(.*)')
     [u'My image 1',
      u'My image 2',
      u'My image 3',
@@ -183,22 +202,22 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 
 比如，假设你想提取在 ``<div>`` 元素中的所有 ``<p>`` 元素。首先，你将先得到所有的 ``<div>`` 元素::
 
-    >>> divs = sel.xpath('//div')
+    >>> divs = response.xpath('//div')
 
 开始时，你可能会尝试使用下面的错误的方法，因为它其实是从整篇文档中，而不仅仅是从那些 ``<div>`` 元素内部提取所有的 ``<p>`` 元素::
 
-    >>> for p in divs.xpath('//p')  # this is wrong - gets all <p> from the whole document
-    >>>     print p.extract()
+    >>> for p in divs.xpath('//p'):  # this is wrong - gets all <p> from the whole document
+    ...     print p.extract()
 
-下面是比较合适的处理方法（注意 ``.//p`` XPath的点前缀)::
+下面是比较合适的处理方法(注意 ``.//p`` XPath的点前缀)::
 
-    >>> for p in divs.xpath('.//p')  # extracts all <p> inside
-    >>>     print p.extract()
+    >>> for p in divs.xpath('.//p'):  # extracts all <p> inside
+    ...     print p.extract()
 
 另一种常见的情况将是提取所有直系 ``<p>`` 的结果::
 
-    >>> for p in divs.xpath('p')
-    >>>     print p.extract()
+    >>> for p in divs.xpath('p'):
+    ...     print p.extract()
 
 更多关于相对XPaths的细节详见XPath说明中的 `Location Paths`_ 部分。
 
@@ -210,12 +229,12 @@ Scrapy选择器是类 :class:`~scrapy.selector.Selector` 的一个实例，通�
 因建于 `lxml`_ 之上, Scrapy选择器也支持一些 `EXSLT`_ 扩展，可以在XPath表达式中使用这些预先制定的命名空间：
 
 
-======  ====================================    =======================
+======  =====================================    =======================
 前缀    命名空间                                用途
-======  ====================================    =======================
-re      http://exslt.org/regular-expressions    `正则表达式`_
-set     http://exslt.org/sets                   `集合操作`_
-======  ====================================    =======================
+======  =====================================    =======================
+re      \http://exslt.org/regular-expressions    `正则表达式`_
+set     \http://exslt.org/sets                   `集合操作`_
+======  =====================================    =======================
 
 正则表达式
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -224,6 +243,7 @@ set     http://exslt.org/sets                   `集合操作`_
 
 例如在列表中选择有"class"元素且结尾为一个数字的链接::
 
+    >>> from scrapy import Selector
     >>> doc = """
     ... <div>
     ...     <ul>
@@ -250,7 +270,7 @@ set     http://exslt.org/sets                   `集合操作`_
 
 集合操作可以方便地用于在提取文字元素前从文档树中去除一些部分。
 
-例如使用itemscopes组和对应的itemprops来提取微数据（来自http://schema.org/Product的样本内容）::
+例如使用itemscopes组和对应的itemprops来提取微数据(来自http://schema.org/Product的样本内容)::
 
     >>> doc = """
     ... <div itemscope itemtype="http://schema.org/Product">
@@ -311,6 +331,7 @@ set     http://exslt.org/sets                   `集合操作`_
     ...     print "    properties:", props.extract()
     ...     print
     ...
+
     current scope: [u'http://schema.org/Product']
         properties: [u'name', u'aggregateRating', u'offers', u'description', u'review', u'review']
 
@@ -357,9 +378,9 @@ set     http://exslt.org/sets                   `集合操作`_
 
   ``text`` 是在 ``response`` 不可用时的一个unicode字符串或utf-8编码的文字。将 ``text`` 和 ``response`` 一起使用是未定义行为。
 
-  ``type`` 定义了选择器类型，可以是 ``"html"``, ``"xml"`` or ``None`` （默认）.
+  ``type`` 定义了选择器类型，可以是 ``"html"``, ``"xml"`` or ``None`` (默认).
 
-    如果 ``type`` 是 ``None`` ，选择器会根据 ``response`` 类型（参见下面）自动选择最佳的类型，或者在和 ``text`` 一起使用时，默认为 ``"html"`` 。
+    如果 ``type`` 是 ``None`` ，选择器会根据 ``response`` 类型(参见下面)自动选择最佳的类型，或者在和 ``text`` 一起使用时，默认为 ``"html"`` 。
 
     如果 ``type`` 是 ``None`` ，并传递了一个 ``response`` ，选择器类型将从response类型中推导如下：
 
@@ -375,6 +396,11 @@ set     http://exslt.org/sets                   `集合操作`_
 
       ``query`` 是包含XPATH查询请求的字符串。
 
+      .. note::
+        
+          为了方便起见，该方法也可以通过 ``response.xpath()`` 调用
+
+
   .. method:: css(query)
 
       应用给定的CSS选择器，返回 :class:`SelectorList` 的一个实例。
@@ -382,6 +408,11 @@ set     http://exslt.org/sets                   `集合操作`_
       ``query`` 是一个包含CSS选择器的字符串。
 
       在后台，通过 `cssselect` 库和运行 ``.xpath()`` 方法，CSS查询会被转换为XPath查询。
+
+      .. note::
+        
+          为了方便起见，该方法也可以通过 ``response.css()`` 调用
+
 
   .. method:: extract()
 
@@ -449,7 +480,7 @@ SelectorList对象
 
       sel = Selector(html_response)
 
-1. 从HTML响应主体中提取所有的 ``<h1>`` 元素，返回:class:`Selector` 对象（即 :class:`SelectorList` 的一个对象）的列表::
+1. 从HTML响应主体中提取所有的 ``<h1>`` 元素，返回:class:`Selector` 对象(即 :class:`SelectorList` 的一个对象)的列表::
 
       sel.xpath("//h1")
 
@@ -461,7 +492,7 @@ SelectorList对象
 3. 在所有 ``<p>`` 标签上迭代，打印它们的类属性::
 
       for node in sel.xpath("//p"):
-      ...    print node.xpath("@class").extract()
+          print node.xpath("@class").extract()
 
 在XML响应上的选择器样例
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -470,7 +501,7 @@ SelectorList对象
 
       sel = Selector(xml_response)
 
-1. 从XML响应主体中选择所有的 ``<product>`` 元素，返回 :class:`Selector` 对象（即 :class:`SelectorList` 对象）的列表::
+1. 从XML响应主体中选择所有的 ``<product>`` 元素，返回 :class:`Selector` 对象(即 :class:`SelectorList` 对象)的列表::
 
       sel.xpath("//product")
 
@@ -492,15 +523,15 @@ SelectorList对象
 
     $ scrapy shell https://github.com/blog.atom
 
-一旦进入shell，我们可以尝试选择所有的 ``<link>`` 对象，可以看到没有结果（因为Atom XML命名空间混淆了这些节点）::
+一旦进入shell，我们可以尝试选择所有的 ``<link>`` 对象，可以看到没有结果(因为Atom XML命名空间混淆了这些节点)::
 
-    >>> sel.xpath("//link")
+    >>> response.xpath("//link")
     []
 
 但一旦我们调用 :meth:`Selector.remove_namespaces` 方法，所有的节点都可以直接通过他们的名字来访问::
 
-    >>> sel.remove_namespaces()
-    >>> sel.xpath("//link")
+    >>> response.selector.remove_namespaces()
+    >>> response.xpath("//link")
     [<Selector xpath='//link' data=u'<link xmlns="http://www.w3.org/2005/Atom'>,
      <Selector xpath='//link' data=u'<link xmlns="http://www.w3.org/2005/Atom'>,
      ...
@@ -511,4 +542,4 @@ SelectorList对象
 
 2. 会存在这样的情况，确实需要使用命名空间，但有些元素的名字与命名空间冲突。尽管这些情况非常少见。
 
-.. _Google Base XML feed: http://base.google.com/support/bin/answer.py?hl=en&answer=59461
+.. _Google Base XML feed: https://support.google.com/merchants/answer/160589?hl=en&ref_topic=2473799

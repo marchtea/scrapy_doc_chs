@@ -30,10 +30,11 @@ DjangoItem
 
 定义一个基本的 :class:`DjangoItem`::
 
-   from scrapy.contrib.djangoitem import DjangoItem 
+   from scrapy.contrib.djangoitem import DjangoItem
 
    class PersonItem(DjangoItem):
        django_model = Person
+
        
 :class:`DjangoItem` 的使用方法和 :class:`~scrapy.item.Item` 类似::
 
@@ -64,9 +65,12 @@ DjangoItem
 
 正如之前所说的，我们可以在item中加入字段::
 
+   import scrapy
+   from scrapy.contrib.djangoitem import DjangoItem
+
    class PersonItem(DjangoItem):
        django_model = Person
-       sex = Field()
+       sex = scrapy.Field()
 
 ::
 
@@ -81,7 +85,7 @@ DjangoItem
 
    class PersonItem(DjangoItem):
        django_model = Person
-       name = Field(default='No Name')
+       name = scrapy.Field(default='No Name')
 
 这在提供字段属性时十分有用，例如您项目中使用的默认或者其他属性一样。
 

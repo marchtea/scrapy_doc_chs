@@ -22,13 +22,13 @@ Scrapy提供 :class:`Item` 类来满足这样的需求。
 
 Item使用简单的class定义语法以及 :class:`Field` 对象来声明。例如::
 
-    from scrapy.item import Item, Field
+    import scrapy
 
-    class Product(Item):
-        name = Field()
-        price = Field()
-        stock = Field()
-        last_updated = Field(serializer=str)
+    class Product(scrapy.Item):
+        name = scrapy.Field()
+        price = scrapy.Field()
+        stock = scrapy.Field()
+        last_updated = scrapy.Field(serializer=str)
 
 .. note:: 熟悉 `Django`_ 的朋友一定会注意到Scrapy Item定义方式与 `Django Models`_ 很类似, 不过没有那么多不同的字段类型(Field type)，更为简单。
 
@@ -169,13 +169,13 @@ Item字段(Item Fields)
 例如::
 
     class DiscountedProduct(Product):
-        discount_percent = Field(serializer=str)
-        discount_expiration_date = Field()
+        discount_percent = scrapy.Field(serializer=str)
+        discount_expiration_date = scrapy.Field()
 
 您也可以通过使用原字段的元数据,添加新的值或修改原来的值来扩展字段的元数据::
 
     class SpecificProduct(Product):
-        name = Field(Product.fields['name'], serializer=my_serializer)
+        name = scrapy.Field(Product.fields['name'], serializer=my_serializer)
 
 这段代码在保留所有原来的元数据值的情况下添加(或者覆盖)了 ``name`` 字段的 ``serializer`` 。
 

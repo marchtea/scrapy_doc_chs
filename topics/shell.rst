@@ -151,10 +151,9 @@ http://slashdot.org 的页面。
 
 以下是如何在spider中调用该函数的例子::
 
-    from scrapy.spider import Spider
+    import scrapy
 
-
-    class MySpider(Spider):
+    class MySpider(scrapy.Spider):
         name = "myspider"
         start_urls = [
             "http://example.com",

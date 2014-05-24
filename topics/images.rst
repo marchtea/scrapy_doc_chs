@@ -44,13 +44,13 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
 为了使用图片管道，你仅需要 :ref:`启动它<topics-images-enabling>` 并用 ``image_urls`` 和 ``images`` 定义一个项目::
 
-    from scrapy.item import Item
+    import scrapy
 
-    class MyItem(Item):
+    class MyItem(scrapy.Item):
 
         # ... other item fields ...
-        image_urls = Field()
-        images = Field()
+        image_urls = scrapy.Field()
+        images = scrapy.Field()
 
 如果你需要更加复杂的功能，想重写定制图片管道行为，参见 :ref:`topics-images-override` 。
 
@@ -188,7 +188,7 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
          def get_media_requests(self, item, info):
              for image_url in item['image_urls']:
-                 yield Request(image_url)
+                 yield scrapy.Request(image_url)
 
       这些请求将被管道处理，当它们完成下载后，结果将以2-元素的元组列表形式传送到 :meth:`~item_completed` 方法:
 
@@ -242,15 +242,15 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
 下面是一个图片管道的完整例子，其方法如上所示::
 
+    import scrapy
     from scrapy.contrib.pipeline.images import ImagesPipeline
     from scrapy.exceptions import DropItem
-    from scrapy.http import Request
 
     class MyImagesPipeline(ImagesPipeline):
 
         def get_media_requests(self, item, info):
             for image_url in item['image_urls']:
-                yield Request(image_url)
+                yield scrapy.Request(image_url)
 
         def item_completed(self, results, item, info):
             image_paths = [x['path'] for ok, x in results if ok]

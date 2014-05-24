@@ -176,7 +176,7 @@ Scrapy通过使用 :reqmeta:`cookiejar` Request meta key来支持单spider追踪
 例如::
 
     for i, url in enumerate(urls):
-        yield Request("http://www.example.com", meta={'cookiejar': i},
+        yield scrapy.Request("http://www.example.com", meta={'cookiejar': i},
             callback=self.parse_page)
 
 需要注意的是 :reqmeta:`cookiejar` meta key不是"黏性的(sticky)"。
@@ -184,7 +184,7 @@ Scrapy通过使用 :reqmeta:`cookiejar` Request meta key来支持单spider追踪
 
     def parse_page(self, response):
         # do some processing
-        return Request("http://www.example.com/otherpage",
+        return scrapy.Request("http://www.example.com/otherpage",
             meta={'cookiejar': response.meta['cookiejar']},
             callback=self.parse_other_page)
 

@@ -92,10 +92,10 @@ Scrapy基于事件驱动网络框架 `Twisted`_ 编写。因此，Scrapy基于�
 
 关于异步编程及Twisted更多的内容请查看下列链接:
 
-* `Asynchronous Programming with Twisted`_
+* `Introduction to Deferreds in Twisted`_
 * `Twisted - hello, asynchronous programming`_
 
 .. _Twisted: http://twistedmatrix.com/trac/
-.. _Asynchronous Programming with Twisted: http://twistedmatrix.com/projects/core/documentation/howto/async.html
+.. _Introduction to Deferreds in Twisted: http://twistedmatrix.com/documents/current/core/howto/defer-intro.html
 .. _Twisted - hello, asynchronous programming: http://jessenoller.com/2009/02/11/twisted-hello-asynchronous-programming/
 

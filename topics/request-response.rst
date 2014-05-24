@@ -76,7 +76,7 @@ Request objects
                                                     'path': '/currency'}])
 
         The latter form allows for customizing the ``domain`` and ``path``
-        attributes of the cookie. These is only useful if the cookies are saved
+        attributes of the cookie. This is only useful if the cookies are saved
         for later requests.
 
         When some site returns cookies (in a response) those are stored in the
@@ -102,7 +102,8 @@ Request objects
 
     :param priority: the priority of this request (defaults to ``0``).
        The priority is used by the scheduler to define the order used to process
-       requests.
+       requests.  Requests with a higher priority value will execute earlier.  
+       Negative values are allowed in order to indicate relatively low-priority.
     :type priority: int
 
     :param dont_filter: indicates that this request should not be filtered by
@@ -183,8 +184,8 @@ downloaded :class:`Response` object as its first argument.
 Example::
 
     def parse_page1(self, response):
-        return Request("http://www.example.com/some_page.html",
-                          callback=self.parse_page2)
+        return scrapy.Request("http://www.example.com/some_page.html",
+                              callback=self.parse_page2)
 
     def parse_page2(self, response):
         # this would log http://www.example.com/some_page.html
@@ -200,8 +201,8 @@ different fields from different pages::
     def parse_page1(self, response):
         item = MyItem()
         item['main_url'] = response.url
-        request = Request("http://www.example.com/some_page.html",
-                          callback=self.parse_page2)
+        request = scrapy.Request("http://www.example.com/some_page.html",
+                                 callback=self.parse_page2)
         request.meta['item'] = item
         return request
 
@@ -349,14 +350,19 @@ automatically pre-populated and only override a couple of them, such as the
 user name and password. You can use the :meth:`FormRequest.from_response`
 method for this job. Here's an example spider which uses it::
 
-    class LoginSpider(Spider):
+
+    import scrapy
+
+    class LoginSpider(scrapy.Spider):
         name = 'example.com'
         start_urls = ['http://www.example.com/users/login.php']
 
         def parse(self, response):
-            return [FormRequest.from_response(response,
-                        formdata={'username': 'john', 'password': 'secret'},
-                        callback=self.after_login)]
+            return scrapy.FormRequest.from_response(
+                response,
+                formdata={'username': 'john', 'password': 'secret'},
+                callback=self.after_login
+            )
 
         def after_login(self, response):
             # check login succeed before going on
@@ -521,6 +527,11 @@ TextResponse objects
        4. the encoding inferred by looking at the response body. This is the more
           fragile method but also the last one tried.
 
+    .. attribute:: TextResponse.selector
+
+        A :class:`~scrapy.selector.Selector` instance using the response as
+        target. The selector is lazily instantiated on first access.
+
     :class:`TextResponse` objects support the following methods in addition to
     the standard :class:`Response` ones:
 
@@ -537,6 +548,19 @@ TextResponse objects
         Since, in the latter case, you would be using you system default encoding
         (typically `ascii`) to convert the body to unicode, instead of the response
         encoding.
+
+    .. method:: TextResponse.xpath(query)
+
+        A shortcut to ``TextResponse.selector.xpath(query)``::
+
+            response.xpath('//p')
+
+    .. method:: TextResponse.css(query)
+
+        A shortcut to ``TextResponse.selector.css(query)``::
+
+            response.css('p')
+
 
 HtmlResponse objects
 --------------------

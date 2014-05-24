@@ -168,9 +168,9 @@ genspider
       xmlfeed
 
     $ scrapy genspider -d basic
-    from scrapy.spider import Spider
+    import scrapy
 
-    class $classname(Spider):
+    class $classname(scrapy.Spider):
         name = "$name"
         allowed_domains = ["$domain"]
         start_urls = (
@@ -458,4 +458,4 @@ Default: ``''`` (empty string)
 
     COMMANDS_MODULE = 'mybot.commands'
 
-.. _部署您的项目: http://scrapyd.readthedocs.org/en/latest/#deploying-your-project
+.. _部署您的项目: http://scrapyd.readthedocs.org/en/latest/deploy.html

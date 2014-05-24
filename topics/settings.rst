@@ -380,7 +380,10 @@ DUPEFILTER_CLASS
 用于检测过滤重复请求的类。
 
 默认的 (``RFPDupeFilter``) 过滤器基于
-``scrapy.utils.request.request_fingerprint`` 函数生成的请求指纹。
+``scrapy.utils.request.request_fingerprint`` 函数生成的请求fingerprint(指纹)。
+如果您需要修改检测的方式，您可以继承 ``RFPDupeFilter`` 
+并覆盖其 ``request_fingerprint`` 方法。
+该方法接收 :class:`~scrapy.http.Request` 对象并返回其fingerprint(一个字符串)。
 
 .. setting:: DUPEFILTER_DEBUG
 

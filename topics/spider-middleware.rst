@@ -113,7 +113,7 @@ Spider中间件(Middleware)
         :type exception: `Exception`_ 对象
 
         :param spider: 抛出该异常的spider
-        :type spider: :class:`scrapy.spider.Spider` 对象
+        :type spider: :class:`~scrapy.spider.Spider` 对象
 
     .. method:: process_start_requests(start_requests, spider)
 

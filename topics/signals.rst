@@ -58,7 +58,7 @@ item_scraped
 ------------
 
 .. signal:: item_scraped
-.. function:: item_scraped(item, spider, response)
+.. function:: item_scraped(item, response, spider)
 
     当item被爬取，并通过所有
     :ref:`topics-item-pipeline` 后(没有被丢弃(dropped)，发送该信号。
@@ -78,7 +78,7 @@ item_dropped
 ------------
 
 .. signal:: item_dropped
-.. function:: item_dropped(item, spider, exception)
+.. function:: item_dropped(item, exception, spider)
 
     当item通过 :ref:`topics-item-pipeline` ，有些pipeline抛出
     :exc:`~scrapy.exceptions.DropItem` 异常，丢弃item时，该信号被发送。

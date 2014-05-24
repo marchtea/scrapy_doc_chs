@@ -13,7 +13,7 @@
 通过一些 :ref:`settings <topics-email-settings>` 设置，您可以很简单的进行配置。
 
 .. _smtplib: http://docs.python.org/library/smtplib.html
-.. _Twisted非阻塞式(non-blocking)IO: http://twistedmatrix.com/projects/core/documentation/howto/async.html
+.. _Twisted非阻塞式(non-blocking)IO: http://twistedmatrix.com/documents/current/core/howto/defer-intro.html
 
 简单例子
 =============
