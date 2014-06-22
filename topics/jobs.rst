@@ -1,96 +1,84 @@
+
 .. _topics-jobs:
 
 =================================
-Jobs: pausing and resuming crawls
+Jobs: 暂停，恢复爬虫
 =================================
 
-Sometimes, for big sites, it's desirable to pause crawls and be able to resume
-them later.
+有些情况下，例如爬取大的站点，我们希望能暂停爬取，之后再恢复运行。
 
-Scrapy supports this functionality out of the box by providing the following
-facilities:
+Scrapy通过如下工具支持这个功能:
 
-* a scheduler that persists scheduled requests on disk
+* 一个把调度请求保存在磁盘的调度器
 
-* a duplicates filter that persists visited requests on disk
+* 一个把访问请求保存在磁盘的副本过滤器[duplicates filter]
 
-* an extension that keeps some spider state (key/value pairs) persistent
-  between batches
+* 一个能持续保持爬虫状态(键/值对)的扩展
 
-Job directory
+Job 路径
 =============
 
-To enable persistence support you just need to define a *job directory* through
-the ``JOBDIR`` setting. This directory will be for storing all required data to
-keep the state of a single job (ie. a spider run).  It's important to note that
-this directory must not be shared by different spiders, or even different
-jobs/runs of the same spider, as it's meant to be used for storing the state of
-a *single* job.
+要启用持久化支持，你只需要通过 ``JOBDIR`` 设置 *job directory* 选项。这个路径将会存储
+所有的请求数据来保持一个单独任务的状态(例如：一次spider爬取(a spider run))。必须要注意的是，这个目录不允许被不同的spider
+共享，甚至是同一个spider的不同jobs/runs也不行。也就是说，这个目录就是存储一个 *单独* job的状态信息。
 
-How to use it
+怎么使用
 =============
 
-To start a spider with persistence supported enabled, run it like this::
+要启用一个爬虫的持久化，运行以下命令::
 
     scrapy crawl somespider -s JOBDIR=crawls/somespider-1
 
-Then, you can stop the spider safely at any time (by pressing Ctrl-C or sending
-a signal), and resume it later by issuing the same command::
+然后，你就能在任何时候安全地停止爬虫(按Ctrl-C或者发送一个信号)。恢复这个爬虫也是同样的命令::
 
     scrapy crawl somespider -s JOBDIR=crawls/somespider-1
 
-Keeping persistent state between batches
+保持状态
 ========================================
 
-Sometimes you'll want to keep some persistent spider state between pause/resume
-batches. You can use the ``spider.state`` attribute for that, which should be a
-dict. There's a built-in extension that takes care of serializing, storing and
-loading that attribute from the job directory, when the spider starts and
-stops.
+有的时候，你希望持续保持一些运行长时间的蜘蛛的状态。这时您可以使用 ``spider.state`` 属性,
+该属性的类型必须是dict. scrapy提供了内置扩展负责在spider启动或结束时，从工作路径(job directory)中序列化、存储、加载属性。
 
-Here's an example of a callback that uses the spider state (other spider code
-is omitted for brevity)::
+下面这个例子展示了使用spider state的回调函数(callback)(简洁起见，省略了其他的代码)::
 
     def parse_item(self, response):
         # parse item here
         self.state['items_count'] = self.state.get('items_count', 0) + 1
 
-Persistence gotchas
+持久化的一些坑
 ===================
 
-There are a few things to keep in mind if you want to be able to use the Scrapy
-persistence support:
+如果你想要使用Scrapy的持久化支持,还有一些东西您需要了解:
 
-Cookies expiration
+Cookies的有效期
 ------------------
 
-Cookies may expire. So, if you don't resume your spider quickly the requests
-scheduled may no longer work. This won't be an issue if you spider doesn't rely
-on cookies.
+Cookies是有有效期的(可能过期)。所以如果你没有把你的爬虫及时恢复，那么他可能在被调度回去的时候
+就不能工作了。当然如果你的爬虫不依赖cookies就不会有这个问题了。
 
-Request serialization
+请求序列化
 ---------------------
 
-Requests must be serializable by the `pickle` module, in order for persistence
-to work, so you should make sure that your requests are serializable.
+请求是由 `pickle` 进行序列化的，所以你需要确保你的请求是可被pickle序列化的。
+这里最常见的问题是在在request回调函数中使用 ``lambda`` 方法，导致无法序列化。
 
-The most common issue here is to use ``lambda`` functions on request callbacks that
-can't be persisted.
-
-So, for example, this won't work::
+例如, 这样就会有问题::
 
     def some_callback(self, response):
         somearg = 'test'
-        return Request('http://www.example.com', callback=lambda r: self.other_callback(r, somearg))
+        return scrapy.Request('http://www.example.com', callback=lambda r: self.other_callback(r, somearg))
 
     def other_callback(self, response, somearg):
         print "the argument passed is:", somearg
 
-But this will::
+这样才对::
 
     def some_callback(self, response):
         somearg = 'test'
-        return Request('http://www.example.com', meta={'somearg': somearg})
+        return scrapy.Request('http://www.example.com', meta={'somearg': somearg})
+
+    #这里的实例代码有错，应该是(译者注)
+    #   return scrapy.Request('http://www.example.com', meta={'somearg': somearg}, callback=self.other_callback)
 
     def other_callback(self, response):
         somearg = response.meta['somearg']
