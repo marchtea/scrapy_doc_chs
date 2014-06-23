@@ -20,6 +20,7 @@ Scrapy中文文档翻译计划
   * intro下边四篇文章
   * index.rst
   * faq.rst
+  * experimental/index.rst
   * topics/api.rst
   * topics/commands.rst
   * topics/items.rst
