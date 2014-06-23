@@ -15,46 +15,26 @@ Scrapy中文文档翻译计划
 
 于是这个坑就打开了。
 
-目前已经翻译的有:
+@update 2014/6/23
+经过一段时间的努力，以及给力的小伙伴们，目前scrapy的文档已经翻译的差不多了。目前还未翻译的章节有：
 
-  * intro下边四篇文章
-  * index.rst
-  * faq.rst
-  * topics/api.rst
-  * topics/commands.rst
-  * topics/items.rst
-  * topics/spiders.rst
-  * topics/selectors.rst
-  * topics/shell.rst
-  * topics/images.rst
-  * topics/link-extractors.rst
-  * topics/logging.rst
-  * topics/feed-exporters.rst
-  * topics/stats.rst
-  * topics/email.rst
-  * topics/telnetconsole.rst
-  * topics/webservice.rst
-  * topics/debug.rst
-  * topics/contracts.rst
-  * topics/practices.rst
-  * topics/broad-crawls.rst
-  * topics/firefox.rst
-  * topics/firebug.rst
-  * topics/leaks.rst
-  * topics/autothrottle.rst
-  * topics/scrapyd.rst
-  * topics/ubuntu.rst
-  * topics/benchmark.rst
-  * topics/djangoitem.rst
-  * topics/architecture.rst
-  * topics/download-middleware.rst
-  * topics/spider-middleware.rst
-  * topics/signals.rst
-  * topics/exceptions.rst
-  * topics/extensions.rst
-  * topics/settings.rst
-  * topics/item-pipeline.rst
+  * topics/loaders.rst
+  * topics/request-response.rst
+  * versioning.rst
+  * contributing.rst(可翻可不翻)
 
+剩余的章节已经翻译完毕。希望各位在查看文档的同时，对于翻译不准确的部分给予反馈(open issue)。感谢各位的支持。
+
+关于版本
+^^^^^^^^^^^
+scrapy目前最新的发行版是 *0.22.3* 。这也是能在 `pip` 上下载到的 *最新版本* 。另外，其github上的repo也一直在更新。由于第一次进行翻译文档的工作，对版本也不大熟悉，导致有段时间 `rtd` 上的文档版本是最新的master分支上的文档，和pip上的有所不同。对于给各位造成的困扰表示抱歉。
+
+现在的repo参考了scrapy的repo，由 `master分支` 和 `0.22分支` 组成。
+
+  * master分支：紧跟着官方的master分支，文档会尽可能的与master分支相同
+  * 0.22分支： 为官方的0.22分支文档，尽可能的与0.22分支相同。各位使用最新发行版的请参考本文档。
+
+在readthedocs上，默认的文档版本为 *0.22* ，以方便大家参考。而使用了官方repo最新的master分支的朋友，可以在readthedocs上修改版本，切换到master版本。
 
 加入我们吧
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -85,7 +65,10 @@ We need U
 ^^^^^^^^^^^^^^^^^^^^
 
 
+
+
 本文档提供了编译Scrapy文档的快速入门
+----------------------------------------
 
 
 环境配置
