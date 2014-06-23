@@ -1,27 +1,26 @@
 .. _experimental:
 
-Experimental features
-=====================
+试验阶段特性
+==================
 
-This section documents experimental Scrapy features that may become stable in
-future releases, but whose API is not yet stable. Use them with caution, and
-subscribe to the `mailing lists <http://scrapy.org/community/>`_ to get
-notified of any changes. 
+这部分介绍一些正处于试验阶段的Scrapy特性，
+这些特性所涉及到的函数接口等还不够稳定，
+但会在以后的发布版中趋于完善。所以在使用这些特性过程中需更谨慎，
+并且最好订阅我们的 `邮件列表 <http://scrapy.org/community/>`_ 以便接收任何有关特性改变的通知。 
 
-Since it's not revised so frequently, this section may contain documentation
-which is outdated, incomplete or overlapping with stable documentation (until
-it's properly merged) . Use at your own risk.
+虽然这些特性不会频繁的被修改，但是这部分文档仍有可能是过时的、
+不完整的或是与已经稳定的特性文档重复。所以你需要自行承担使用风险。
 
 .. warning::
 
-   This documentation is a work in progress. Use at your own risk.
+   本部分文档一直处于修改中。请自行承担使用风险。
 
-Add commands using external libraries
--------------------------------------
+使用外部库插入命令
+-----------------------
 
-You can also add Scrapy commands from an external library by adding `scrapy.commands` section into entry_points in the `setup.py`.
+你可以使用外部库通过增加 `scrapy.commands` 部分到 `setup.py` 的entry_points中来插入Scrapy命令。
 
-The following example adds `my_command` command::
+增加 `my_command` 命令的例子::
 
   from setuptools import setup, find_packages
 
