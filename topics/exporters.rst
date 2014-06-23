@@ -16,15 +16,15 @@ Item Exporters
 
 如果你很忙，只想使用 Item Exporter 输出数据，请查看 :ref:`topics-feed-exports`. 相反，如果你想知道Item Exporter 是如何工作的，或需要更多的自定义功能（不包括默认的 exports），请继续阅读下文。
 
-为了使用 Item Exporter，你必须对 Item Exporter 及其参数 (args) 实例化。每个 Item Exporter 需要不同的参数，详细请查看 :ref:`topics-exporters-reference`。在实例化了 exporter 之后，你必须：
+为了使用 Item Exporter，你必须对 Item Exporter 及其参数 (args) 实例化。每个 Item Exporter 需要不同的参数，详细请查看 :ref:`topics-exporters-reference` 。在实例化了 exporter 之后，你必须：
 
-1. 调用方法 :meth:`~BaseItemExporter.start_exporting`以标识 exporting 过程的开始。
+1. 调用方法 :meth:`~BaseItemExporter.start_exporting` 以标识 exporting 过程的开始。
 
 2. 对要导出的每个项目调用 :meth:`~BaseItemExporter.export_item` 方法。
 
 3. 最后调用 :meth:`~BaseItemExporter.finish_exporting` 表示 exporting 过程的结束
 
-这里，你可以看到一个 :doc:`Item Pipeline <item-pipeline>`，它使用 Item Exporter 导出 items 到不同的文件，每个 spider:: 一个：
+这里，你可以看到一个 :doc:`Item Pipeline <item-pipeline>` ，它使用 Item Exporter 导出 items 到不同的文件，每个 spider 一个::
 
    from scrapy import signals
    from scrapy.contrib.exporter import XmlItemExporter
@@ -124,7 +124,7 @@ BaseItemExporter
 
    这是一个对所有 Item Exporters 的(抽象)父类。它对所有(具体) Item Exporters 提供基本属性，如定义export什么fields, 是否export空fields, 或是否进行编码。
 
-   你可以在构造器中设置它们不同的属性值: :attr:`fields_to_export`,
+   你可以在构造器中设置它们不同的属性值: :attr:`fields_to_export` ,
    :attr:`export_empty_fields`, :attr:`encoding`.
 
    .. method:: export_item(item)
