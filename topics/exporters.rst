@@ -7,37 +7,24 @@ Item Exporters
 .. module:: scrapy.contrib.exporter
    :synopsis: Item Exporters
 
-Once you have scraped your Items, you often want to persist or export those
-items, to use the data in some other application. That is, after all, the whole
-purpose of the scraping process.
+当你抓取了你要的数据(Items)，你就会想要将他们持久化或导出它们，并应用在其他的程序。这是整个抓取过程的目的。
 
-For this purpose Scrapy provides a collection of Item Exporters for different
-output formats, such as XML, CSV or JSON.
+为此，Scrapy提供了Item Exporters 来创建不同的输出格式，如XML，CSV或JSON。
 
-Using Item Exporters
+使用 Item Exporter
 ====================
 
-If you are in a hurry, and just want to use an Item Exporter to output scraped
-data see the :ref:`topics-feed-exports`. Otherwise, if you want to know how
-Item Exporters work or need more custom functionality (not covered by the
-default exports), continue reading below.
+如果你很忙，只想使用 Item Exporter 输出数据，请查看 :ref:`topics-feed-exports`. 相反，如果你想知道Item Exporter 是如何工作的，或需要更多的自定义功能（不包括默认的 exports），请继续阅读下文。
 
-In order to use an Item Exporter, you  must instantiate it with its required
-args. Each Item Exporter requires different arguments, so check each exporter
-documentation to be sure, in :ref:`topics-exporters-reference`. After you have
-instantiated your exporter, you have to:
+为了使用 Item Exporter，你必须对 Item Exporter 及其参数 (args) 实例化。每个 Item Exporter 需要不同的参数，详细请查看 :ref:`topics-exporters-reference` 。在实例化了 exporter 之后，你必须：
 
-1. call the method :meth:`~BaseItemExporter.start_exporting` in order to
-signal the beginning of the exporting process
+1. 调用方法 :meth:`~BaseItemExporter.start_exporting` 以标识 exporting 过程的开始。
 
-2. call the :meth:`~BaseItemExporter.export_item` method for each item you want
-to export
+2. 对要导出的每个项目调用 :meth:`~BaseItemExporter.export_item` 方法。
 
-3. and finally call the :meth:`~BaseItemExporter.finish_exporting` to signal
-the end of the exporting process
+3. 最后调用 :meth:`~BaseItemExporter.finish_exporting` 表示 exporting 过程的结束
 
-Here you can see an :doc:`Item Pipeline <item-pipeline>` which uses an Item
-Exporter to export scraped items to different files, one per spider::
+这里，你可以看到一个 :doc:`Item Pipeline <item-pipeline>` ，它使用 Item Exporter 导出 items 到不同的文件，每个 spider 一个::
 
    from scrapy import signals
    from scrapy.contrib.exporter import XmlItemExporter
@@ -72,29 +59,25 @@ Exporter to export scraped items to different files, one per spider::
 
 .. _topics-exporters-field-serialization:
 
-Serialization of item fields
+序列化 item fields
+
 ============================
 
-By default, the field values are passed unmodified to the underlying
-serialization library, and the decision of how to serialize them is delegated
-to each particular serialization library.
+B默认情况下，该字段值将不变的传递到序列化库，如何对其进行序列化的决定被委托给每一个特定的序列化库。
 
-However, you can customize how each field value is serialized *before it is
-passed to the serialization library*.
+但是，你可以自定义每个字段值如何序列化在它被传递到序列化库中之前。
 
-There are two ways to customize how a field will be serialized, which are
-described next.
+有两种方法可以自定义一个字段如何被序列化，请看下文。
 
 .. _topics-exporters-serializers:
 
-1. Declaring a serializer in the field
+1. 在 field 类中声明一个 serializer
 --------------------------------------
 
-You can declare a serializer in the :ref:`field metadata
-<topics-items-fields>`. The serializer must be a callable which receives a
-value and returns its serialized form.
+您可以在 :ref:`field metadata <topics-items-fields>` 声明一个 serializer。该 serializer 必须可调用，并返回它的序列化形式。
 
-Example::
+
+实例::
 
       from scrapy.item import Item, Field
 
@@ -105,17 +88,14 @@ Example::
           name = Field()
           price = Field(serializer=serialize_price)
 
-
-2. Overriding the serialize_field() method
+2. 覆盖(overriding) serialize_field() 方法
 ------------------------------------------
 
-You can also override the :meth:`~BaseItemExporter.serialize_field()` method to
-customize how your field value will be exported.
+你可以覆盖 :meth:`~BaseItemExporter.serialize_field()` 方法来自定义如何输出你的数据。
 
-Make sure you call the base class :meth:`~BaseItemExporter.serialize_field()` method
-after your custom code. 
+在你的自定义代码后确保你调用父类的 :meth:`~BaseItemExporter.serialize_field()` 方法。
 
-Example::
+实例::
 
       from scrapy.contrib.exporter import XmlItemExporter
 
@@ -125,14 +105,13 @@ Example::
               if field == 'price':
                   return '$ %s' % str(value)
               return super(Product, self).serialize_field(field, name, value)
-             
+
 .. _topics-exporters-reference:
 
-Built-in Item Exporters reference
+Item Exporters 参考资料
 =================================
 
-Here is a list of the Item Exporters bundled with Scrapy. Some of them contain
-output examples, which assume you're exporting these two items::
+下面是一些Scrapy内置的 Item Exporters类. 其中一些包括了实例, 假设你要输出以下2个Items::
 
     Item(name='Color TV', price='1200')
     Item(name='DVD player', price='200')
@@ -142,30 +121,22 @@ BaseItemExporter
 
 .. class:: BaseItemExporter(fields_to_export=None, export_empty_fields=False, encoding='utf-8')
 
-   This is the (abstract) base class for all Item Exporters. It provides
-   support for common features used by all (concrete) Item Exporters, such as
-   defining what fields to export, whether to export empty fields, or which
-   encoding to use.
-   
-   These features can be configured through the constructor arguments which
-   populate their respective instance attributes: :attr:`fields_to_export`,
+   这是一个对所有 Item Exporters 的(抽象)父类。它对所有(具体) Item Exporters 提供基本属性，如定义export什么fields, 是否export空fields, 或是否进行编码。
+
+   你可以在构造器中设置它们不同的属性值: :attr:`fields_to_export` ,
    :attr:`export_empty_fields`, :attr:`encoding`.
 
    .. method:: export_item(item)
 
-      Exports the given item. This method must be implemented in subclasses.
+      输出给定item. 此方法必须在子类中实现.
 
    .. method:: serialize_field(field, name, value)
 
-      Return the serialized value for the given field. You can override this
-      method (in your custom Item Exporters) if you want to control how a
-      particular field or value will be serialized/exported.
+      返回给定field的序列化值. 你可以覆盖此方法来控制序列化或输出指定的field.
 
-      By default, this method looks for a serializer :ref:`declared in the item
-      field <topics-exporters-serializers>` and returns the result of applying
-      that serializer to the value. If no serializer is found, it returns the
-      value unchanged except for ``unicode`` values which are encoded to
-      ``str`` using the encoding declared in the :attr:`encoding` attribute.
+      默认情况下, 此方法寻找一个 serializer :ref:`在 item
+      field 中声明 <topics-exporters-serializers>` 并返回它的值. 如果没有发现   serializer, 则值不会改变，除非你使用 ``unicode`` 值并编码到
+      ``str``， 编码可以在 :attr:`encoding` 属性中声明.
 
       :param field: the field being serialized
       :type field: :class:`~scrapy.item.Field` object
@@ -177,38 +148,29 @@ BaseItemExporter
 
    .. method:: start_exporting()
 
-      Signal the beginning of the exporting process. Some exporters may use
-      this to generate some required header (for example, the
-      :class:`XmlItemExporter`). You must call this method before exporting any
-      items.
+      表示exporting过程的开始. 一些exporters用于产生需要的头元素(例如
+      :class:`XmlItemExporter`). 在实现exporting item前必须调用此方法.
 
    .. method:: finish_exporting()
 
-      Signal the end of the exporting process. Some exporters may use this to
-      generate some required footer (for example, the
-      :class:`XmlItemExporter`). You must always call this method after you
-      have no more items to export.
+      表示exporting过程的结束. 一些exporters用于产生需要的尾元素 (例如
+      :class:`XmlItemExporter`). 在完成exporting item后必须调用此方法.
 
    .. attribute:: fields_to_export
 
-      A list with the name of the fields that will be exported, or None if you
-      want to export all fields. Defaults to None.
+      列出export什么fields值, None表示export所有fields. 默认值为None.
 
-      Some exporters (like :class:`CsvItemExporter`) respect the order of the
-      fields defined in this attribute.
+      一些 exporters (例如 :class:`CsvItemExporter`) 按照定义在属性中fields的次序依次输出.
 
    .. attribute:: export_empty_fields
 
-      Whether to include empty/unpopulated item fields in the exported data.
-      Defaults to ``False``. Some exporters (like :class:`CsvItemExporter`)
-      ignore this attribute and always export all empty fields.
+      是否在输出数据中包含为空的item fields.
+      默认值是 ``False``. 一些 exporters (例如 :class:`CsvItemExporter`)
+      会忽略此属性并输出所有fields.
 
    .. attribute:: encoding
 
-      The encoding that will be used to encode unicode values. This only
-      affects unicode values (which are always serialized to str using this
-      encoding). Other value types are passed unchanged to the specific
-      serialization library.
+      Encoding 属性将用于编码 unicode 值. (仅用于序列化字符串).其他值类型将不变的传递到指定的序列化库.
 
 .. highlight:: none
 
@@ -217,20 +179,19 @@ XmlItemExporter
 
 .. class:: XmlItemExporter(file, item_element='item', root_element='items', \**kwargs)
 
-   Exports Items in XML format to the specified file object.
+   以XML格式 exports Items 到指定的文件类.
 
-   :param file: the file-like object to use for exporting the data.
+   :param file: 文件类.
 
-   :param root_element: The name of root element in the exported XML.
+   :param root_element: XML 根元素名.
    :type root_element: str
 
-   :param item_element: The name of each item element in the exported XML.
+   :param item_element: XML item 的元素名.
    :type item_element: str
 
-   The additional keyword arguments of this constructor are passed to the
-   :class:`BaseItemExporter` constructor.
+   构造器额外的关键字参数将传给 :class:`BaseItemExporter` 构造器.
 
-   A typical output of this exporter would be::
+   一个典型的 exporter 实例::
 
        <?xml version="1.0" encoding="utf-8"?>
        <items>
@@ -244,15 +205,13 @@ XmlItemExporter
         </item>
        </items>
 
-   Unless overridden in the :meth:`serialize_field` method, multi-valued fields are
-   exported by serializing each value inside a ``<value>`` element. This is for
-   convenience, as multi-valued fields are very common.
+   除了覆盖 :meth:`serialize_field` 方法, 多个值的 fields 会转化每个值到 ``<value>`` 元素.
 
-   For example, the item::
+   例如, item::
 
         Item(name=['John', 'Doe'], age='23')
 
-   Would be serialized as::
+   将被转化为::
 
        <?xml version="1.0" encoding="utf-8"?>
        <items>
@@ -270,33 +229,24 @@ CsvItemExporter
 
 .. class:: CsvItemExporter(file, include_headers_line=True, join_multivalued=',', \**kwargs)
 
-   Exports Items in CSV format to the given file-like object. If the
-   :attr:`fields_to_export` attribute is set, it will be used to define the
-   CSV columns and their order. The :attr:`export_empty_fields` attribute has
-   no effect on this exporter.
+   输出 csv 文件格式. 如果添加 :attr:`fields_to_export` 属性, 它会按顺序定义CSV的列名. :attr:`export_empty_fields` 属性在此没有作用.
 
-   :param file: the file-like object to use for exporting the data.
+   :param file: 文件类.
 
-   :param include_headers_line: If enabled, makes the exporter output a header
-      line with the field names taken from 
-      :attr:`BaseItemExporter.fields_to_export` or the first exported item fields.
+   :param include_headers_line: 启用后 exporter 会输出第一行为列名, 列名从 :attr:`BaseItemExporter.fields_to_export` 或第一个 item fields 获取.
    :type include_headers_line: boolean
 
-   :param join_multivalued: The char (or chars) that will be used for joining
-      multi-valued fields, if found.
+   :param join_multivalued: char 将用于连接多个值的fields.
    :type include_headers_line: str
 
-   The additional keyword arguments of this constructor are passed to the
-   :class:`BaseItemExporter` constructor, and the leftover arguments to the
-   `csv.writer`_ constructor, so you can use any `csv.writer` constructor
-   argument to customize this exporter.
+   此构造器额外的关键字参数将传给 :class:`BaseItemExporter` 构造器 , 其余的将传给 `csv.writer`_ 构造器, 以此来定制 exporter.
 
-   A typical output of this exporter would be::
+   一个典型的 exporter 实例::
 
       product,price
       Color TV,1200
       DVD player,200
-      
+
 .. _csv.writer: http://docs.python.org/library/csv.html#csv.writer
 
 PickleItemExporter
@@ -304,19 +254,18 @@ PickleItemExporter
 
 .. class:: PickleItemExporter(file, protocol=0, \**kwargs)
 
-   Exports Items in pickle format to the given file-like object. 
+   输出 pickle 文件格式.
 
-   :param file: the file-like object to use for exporting the data.
+   :param file: 文件类.
 
-   :param protocol: The pickle protocol to use.
+   :param protocol: pickle 协议.
    :type protocol: int
 
-   For more information, refer to the `pickle module documentation`_.
+   更多信息请看 `pickle module documentation`_.
 
-   The additional keyword arguments of this constructor are passed to the
-   :class:`BaseItemExporter` constructor.
+   此构造器额外的关键字参数将传给 :class:`BaseItemExporter` 构造器.
 
-   Pickle isn't a human readable format, so no output examples are provided.
+   Pickle 不是可读的格式，这里不提供实例.
 
 .. _pickle module documentation: http://docs.python.org/library/pickle.html
 
@@ -325,47 +274,36 @@ PprintItemExporter
 
 .. class:: PprintItemExporter(file, \**kwargs)
 
-   Exports Items in pretty print format to the specified file object.
+   输出整齐打印的文件格式.
 
-   :param file: the file-like object to use for exporting the data.
+   :param file: 文件类.
 
-   The additional keyword arguments of this constructor are passed to the
-   :class:`BaseItemExporter` constructor.
+   此构造器额外的关键字参数将传给 :class:`BaseItemExporter` 构造器.
 
-   A typical output of this exporter would be::
+   一个典型的 exporter 实例::
 
         {'name': 'Color TV', 'price': '1200'}
         {'name': 'DVD player', 'price': '200'}
 
-   Longer lines (when present) are pretty-formatted.
+   此格式会根据行的长短进行调整.
 
 JsonItemExporter
 ----------------
 
 .. class:: JsonItemExporter(file, \**kwargs)
 
-   Exports Items in JSON format to the specified file-like object, writing all
-   objects as a list of objects. The additional constructor arguments are
-   passed to the :class:`BaseItemExporter` constructor, and the leftover
-   arguments to the `JSONEncoder`_ constructor, so you can use any
-   `JSONEncoder`_ constructor argument to customize this exporter.
+   输出 JSON 文件格式, 所有对象将写进一个对象的列表. 此构造器额外的关键字参数将传给 :class:`BaseItemExporter` 构造器, 其余的将传给 `JSONEncoder`_ 构造器, 以此来定制 exporter.
 
-   :param file: the file-like object to use for exporting the data.
+   :param file: 文件类.
 
-   A typical output of this exporter would be::
+   一个典型的 exporter 实例::
 
         [{"name": "Color TV", "price": "1200"},
         {"name": "DVD player", "price": "200"}]
 
    .. _json-with-large-data:
 
-   .. warning:: JSON is very simple and flexible serialization format, but it
-      doesn't scale well for large amounts of data since incremental (aka.
-      stream-mode) parsing is not well supported (if at all) among JSON parsers
-      (on any language), and most of them just parse the entire object in
-      memory. If you want the power and simplicity of JSON with a more
-      stream-friendly format, consider using :class:`JsonLinesItemExporter`
-      instead, or splitting the output in multiple chunks.
+   .. warning:: JSON 是一个简单而有弹性的格式, 但对大量数据的扩展性不是很好，因为这里会将整个对象放入内存. 如果你要JSON既强大又简单,可以考虑 :class:`JsonLinesItemExporter` , 或把输出对象分为多个块.
 
 .. _JSONEncoder: http://docs.python.org/library/json.html#json.JSONEncoder
 
@@ -374,20 +312,15 @@ JsonLinesItemExporter
 
 .. class:: JsonLinesItemExporter(file, \**kwargs)
 
-   Exports Items in JSON format to the specified file-like object, writing one
-   JSON-encoded item per line. The additional constructor arguments are passed
-   to the :class:`BaseItemExporter` constructor, and the leftover arguments to
-   the `JSONEncoder`_ constructor, so you can use any `JSONEncoder`_
-   constructor argument to customize this exporter.
+   输出 JSON 文件格式, 每行写一个 JSON-encoded 项. 此构造器额外的关键字参数将传给 :class:`BaseItemExporter` 构造器, 其余的将传给 `JSONEncoder`_ 构造器, 以此来定制 exporter.
 
-   :param file: the file-like object to use for exporting the data.
+   :param file: 文件类.
 
-   A typical output of this exporter would be::
+   一个典型的 exporter 实例::
 
         {"name": "Color TV", "price": "1200"}
         {"name": "DVD player", "price": "200"}
 
-   Unlike the one produced by :class:`JsonItemExporter`, the format produced by
-   this exporter is well suited for serializing large amounts of data.
+   这个类能很好的处理大量数据. 
 
 .. _JSONEncoder: http://docs.python.org/library/json.html#json.JSONEncoder
