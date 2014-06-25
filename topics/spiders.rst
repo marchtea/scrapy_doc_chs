@@ -230,7 +230,7 @@ CrawlSpider
    .. method:: parse_start_url(response)
 
       当start_url的请求返回时，该方法被调用。
-      该方法分析最初的返回值并必须一个
+      该方法分析最初的返回值并必须返回一个
       :class:`~scrapy.item.Item` 对象或者
       一个 :class:`~scrapy.http.Request` 对象或者
       一个可迭代的包含二者对象。
