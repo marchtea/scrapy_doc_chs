@@ -340,15 +340,12 @@ spider) like this::
 
 .. _topics-request-response-ref-request-userlogin:
 
-Using FormRequest.from_response() to simulate a user login
+使用FormRequest.from_response()方法模拟用户登录
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is usual for web sites to provide pre-populated form fields through ``<input
-type="hidden">`` elements, such as session related data or authentication
-tokens (for login pages). When scraping, you'll want these fields to be
-automatically pre-populated and only override a couple of them, such as the
-user name and password. You can use the :meth:`FormRequest.from_response`
-method for this job. Here's an example spider which uses it::
+通常网站通过 ``<input type="hidden">`` 实现对某些表单字段（如数据或是登录界面中的认证令牌等）的预填充。
+使用Scrapy抓取网页时，如果想要预填充或重写像用户名、用户密码这些表单字段，
+可以使用 :meth:`FormRequest.from_response` 方法实现。下面是使用这种方法的爬虫例子::
 
 
     import scrapy
