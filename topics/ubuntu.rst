@@ -19,9 +19,11 @@ Ubuntu 软件包
 
     echo 'deb http://archive.scrapy.org/ubuntu scrapy main' | sudo tee /etc/apt/sources.list.d/scrapy.list
 
-3. 更新包列表并安装 `scrapy-VERSION`, 用Scrapy的版本号(如: `scrapy-0.22`等)替换 `VERSION` ::
+3. 更新包列表并安装 scrapy-|version|:
 
-    sudo apt-get update && sudo apt-get install scrapy-VERSION
+   .. parsed-literal::
+   
+      sudo apt-get update && sudo apt-get install scrapy-|version|
 
 .. note:: 如果你要升级Scrapy，请重复步骤3。
 

@@ -121,14 +121,14 @@ Scrapy可以助你一臂之力。
 最后，结合以上内容给出spider的代码::
 
     from scrapy.contrib.spiders import CrawlSpider, Rule
-    from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+    from scrapy.contrib.linkextractors import LinkExtractor
 
     class MininovaSpider(CrawlSpider):
 
         name = 'mininova'
         allowed_domains = ['mininova.org']
         start_urls = ['http://www.mininova.org/today']
-        rules = [Rule(SgmlLinkExtractor(allow=['/tor/\d+']), 'parse_torrent')]
+        rules = [Rule(LinkExtractor(allow=['/tor/\d+']), 'parse_torrent')]
 
         def parse_torrent(self, response):
             torrent = TorrentItem()
@@ -146,7 +146,7 @@ Scrapy可以助你一臂之力。
 终于，我们可以运行spider来获取网站的数据，并以JSON格式存入到 
 ``scraped_data.json`` 文件中::
 
-    scrapy crawl mininova -o scraped_data.json -t json
+    scrapy crawl mininova -o scraped_data.json
 
 命令中使用了 :ref:`feed导出 <topics-feed-exports>` 来导出JSON文件。您可以修改导出格式(XML或者CSV)或者存储后端(FTP或者 `Amazon S3`_)，这并不困难。
 

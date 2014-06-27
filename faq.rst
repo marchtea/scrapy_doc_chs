@@ -187,15 +187,15 @@ spider处理返回的返回(response)。通常来说，比老旧的 ``pdb.set_tr
 
 dump到JSON文件::
 
-    scrapy crawl myspider -o items.json -t json
+    scrapy crawl myspider -o items.json
 
 dump到CSV文件::
 
-    scrapy crawl myspider -o items.csv -t csv
+    scrapy crawl myspider -o items.csv
 
 dump到XML文件::
 
-    scrapy crawl myspider -o items.xml -t xml
+    scrapy crawl myspider -o items.xml
 
 更多详情请参考 :ref:`topics-feed-exports`
 

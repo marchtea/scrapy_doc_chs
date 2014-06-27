@@ -59,7 +59,7 @@ Firebug提供了非常实用的 `检查元素`_ 功能。该功能允许您将�
 
 因此，根据这个表达式，我们创建第一个爬取规则::
 
-    Rule(SgmlLinkExtractor(allow='directory.google.com/[A-Z][a-zA-Z_/]+$', ),
+    Rule(LinkExtractor(allow='directory.google.com/[A-Z][a-zA-Z_/]+$', ),
         'parse_category',
         follow=True,
     ),
@@ -70,7 +70,7 @@ Firebug提供了非常实用的 `检查元素`_ 功能。该功能允许您将�
 
 spider的代码如下::
 
-   from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+   from scrapy.contrib.linkextractors import LinkExtractor
    from scrapy.contrib.spiders import CrawlSpider, Rule
 
    class GoogleDirectorySpider(CrawlSpider):
@@ -79,7 +79,7 @@ spider的代码如下::
        start_urls = ['http://directory.google.com/']
 
        rules = (
-           Rule(SgmlLinkExtractor(allow='directory\.google\.com/[A-Z][a-zA-Z_/]+$'),
+           Rule(LinkExtractor(allow='directory\.google\.com/[A-Z][a-zA-Z_/]+$'),
                'parse_category', follow=True,
            ),
        )

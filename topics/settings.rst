@@ -30,20 +30,21 @@ Scrapy设定(settings)提供了定制Scrapy组件的方法。您可以控制包�
 设定可以通过多种方式设置，每个方式具有不同的优先级。
 下面以优先级降序的方式给出方式列表:
 
- 1. 全局覆盖(Global overrides) (最高优先级)
+ 1. 命令行选项(Command line Options)(最高优先级)
  2. 项目设定模块(Project settings module)
  3. 命令默认设定模块(Default settings per-command)
  4. 全局默认设定(Default global settings) (最低优先级)
 
+这些设定(settings)由scrapy内部很好的进行了处理，不过您仍可以使用API调用来手动处理。
+详情请参考 :ref:`topics-api-settings`.
+
 这些机制将在下面详细介绍。
 
-1. 全局覆盖(Global overrides)
---------------------------------
+1. 命令行选项(Command line options)
+------------------------------------
 
-全局覆盖具有最高的优先级，一般由command-line选项传入。
+命令行传入的参数具有最高的优先级。
 您可以使用command line 选项 ``-s`` (或 ``--set``) 来覆盖一个(或更多)选项。
-
-更多内容请参考设定的 :attr:`~scrapy.settings.Settings.overrides` 属性。
 
 .. highlight:: sh
 
@@ -256,6 +257,15 @@ DNSCACHE_ENABLED
 默认: ``True``
 
 是否启用DNS内存缓存(DNS in-memory cache)。
+
+.. setting:: DOWNLOADER
+
+DOWNLOADER
+----------
+
+默认: ``'scrapy.core.downloader.Downloader'``
+
+用于crawl的downloader.
 
 .. setting:: DOWNLOADER_MIDDLEWARES
 

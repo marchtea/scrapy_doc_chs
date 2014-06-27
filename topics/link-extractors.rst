@@ -25,18 +25,92 @@ Link Extractors在 :class:`~scrapy.contrib.spiders.CrawlSpider` 类(在Scrapy可
    :synopsis: Link extractors classes
 
 所有与Scrapy绑定且可用的Link Extractors类在 :mod:`scrapy.contrib.linkextractors` 模块提供｡
+如果您不知道选择哪个link extractor,使用默认的即可(其实就是LxmlLinkExtractor(参照下面))::
 
-.. module:: scrapy.contrib.linkextractors.sgml
-   :synopsis: SGMLParser-based link extractors
+    from scrapy.contrib.linkextractors import LinkExtractor
+
+
+LxmlLinkExtractor
+-----------------
+
+.. module:: scrapy.contrib.linkextractors.lxmlhtml
+   :synopsis: lxml's HTMLParser-based link extractors
+
+
+.. class:: LxmlLinkExtractor(allow=(), deny=(), allow_domains=(), deny_domains=(), deny_extensions=None, restrict_xpaths=(), tags=('a', 'area'), attrs=('href',), canonicalize=True, unique=True, process_value=None)
+
+
+    LxmlLinkExtractor is the recommended link extractor with handy filtering
+    options. It is implemented using lxml's robust HTMLParser.
+
+    :param allow: a single regular expression (or list of regular expressions)
+        that the (absolute) urls must match in order to be extracted. If not
+        given (or empty), it will match all links.
+    :type allow: a regular expression (or list of)
+
+    :param deny: a single regular expression (or list of regular expressions)
+        that the (absolute) urls must match in order to be excluded (ie. not
+        extracted). It has precedence over the ``allow`` parameter. If not
+        given (or empty) it won't exclude any links.
+    :type deny: a regular expression (or list of)
+
+    :param allow_domains: a single value or a list of string containing
+        domains which will be considered for extracting the links
+    :type allow_domains: str or list
+
+    :param deny_domains: a single value or a list of strings containing
+        domains which won't be considered for extracting the links
+    :type deny_domains: str or list
+
+    :param deny_extensions: a single value or list of strings containing
+        extensions that should be ignored when extracting links.
+        If not given, it will default to the
+        ``IGNORED_EXTENSIONS`` list defined in the `scrapy.linkextractor`_
+        module.
+    :type deny_extensions: list
+
+    :param restrict_xpaths: is a XPath (or list of XPath's) which defines
+        regions inside the response where links should be extracted from.
+        If given, only the text selected by those XPath will be scanned for
+        links. See examples below.
+    :type restrict_xpaths: str or list
+
+    :param tags: a tag or a list of tags to consider when extracting links.
+        Defaults to ``('a', 'area')``.
+    :type tags: str or list
+
+    :param attrs: an attribute or list of attributes which should be considered when looking
+        for links to extract (only for those tags specified in the ``tags``
+        parameter). Defaults to ``('href',)``
+    :type attrs: list
+
+    :param canonicalize: canonicalize each extracted url (using
+        scrapy.utils.url.canonicalize_url). Defaults to ``True``.
+    :type canonicalize: boolean
+
+    :param unique: whether duplicate filtering should be applied to extracted
+        links.
+    :type unique: boolean
+
+    :param process_value: see ``process_value`` argument of
+        :class:`BaseSgmlLinkExtractor` class constructor
+    :type process_value: callable
+
 
 SgmlLinkExtractor
 -----------------
 
+.. module:: scrapy.contrib.linkextractors.sgml
+   :synopsis: SGMLParser-based link extractors
+
+.. warning:: SGMLParser based link extractors are unmantained and its usage is discouraged.
+    It is recommended to migrate to :class:`LxmlLinkExtractor` if you are still
+    using :class:`SgmlLinkExtractor`.
+
 .. class:: SgmlLinkExtractor(allow=(), deny=(), allow_domains=(), deny_domains=(), deny_extensions=None, restrict_xpaths=(), tags=('a', 'area'), attrs=('href'), canonicalize=True, unique=True, process_value=None)
 
-    该Sgml Link Extractor拓展通过提供额外的过滤器底座BaseSgmlLinkExtractor您可以指定要提取的链接, 包括正则表达式模式的链接必须匹配被提取｡所有这些过滤器是通过这些构造函数的参数配置:
-
-
+    SgmlLinkExtractor继承于 :class:`BaseSgmlLinkExtractor`,其提供了过滤器(filter),以便于提取包括符合正则表达式的链接。
+    过滤器通过以下构造函数的参数配置:
 
     :param allow: 必须要匹配这个正则表达式(或正则表达式列表)的URL才会被提取｡如果没有给出(或为空), 它会匹配所有的链接｡
 

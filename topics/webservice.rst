@@ -134,7 +134,7 @@ web服务的端口范围。如果设置为 ``None`` 或 ``0`` ，则使用动态
 WEBSERVICE_HOST
 ---------------
 
-Default: ``'0.0.0.0'``
+Default: ``'127.0.0.1'``
 
 web服务监听的接口(interface)
 

@@ -44,6 +44,8 @@ spider参数一般用来定义初始URL或者指定限制爬取网站的部分�
 
 Spider在构造器(constructor)中获取参数::
 
+    import scrapy
+
     class MySpider(Spider):
         name = 'myspider'
 
@@ -66,12 +68,12 @@ Scrapy提供多种方便的通用spider供您继承使用。
 
 下面spider的示例中，我们假定您有个项目在 ``myproject.items`` 模块中声明了 ``TestItem``::
 
-    from scrapy.item import Item
+    import scrapy
 
-    class TestItem(Item):
-        id = Field()
-        name = Field()
-        description = Field()
+    class TestItem(scrapy.Item):
+        id = scrapy.Field()
+        name = scrapy.Field()
+        description = scrapy.Field()
 
 
 .. module:: scrapy.spider
@@ -121,9 +123,9 @@ Spider
        例如，如果您需要在启动时以POST登录某个网站，你可以这么写::
 
            def start_requests(self):
-               return [FormRequest("http://www.example.com/login",
-                                   formdata={'user': 'john', 'pass': 'secret'},
-                                   callback=self.logged_in)]
+               return [scrapy.FormRequest("http://www.example.com/login",
+                                          formdata={'user': 'john', 'pass': 'secret'},
+                                          callback=self.logged_in)]
 
            def logged_in(self, response):
                # here you would extract links to follow and return Requests for
@@ -159,16 +161,20 @@ Spider
        log中自动带上该spider的 :attr:`name` 属性。
        更多数据请参见 :ref:`topics-logging` 。
 
+   .. method:: closed(reason)
+
+       当spider关闭时，该函数被调用。
+       该方法提供了一个替代调用signals.connect()来监听 :signal:`spider_closed` 信号的快捷方式。
+
 
 Spider样例
 ~~~~~~~~~~~~~~
 
 让我们来看一个例子::
 
-    from scrapy import log # This module is useful for printing out debug information
-    from scrapy.spider import Spider
+    import scrapy
 
-    class MySpider(Spider):
+    class MySpider(scrapy.Spider):
         name = 'example.com'
         allowed_domains = ['example.com']
         start_urls = [
@@ -182,12 +188,10 @@ Spider样例
 
 另一个在单个回调函数中返回多个Request以及Item的例子::
 
-    from scrapy.selector import Selector
-    from scrapy.spider import Spider
-    from scrapy.http import Request
+    import scrapy
     from myproject.items import MyItem
 
-    class MySpider(Spider):
+    class MySpider(scrapy.Spider):
         name = 'example.com'
         allowed_domains = ['example.com']
         start_urls = [
@@ -197,12 +201,12 @@ Spider样例
         ]
 
         def parse(self, response):
-            sel = Selector(response)
-            for h3 in sel.xpath('//h3').extract():
+            sel = scrapy.Selector(response)
+            for h3 in response.xpath('//h3').extract():
                 yield MyItem(title=h3)
 
-            for url in sel.xpath('//a/@href').extract():
-                yield Request(url, callback=self.parse)
+            for url in response.xpath('//a/@href').extract():
+                yield scrapy.Request(url, callback=self.parse)
 
 .. module:: scrapy.contrib.spiders
    :synopsis: Collection of generic spiders
@@ -268,10 +272,9 @@ CrawlSpider样例
 
 接下来给出配合rule使用CrawlSpider的例子::
 
+    import scrapy
     from scrapy.contrib.spiders import CrawlSpider, Rule
-    from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
-    from scrapy.selector import Selector
-    from scrapy.item import Item
+    from scrapy.contrib.linkextractors import LinkExtractor
 
     class MySpider(CrawlSpider):
         name = 'example.com'
@@ -280,20 +283,19 @@ CrawlSpider样例
 
         rules = (
             # 提取匹配 'category.php' (但不匹配 'subsection.php') 的链接并跟进链接(没有callback意味着follow默认为True)
-            Rule(SgmlLinkExtractor(allow=('category\.php', ), deny=('subsection\.php', ))),
+            Rule(LinkExtractor(allow=('category\.php', ), deny=('subsection\.php', ))),
 
             # 提取匹配 'item.php' 的链接并使用spider的parse_item方法进行分析
-            Rule(SgmlLinkExtractor(allow=('item\.php', )), callback='parse_item'),
+            Rule(LinkExtractor(allow=('item\.php', )), callback='parse_item'),
         )
 
         def parse_item(self, response):
             self.log('Hi, this is an item page! %s' % response.url)
 
-            sel = Selector(response)
-            item = Item()
-            item['id'] = sel.xpath('//td[@id="item_id"]/text()').re(r'ID: (\d+)')
-            item['name'] = sel.xpath('//td[@id="item_name"]/text()').extract()
-            item['description'] = sel.xpath('//td[@id="item_description"]/text()').extract()
+            item = scrapy.Item()
+            item['id'] = response.xpath('//td[@id="item_id"]/text()').re(r'ID: (\d+)')
+            item['name'] = response.xpath('//td[@id="item_name"]/text()').extract()
+            item['description'] = response.xpath('//td[@id="item_description"]/text()').extract()
             return item
 
 
@@ -393,7 +395,7 @@ XMLFeedSpider例子
         def parse_node(self, response, node):
             log.msg('Hi, this is a <%s> node!: %s' % (self.itertag, ''.join(node.extract())))
 
-            item = Item()
+            item = TestItem()
             item['id'] = node.xpath('@id').extract()
             item['name'] = node.xpath('name').extract()
             item['description'] = node.xpath('description').extract()
@@ -567,7 +569,7 @@ SitemapSpider样例
 
         def start_requests(self):
             requests = list(super(MySpider, self).start_requests())
-            requests += [Request(x, callback=self.parse_other) for x in self.other_urls]
+            requests += [scrapy.Request(x, self.parse_other) for x in self.other_urls]
             return requests
 
         def parse_shop(self, response):

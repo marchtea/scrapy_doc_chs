@@ -167,6 +167,21 @@ spider_error
     :param spider: 抛出异常的spider
     :type spider: :class:`~scrapy.spider.Spider` 对象
 
+request_scheduled
+-----------------
+
+.. signal:: request_scheduled
+.. function:: request_scheduled(request, spider)
+
+    当引擎调度一个 :class:`~scrapy.http.Request` 对象用于下载时，该信号被发送。
+
+    该信号 **不支持** 返回deferreds。
+
+    :param request: 到达调度器的request
+    :type request: :class:`~scrapy.http.Request` 对象
+
+    :param spider: 产生该request的spider
+    :type spider: :class:`~scrapy.spider.Spider` 对象
 
 response_received
 -----------------

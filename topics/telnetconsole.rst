@@ -151,7 +151,7 @@ telnet终端使用的端口范围。如果设为 ``None`` 或 ``0`` ，
 TELNETCONSOLE_HOST
 ------------------
 
-Default: ``'0.0.0.0'``
+默认: ``'127.0.0.1'``
 
 telnet终端监听的接口(interface)。
 

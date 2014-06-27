@@ -216,7 +216,7 @@ shell的输出类似::
     [s]   item       {}
     [s]   request    <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
     [s]   response   <200 http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
-    [s]   settings   <CrawlerSettings module=None>
+    [s]   settings   <scrapy.settings.Settings object at 0x3fadc50>
     [s]   spider     <Spider 'default' at 0x3cebf50>
     [s] Useful shortcuts:
     [s]   shelp()           Shell help (print this help)
@@ -361,7 +361,7 @@ shell的输出类似::
 
 最简单存储爬取的数据的方式是使用 :ref:`Feed exports <topics-feed-exports>`::
 
-    scrapy crawl dmoz -o items.json -t json
+    scrapy crawl dmoz -o items.json
 
 该命令将采用 `JSON`_ 格式对爬取的数据进行序列化，生成 ``items.json`` 文件。
 
