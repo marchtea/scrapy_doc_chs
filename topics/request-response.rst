@@ -7,18 +7,15 @@ Requests and Responses
 .. module:: scrapy.http
    :synopsis: Request and Response classes
 
-Scrapy uses :class:`Request` and :class:`Response` objects for crawling web
-sites.
+Scrapy使用 :class:`Request` 和 :class:`Response` 对象爬取web站点。
 
-Typically, :class:`Request` objects are generated in the spiders and pass
-across the system until they reach the Downloader, which executes the request
-and returns a :class:`Response` object which travels back to the spider that
-issued the request.
+一般来说，:class:`Request` 对象在spiders中被生成并且最终传递到
+下载器(Downloader)，下载器对其进行处理并返回一个 :class:`Response` 对象， 
+:class:`Response` 对象还会返回到生成request的spider中。
 
-Both :class:`Request` and :class:`Response` classes have subclasses which add
-functionality not required in the base classes. These are described
-below in :ref:`topics-request-response-ref-request-subclasses` and
-:ref:`topics-request-response-ref-response-subclasses`.
+所有 :class:`Request` and :class:`Response` 的子类都会实现一些在基类中非必要的
+功能。它们会在 :ref:`topics-request-response-ref-request-subclasses` 和 
+:ref:`topics-request-response-ref-response-subclasses` 两部分进行详细的说明。
 
 
 Request objects
