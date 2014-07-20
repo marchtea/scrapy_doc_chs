@@ -85,28 +85,21 @@ Item Loader在每个(Item)字段中都包含了一个输入处理器和一个输
 
 2. 从 ``xpath2`` 提取出来的数据,传递给(1)中使用的相同的 *输入处理器* .输入处理器的结果被附加到在(1)中收集的数据(如果有的话) ｡
 
-3. This case is similar to the previous ones, except that the data is extracted
-   from the ``css`` CSS selector, and passed through the same *input
-   processor* used in (1) and (2). The result of the input processor is appended to the
-   data collected in (1) and (2) (if any).
+3. 和之前相似，只不过这里的数据是通过 ``css`` CSS selector抽取，之后传输到在(1)和(2)使用
+   的 *input processor* 中。最终输入处理器的结果被附加到在(1)和(2)中收集的数据之后
+   (如果存在数据的话)。
 
-4. This case is also similar to the previous ones, except that the value to be
-   collected is assigned directly, instead of being extracted from a XPath
-   expression or a CSS selector.
-   However, the value is still passed through the input processors. In this
-   case, since the value is not iterable it is converted to an iterable of a
-   single element before passing it to the input processor, because input
-   processor always receive iterables.
+4. 这里的处理方式也和之前相似，但是此处的值是通过add_value直接赋予的，
+   而不是利用XPath表达式或CSS selector获取。得到的值仍然是被传送到输入处理器。
+   在这里例程中，因为得到的值并非可迭代，所以在传输到输入处理器之前需要将其
+   转化为可迭代的单个元素，这才是它所接受的形式。
 
-5. The data collected in steps (1), (2), (3) and (4) is passed through
-   the *output processor* of the ``name`` field.
-   The result of the output processor is the value assigned to the ``name``
-   field in the item.
+5. 在之前步骤中所收集到的数据被传送到 *output processor* 的 ``name`` field中。
+   输出处理器的结果就是赋到item中 ``name`` field的值。
 
-It's worth noticing that processors are just callable objects, which are called
-with the data to be parsed, and return a parsed value. So you can use any
-function as input or output processor. The only requirement is that they must
-accept one (and only one) positional argument, which will be an iterator.
+需要注意的是，输入和输出处理器都是可调用对象，调用时传入需要被分析的数据，
+处理后返回分析得到的值。因此你可以使用任意函数作为输入、输出处理器。
+唯一需注意的是它们必须接收一个（并且只是一个）迭代器性质的positional参数。
 
 .. note:: Both input and output processors must receive an iterator as their
    first argument. The output of those functions can be anything. The result of
