@@ -137,7 +137,7 @@ BOT_NAME
 
 默认: ``'scrapybot'``
 
-Scrapy项目实现的bot的名字(也未项目名称)。
+Scrapy项目实现的bot的名字(也为项目名称)。
 这将用来构造默认 User-Agent，同时也用来log。
 
 当您使用 :command:`startproject` 命令创建项目时其也被自动赋值。
