@@ -45,19 +45,17 @@ Request对象
        通过参数传递的字典将会被浅拷贝。
     :type meta: dict
 
-    :param body: the request body. If a ``unicode`` is passed, then it's encoded to
-      ``str`` using the `encoding` passed (which defaults to ``utf-8``). If
-      ``body`` is not given,, an empty string is stored. Regardless of the
-      type of this argument, the final value stored will be a ``str`` (never
-      ``unicode`` or ``None``).
+    :param body: request体。如果传进的参数是 ``unicode`` 类型，将会被编码为
+      ``str`` 类型。如果 ``body`` 参数没有给定，那么将会存储一个空的string类型，不管
+      这个参数是什么类型的，最终存储的都会是 ``str`` 类型(永远不会是 ``unicode`` 或是 ``None``)。
     :type body: str or unicode
 
-    :param headers: the headers of this request. The dict values can be strings
-       (for single valued headers) or lists (for multi-valued headers). If
-       ``None`` is passed as value, the HTTP header will not be sent at all.
+    :param headers: 请求头。字典值的类型可以是strings
+       (for single valued headers) 或是 lists (for multi-valued headers)。如果传进的值是
+       ``None`` ，那么HTTP头将不会被发送。
     :type headers: dict
 
-    :param cookies: the request cookies. These can be sent in two forms.
+    :param cookies: 请求的cookies。可以被设置成如下两种形式。
 
         1. Using a dict::
 
