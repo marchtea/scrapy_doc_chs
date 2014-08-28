@@ -18,16 +18,15 @@ Scrapy使用 :class:`Request` 和 :class:`Response` 对象爬取web站点。
 :ref:`topics-request-response-ref-response-subclasses` 两部分进行详细的说明。
 
 
-Request objects
+Request对象
 ===============
 
 .. class:: Request(url[, callback, method='GET', headers, body, cookies, meta, encoding='utf-8', priority=0, dont_filter=False, errback])
 
-    A :class:`Request` object represents an HTTP request, which is usually
-    generated in the Spider and executed by the Downloader, and thus generating
-    a :class:`Response`.
+    一个 :class:`Request` 对象代表一个HTTP请求，一般来讲，
+    HTTP请求是由Spider产生并被Downloader处理进而生成一个 :class:`Response`。
 
-    :param url: the URL of this request
+    :param url: 请求的URL
     :type url: string
 
     :param callback: the function that will be called with the response of this
@@ -39,26 +38,24 @@ Request objects
 
     :type callback: callable
 
-    :param method: the HTTP method of this request. Defaults to ``'GET'``.
+    :param method: 此请求的HTTP方法。默认是 ``'GET'``。
     :type method: string
 
-    :param meta: the initial values for the :attr:`Request.meta` attribute. If
-       given, the dict passed in this parameter will be shallow copied.
+    :param meta: :attr:`Request.meta` 属性的初始值。 一旦此参数被设置，
+       通过参数传递的字典将会被浅拷贝。
     :type meta: dict
 
-    :param body: the request body. If a ``unicode`` is passed, then it's encoded to
-      ``str`` using the `encoding` passed (which defaults to ``utf-8``). If
-      ``body`` is not given,, an empty string is stored. Regardless of the
-      type of this argument, the final value stored will be a ``str`` (never
-      ``unicode`` or ``None``).
+    :param body: request体。如果传进的参数是 ``unicode`` 类型，将会被编码为
+      ``str`` 类型。如果 ``body`` 参数没有给定，那么将会存储一个空的string类型，不管
+      这个参数是什么类型的，最终存储的都会是 ``str`` 类型(永远不会是 ``unicode`` 或是 ``None``)。
     :type body: str or unicode
 
-    :param headers: the headers of this request. The dict values can be strings
-       (for single valued headers) or lists (for multi-valued headers). If
-       ``None`` is passed as value, the HTTP header will not be sent at all.
+    :param headers: 请求头。字典值的类型可以是strings
+       (for single valued headers) 或是 lists (for multi-valued headers)。如果传进的值是
+       ``None`` ，那么HTTP头将不会被发送。
     :type headers: dict
 
-    :param cookies: the request cookies. These can be sent in two forms.
+    :param cookies: 请求的cookies。可以被设置成如下两种形式。
 
         1. Using a dict::
 
