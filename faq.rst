@@ -260,34 +260,6 @@ Scrapy自动管理cookies么？
 也许您需要移除命名空间(namespace)。参见 :ref:`removing-namespaces`.
 
 
-我得到错误: "不能导入name crawler“
---------------------------------------------------
-
-这是由于Scrapy修改，去掉了单例模式(singletons)所引起的。
-这个错误一般是由从 ``scrapy.project`` 导入 ``crawler`` 的模块引起的(扩展，中间件，pipeline或spider)。
-例如::
-
-    from scrapy.project import crawler
-
-    class SomeExtension(object):
-        def __init__(self):
-            self.crawler = crawler
-            # ...
-
-这种访问crawler对象的方式已经被舍弃了，新的代码应该使用
-``from_crawler`` 类方法来移植，例如::
-
-    class SomeExtension(object):
-
-        @classmethod
-        def from_crawler(cls, crawler):
-            o = cls()
-            o.crawler = crawler
-            return o
-
-Scrapy终端工具(command line tool)针对旧的导入机制提供了一些支持(给出了废弃警告)，
-但如果您以不同方式使用Scrapy(例如，作为类库)，该机制可能会失效。
-
 .. _user agents: http://en.wikipedia.org/wiki/User_agent
 .. _LIFO: http://en.wikipedia.org/wiki/LIFO
 .. _深度优先顺序: http://en.wikipedia.org/wiki/Depth-first_search

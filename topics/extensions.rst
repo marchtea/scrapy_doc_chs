@@ -31,7 +31,6 @@
 
     EXTENSIONS = {
         'scrapy.contrib.corestats.CoreStats': 500,
-        'scrapy.webservice.WebService': 500,
         'scrapy.telnet.TelnetConsole': 500,
     }
 
@@ -172,18 +171,6 @@ items的数量通过 ``MYEXT_ITEMCOUNT`` 配置项设置。
 .. class:: CoreStats
 
 如果统计收集器(stats collection)启用了，该扩展开启核心统计收集(参考 :ref:`topics-stats`)。
-
-.. _topics-extensions-ref-webservice:
-
-Web service 扩展
-~~~~~~~~~~~~~~~~~~~~~
-
-.. module:: scrapy.webservice
-   :synopsis: Web service
-
-.. class:: scrapy.webservice.WebService
-
-参考 :ref:`webservice <topics-webservice>` 。
 
 .. _topics-extensions-ref-telnetconsole:
 

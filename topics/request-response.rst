@@ -77,7 +77,7 @@ Request对象
         cookies for that domain and will be sent again in future requests. That's
         the typical behaviour of any regular web browser. However, if, for some
         reason, you want to avoid merging with existing cookies you can instruct
-        Scrapy to do so by setting the ``dont_merge_cookies`` key in the
+        Scrapy to do so by setting the ``dont_merge_cookies`` key to True in the
         :attr:`Request.meta`.
 
         Example of request without merging cookies::

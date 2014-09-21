@@ -202,8 +202,6 @@ Scrapy可以助你一臂之力。
 
 * 提供 :ref:`System service <topics-scrapyd>`, 简化在生产环境的部署及运行
 
-* 内置 :ref:`Web service <topics-webservice>`, 使您可以监视及控制您的机器
-
 * 内置 :ref:`Telnet终端 <topics-telnetconsole>` ，通过在Scrapy进程中钩入Python终端，使您可以查看并且调试爬虫
 
 * :ref:`Logging <topics-logging>` 为您在爬取过程中捕捉错误提供了方便

@@ -9,7 +9,8 @@ Scrapy提供了log功能。您可以通过
 
 .. _Twisted logging: http://twistedmatrix.com/projects/core/documentation/howto/logging.html
 
-log服务必须通过显示调用 :func:`scrapy.log.start` 来开启。
+log服务必须通过显示调用 :func:`scrapy.log.start` 来开启，以捕捉顶层的Scrapy日志消息。
+在此之上，每个crawler都拥有独立的log观察者(observer)(创建时自动连接(attach)),接收其spider的日志消息。
 
 .. _topics-logging-levels:
 
@@ -53,7 +54,9 @@ scrapy.log模块
 
 .. function:: start(logfile=None, loglevel=None, logstdout=None)
 
-    启动log功能。该方法必须在记录(log)任何信息前被调用。否则调用前的信息将会丢失。
+    启动Scrapy顶层logger。该方法必须在记录任何顶层消息前被调用
+    (使用模块的 :func:`~scrapy.log.msg` 而不是 :meth:`Spider.log
+    <scrapy.spider.Spider.log>` 的消息)。否则，之前的消息将会丢失。
 
     :param logfile: 用于保存log输出的文件路径。如果被忽略，
         :setting:`LOG_FILE` 设置会被使用。 

@@ -25,9 +25,11 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 它通过 :setting:`EXTENSIONS` 配置，包含一个所有可用扩展的字典，
 字典的顺序跟你在 :ref:`configure the downloader middlewares <topics-downloader-middleware-setting>` 配置的顺序一致。
 
-.. class:: Crawler(settings)
+.. class:: Crawler(spidercls, settings)
 
-    Crawler必须使用 :class:`scrapy.settings.Settings` 的对象进行实例化
+    Crawler必须使用 
+    :class:`scrapy.spider.Spider` 子类及
+    :class:`scrapy.settings.Settings` 的对象进行实例化
 
     .. attribute:: settings
 
@@ -67,12 +69,6 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
         关于扩展和可用扩展列表器的介绍参考 :ref:`topics-extensions`。
 
-    .. attribute:: spiders
-
-        spider管理器，加载和实例化spiders。
-
-        大多数扩展不需要访问该属性。
-
     .. attribute:: engine
 
         执行引擎，协调crawler的核心逻辑，包括调度，下载和spider。
@@ -80,17 +76,63 @@ Extension Manager负责加载和跟踪已经安装的扩展，
         某些扩展可能需要访问Scrapy的引擎属性，以修改检查(modify inspect)或修改下载器和调度器的行为，
         这是该API的高级使用，但还不稳定。
 
-    .. method:: configure()
+    .. attribute:: spider
+        正在爬取的spider。该spider类的实例由创建crawler时所提供，
+        在调用 :meth:`crawl` 方法是所创建。
 
-        配置crawler。
+    .. method:: crawl(\*args, \**kwargs)
 
-        该方法加载扩展、中间件和spiders，使crawler处于ready状态。
-        同时，它还配置好了执行引擎。
+        根据给定的
+        `args` , `kwargs` 的参数来初始化spider类，启动执行引擎，启动crawler。
 
-    .. method:: start()
+        返回一个延迟deferred对象，当爬取结束时触发它。
 
-        启动crawler。如果 :meth: `configure` 方法还未被调用过，该方法会调用它。
-        返回一个延迟deferred对象，当爬取结束是触发它。
+.. class:: CrawlerRunner(settings)
+
+    This is a convenient helper class that creates, configures and runs
+    crawlers inside an already setup Twisted `reactor`_.
+
+    The CrawlerRunner object must be instantiated with a
+    :class:`~scrapy.settings.Settings` object.
+
+    This class shouldn't be needed (since Scrapy is responsible of using it
+    accordingly) unless writing scripts that manually handle the crawling
+    process. See :ref:`run-from-script` for an example.
+
+    .. attribute:: crawlers
+
+       Set of :class:`crawlers <scrapy.crawler.Crawler>` created by the
+       :meth:`crawl` method.
+
+    .. attribute:: crawl_deferreds
+
+       Set of the `deferreds`_ return by the :meth:`crawl` method. This
+       collection it's useful for keeping track of current crawling state.
+
+    .. method:: crawl(spidercls, \*args, \**kwargs)
+
+       This method sets up the crawling of the given `spidercls` with the
+       provided arguments.
+
+       It takes care of loading the spider class while configuring and starting
+       a crawler for it.
+
+       Returns a deferred that is fired when the crawl is finished.
+
+       :param spidercls: spider class or spider's name inside the project
+       :type spidercls: :class:`~scrapy.spider.Spider` subclass or str
+
+       :param args: arguments to initializate the spider
+       :type args: list
+
+       :param kwargs: keyword arguments to initializate the spider
+       :type kwargs: dict
+
+    .. method:: stop()
+
+       Stops simultaneously all the crawling jobs taking place.
+
+       Returns a deferred that is fired when they all have ended.
 
 .. _topics-api-settings:
 
@@ -118,6 +160,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
             'default': 0,
             'command': 10,
             'project': 20,
+            'spider': 30,
             'cmdline': 40,
         }
 
@@ -239,7 +282,7 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
     .. method:: getlist(name, default=None)
 
-       将某项配置的值以列表形式返回。如果配置值本来就是list则原样返回。
+       将某项配置的值以列表形式返回。如果配置值本来就是list则将返回其拷贝。
        如果是字符串，则返回被 "," 分割后的列表。
 
        比如，某项值通过环境变量的计算被设置为 ``'one,two'`` ，该方法返回['one', 'two']。
@@ -248,7 +291,92 @@ Extension Manager负责加载和跟踪已经安装的扩展，
        :type name: 字符串
 
        :param default: 如果该配置项未设置，返回的缺省值
-       :type default: 任何
+       :type default: 任何类型
+
+    .. method:: getdict(name, default=None)
+
+       Get a setting value as a dictionary. If the setting original type is a
+       dictionary, a copy of it will be returned. If it's a string it will
+       evaluated as a json dictionary.
+
+       :param name: the setting name
+       :type name: string
+
+       :param default: the value to return if no setting is found
+       :type default: any
+
+    .. method:: copy()
+
+       Make a deep copy of current settings.
+
+       This method returns a new instance of the :class:`Settings` class,
+       populated with the same values and their priorities.
+
+       Modifications to the new object won't be reflected on the original
+       settings.
+
+    .. method:: freeze()
+
+       Disable further changes to the current settings.
+
+       After calling this method, the present state of the settings will become
+       immutable. Trying to change values through the :meth:`~set` method and
+       its variants won't be possible and will be alerted.
+
+    .. method:: frozencopy()
+
+       Return an immutable copy of the current settings.
+
+       Alias for a :meth:`~freeze` call in the object returned by :meth:`copy`
+
+.. _topics-api-spidermanager:
+
+SpiderManager API
+=================
+
+.. module:: scrapy.spidermanager
+   :synopsis: The spider manager
+
+.. class:: SpiderManager
+
+    This class is in charge of retrieving and handling the spider classes
+    defined across the project.
+
+    Custom spider managers can be employed by specifying their path in the
+    :setting:`SPIDER_MANAGER_CLASS` project setting. They must fully implement
+    the :class:`scrapy.interfaces.ISpiderManager` interface to guarantee an
+    errorless execution.
+
+    .. method:: from_settings(settings)
+
+       This class method is used by Scrapy to create an instance of the class.
+       It's called with the current project settings, and it loads the spiders
+       found in the modules of the :setting:`SPIDER_MODULES` setting.
+
+       :param settings: project settings
+       :type settings: :class:`~scrapy.settings.Settings` instance
+
+    .. method:: load(spider_name)
+
+       Get the Spider class with the given name. It'll look into the previously
+       loaded spiders for a spider class with name `spider_name` and will raise
+       a KeyError if not found.
+
+       :param spider_name: spider class name
+       :type spider_name: str
+
+    .. method:: list()
+
+       Get the names of the available spiders in the project.
+
+    .. method:: find_by_request(request)
+
+       List the spiders' names that can handle the given request. Will try to
+       match the request's url against the domains of the spiders.
+
+       :param request: queried request
+       :type request: :class:`~scrapy.http.Request` instance
+
 
 .. _topics-api-signals:
 
@@ -360,3 +488,4 @@ Extension Manager负责加载和跟踪已经安装的扩展，
 
 .. _deferreds: http://twistedmatrix.com/documents/current/core/howto/defer.html
 .. _deferred: http://twistedmatrix.com/documents/current/core/howto/defer.html
+.. _reactor: http://twistedmatrix.com/documents/current/core/howto/reactor-basics.html

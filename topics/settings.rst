@@ -31,9 +31,10 @@ Scrapy设定(settings)提供了定制Scrapy组件的方法。您可以控制包�
 下面以优先级降序的方式给出方式列表:
 
  1. 命令行选项(Command line Options)(最高优先级)
- 2. 项目设定模块(Project settings module)
- 3. 命令默认设定模块(Default settings per-command)
- 4. 全局默认设定(Default global settings) (最低优先级)
+ 2. 每个spider的设定 
+ 3. 项目设定模块(Project settings module)
+ 4. 命令默认设定模块(Default settings per-command)
+ 5. 全局默认设定(Default global settings) (最低优先级)
 
 这些设定(settings)由scrapy内部很好的进行了处理，不过您仍可以使用API调用来手动处理。
 详情请参考 :ref:`topics-api-settings`.
@@ -433,7 +434,6 @@ EXTENSIONS_BASE
 
     {
         'scrapy.contrib.corestats.CoreStats': 0,
-        'scrapy.webservice.WebService': 0,
         'scrapy.telnet.TelnetConsole': 0,
         'scrapy.contrib.memusage.MemoryUsage': 0,
         'scrapy.contrib.memdebug.MemoryDebugger': 0,
@@ -731,6 +731,15 @@ SPIDER_CONTRACTS_BASE
 永远不要在项目中修改该设定，而是修改
 :setting:`SPIDER_CONTRACTS` 。更多内容请参考
 :ref:`topics-contracts` 。
+
+.. setting:: SPIDER_MANAGER_CLASS
+
+SPIDER_MANAGER_CLASS
+--------------------
+
+默认: ``'scrapy.spidermanager.SpiderManager'``
+
+用于管理spider的类。该类必须实现 :ref:`topics-api-spidermanager` 
 
 .. setting:: SPIDER_MIDDLEWARES
 

@@ -595,8 +595,8 @@ RedirectMiddleware
 
 .. reqmeta:: dont_redirect
 
-如果 :attr:`Request.meta <scrapy.http.Request.meta>` 包含
-``dont_redirect`` 键，则该request将会被此中间件忽略。
+如果 :attr:`Request.meta <scrapy.http.Request.meta>` 中
+``dont_redirect`` 设置为True ，则该request将会被此中间件忽略。
 
 
 RedirectMiddleware settings
@@ -691,7 +691,8 @@ RetryMiddleware
 
 .. reqmeta:: dont_retry
 
-如果 :attr:`Request.meta <scrapy.http.Request.meta>` 包含 ``dont_retry`` 键，
+如果 :attr:`Request.meta <scrapy.http.Request.meta>` 中
+``dont_retry`` 设为True，
 该request将会被本中间件忽略。
 
 RetryMiddleware Settings

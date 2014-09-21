@@ -18,27 +18,51 @@
 因此其必须在Twisted reactor里运行。
 
 另外，在spider运行结束后，您必须自行关闭Twisted reactor。
-这可以通过设置 ``signals.spider_closed`` 信号的处理器(handler)来实现。
+这可以通过在 :meth:`CrawlerRunner.crawl
+<scrapy.crawler.CrawlerRunner.crawl>` 所返回的对象中添加回调函数来实现。
 
 下面给出了如何实现的例子，使用 `testspiders`_ 项目作为例子。
 
 ::
 
     from twisted.internet import reactor
-    from scrapy.crawler import Crawler
-    from scrapy import log, signals
-    from testspiders.spiders.followall import FollowAllSpider
+    from scrapy.crawler import CrawlerRunner
     from scrapy.utils.project import get_project_settings
 
-    spider = FollowAllSpider(domain='scrapinghub.com')
-    settings = get_project_settings()
-    crawler = Crawler(settings)
-    crawler.signals.connect(reactor.stop, signal=signals.spider_closed)
-    crawler.configure()
-    crawler.crawl(spider)
-    crawler.start()
-    log.start()
-    reactor.run() # the script will block here until the spider_closed signal was sent
+    runner = CrawlerRunner(get_project_settings())
+
+    # 'followall' is the name of one of the spiders of the project. 
+    d = runner.crawl('followall', domain='scrapinghub.com')
+    d.addBoth(lambda _: reactor.stop())
+    reactor.run() # the script will block here until the crawling is finished
+
+Running spiders outside projects it's not much different. You have to create a
+generic :class:`~scrapy.settings.Settings` object and populate it as needed
+(See :ref:`topics-settings-ref` for the available settings), instead of using
+the configuration returned by `get_project_settings`.
+
+Spiders can still be referenced by their name if :setting:`SPIDER_MODULES` is
+set with the modules where Scrapy should look for spiders.  Otherwise, passing
+the spider class as first argument in the :meth:`CrawlerRunner.crawl
+<scrapy.crawler.CrawlerRunner.crawl>` method is enough.
+
+::
+
+    from twisted.internet import reactor
+    from scrapy.spider import Spider
+    from scrapy.crawler import CrawlerRunner
+    from scrapy.settings import Settings
+
+    class MySpider(Spider):
+        # Your spider definition
+        ...
+
+    settings = Settings({'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'})
+    runner = CrawlerRunner(settings)
+
+    d = runner.crawl(MySpider)
+    d.addBoth(lambda _: reactor.stop())
+    reactor.run() # the script will block here until the crawling is finished
 
 .. seealso:: `Twisted Reactor Overview`_.
 
@@ -50,28 +74,41 @@
 :ref:`内部(internal)API <topics-api>`
 也支持单进程多个spider。
 
-下面以 `testspiders`_ 作为例子:
+下面以 `testspiders`_ 作为例子来说明如何同时运行多个spider:
 
 ::
 
-    from twisted.internet import reactor
-    from scrapy.crawler import Crawler
-    from scrapy import log
-    from testspiders.spiders.followall import FollowAllSpider
+    from twisted.internet import reactor, defer
+    from scrapy.crawler import CrawlerRunner
     from scrapy.utils.project import get_project_settings
 
-    def setup_crawler(domain):
-        spider = FollowAllSpider(domain=domain)
-        settings = get_project_settings()
-        crawler = Crawler(settings)
-        crawler.configure()
-        crawler.crawl(spider)
-        crawler.start()
-
+    runner = CrawlerRunner(get_project_settings())
+    dfs = set()
     for domain in ['scrapinghub.com', 'insophia.com']:
-        setup_crawler(domain)
-    log.start()
-    reactor.run()
+        d = runner.crawl('followall', domain=domain)
+        dfs.add(d)
+
+    defer.DeferredList(dfs).addBoth(lambda _: reactor.stop())
+    reactor.run() # the script will block here until all crawling jobs are finished
+
+相同的例子，不过通过链接(chaining) deferred来线性运行spider:
+
+::
+
+    from twisted.internet import reactor, defer
+    from scrapy.crawler import CrawlerRunner
+    from scrapy.utils.project import get_project_settings
+
+    runner = CrawlerRunner(get_project_settings())
+
+    @defer.inlineCallbacks
+    def crawl():
+        for domain in ['scrapinghub.com', 'insophia.com']:
+            yield runner.crawl('followall', domain=domain)
+        reactor.stop()
+
+    crawl()
+    reactor.run() # the script will block here until the last crawl call is finished
 
 .. seealso:: :ref:`run-from-script`.
 
