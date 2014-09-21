@@ -4,30 +4,28 @@
 安装指南
 ==================
 
-前期准备
+安装Scrapy
 ==============
+
+.. note:: 请先阅读 :ref:`intro-install-platform-notes`.
 
 下列的安装步骤假定您已经安装好下列程序:
 
 * `Python`_ 2.7
+
+* Python Package: `pip`_ and `setuptools`_. 现在 `pip`_ 依赖 `setuptools`_ ，如果未安装，则会自动安装 `setuptools`_ 。
+
 * `lxml`_. 大多数Linux发行版自带了lxml。如果缺失，请查看http://lxml.de/installation.html
+
 * `OpenSSL`_. 除了Windows(请查看 :ref:`intro-install-platform-notes`)之外的系统都已经提供。
-* `pip`_ 或者 `easy_install`_ Python安装管理器
 
-安装Scrapy
-=================
+您可以使用pip来安装Scrapy(推荐使用pip来安装Python package).
 
-您可以通过使用easy_install或者pip来安装Scrapy。(pip是更受推荐用来分发和安装Python包的工具)
-
-.. note:: 请先查看 :ref:`intro-install-platform-notes`.
 
 使用pip安装::
 
    pip install Scrapy
 
-使用easy_install安装::
-
-   easy_install Scrapy
 
 .. _intro-install-platform-notes:
 
@@ -37,31 +35,31 @@
 Windows
 -------
 
-安装完Python后，在安装Scrapy前请先执行下列步骤:
 
-* 修改 `控制面板`_ 中的 ``PATH`` 环境变量，将 ``C:\python27\Scripts`` 和 ``C:\python27`` 添加到系统路径中。
+* 从 http://python.org/download/ 上安装Python 2.7.
 
-* 执行下列步骤来安装OpenSSL:
+    您需要修改 ``PATH`` 环境变量，将Python的可执行程序及额外的脚本添加到系统路径中。将以下路径添加到 ``PATH`` 中::
 
-  1. 打开 `Win32 OpenSSL页面 <http://slproweb.com/products/Win32OpenSSL.html>`_
+      C:\Python2.7\;C:\Python2.7\Scripts\;
 
-  2. 根据您的Windows版本和架构(32位或64位)，下载Visual C++ 2008 redistributables.
+  请打开命令行，并且运行以下命令来修改 ``PATH``::
 
-  3. 根据您的Windows版本和架构来下载OpenSSL(完整版，不是简化版)
+      c:\python27\python.exe c:\python27\tools\scripts\win_add2path.py
 
-  4. 按照上面添加 ``python27`` 环境变量的方式将 ``c:\openssl-win32\bin`` 添加到您的 ``PATH`` 中。
+  关闭并重新打开命令行窗口，使之生效。运行接下来的命令来确认其输出所期望的Python版本::
 
-* 一些Scrapy依赖的二进制包(Twisted, lxml以及pyOpenSSL)要求系统中预装有编译器。如果没有安装Visual Studio,则会出现错误。您可以在下边的链接中找到Windows的安装包。在安装前请注意您的Python版本和Windows的架构(32或64位)
+      python --version
 
-  * pywin32: http://sourceforge.net/projects/pywin32/files/
-  * Twisted: http://twistedmatrix.com/trac/wiki/Downloads
-  * zope.interface: 您可以从 `zope.interface pypi page <http://pypi.python.org/pypi/zope.interface>`_ 下载并运行 ``easy_install file.egg`` 安装
-  * lxml: http://pypi.python.org/pypi/lxml/
-  * pyOpenSSL: https://launchpad.net/pyopenssl
+* 从 https://pip.pypa.io/en/latest/installing.html 安装 `pip`_
+  
+  打开命令行窗口，确认 ``pip`` 被正确安装::
 
-另外， 下面的页面包括很多已经编译好的Python二进制库，方便满足Scrapy的依赖。
+      pip --version
 
-    http://www.lfd.uci.edu/~gohlke/pythonlibs/
+* 到目前为止Python 2.7 及 ``pip`` 已经可以正确运行了。接下来安装Scrapy::
+
+      pip install Scrapy
+
 
 Ubuntu 9.10及以上版本 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,6 +68,13 @@ Ubuntu 9.10及以上版本
 
 您可以使用官方提供的 :ref:`Ubuntu Packages <topics-ubuntu>` 。该包解决了全部依赖问题，并且与最新的bug修复保持持续更新。
 
+Archlinux
+~~~~~~~~~
+
+您可以依照通用的方式或者从 `AUR Scrapy package` 来安装Scrapy::
+
+    yaourt -S scrapy
+
 
 .. _Python: http://www.python.org
 .. _pip: http://www.pip-installer.org/en/latest/installing.html
@@ -77,3 +82,5 @@ Ubuntu 9.10及以上版本
 .. _控制面板: http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/sysdm_advancd_environmnt_addchange_variable.mspx
 .. _lxml: http://lxml.de/
 .. _OpenSSL: https://pypi.python.org/pypi/pyOpenSSL
+.. _setuptools: https://pypi.python.org/pypi/setuptools
+.. _AUR Scrapy package: https://aur.archlinux.org/packages/scrapy/

@@ -278,7 +278,7 @@ shell的输出类似::
 
 之前提到过，每个 ``.xpath()`` 调用返回selector组成的list，因此我们可以拼接更多的 ``.xpath()`` 来进一步获取某个节点。我们将在下边使用这样的特性::
 
-   for sel in response.xpath('//ul/li')
+   for sel in response.xpath('//ul/li'):
        title = sel.xpath('a/text()').extract()
        link = sel.xpath('a/@href').extract()
        desc = sel.xpath('text()').extract()
