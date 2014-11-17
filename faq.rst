@@ -226,7 +226,7 @@ Scrapy自动管理cookies么？
 
 更多详情请参考 :ref:`topics-request-response` 及 :ref:`cookies-mw` 。
 
-如何才能看到Scrapy发出及接收到的Scrapy呢？
+如何才能看到Scrapy发出及接收到的Cookies呢？
 --------------------------------------------------------------
 
 启用 :setting:`COOKIES_DEBUG` 选项。
