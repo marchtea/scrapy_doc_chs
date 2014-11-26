@@ -7,21 +7,18 @@ Item Loaders
 .. module:: scrapy.contrib.loader
    :synopsis: Item Loader class
 
-Item Loaders 提供了一种便捷的 convenient mechanism for populating scraped :ref:`Items
-<topics-items>`. Even though Items can be populated using their own
-dictionary-like API, the Item Loaders provide a much more convenient API for
-populating them from a scraping process, by automating some common tasks like
-parsing the raw extracted data before assigning it.
+Item Loaders 提供了一种简便的构件（mechanism）来抓取:ref:`Items<topics-items>`. 
+虽然Items可以从它自己的类似字典（dictionary-like）的API得到所需信息 ,不过
+Item Loaders提供了许多更加方便的API，这些API通过自动完成那些具有共通性的任务，可从抓取进程中得到这些信息,
+比如预先解析提取到的原生数据。
+换句话来解释, :ref:`Items <topics-items>` 提供了盛装抓取到的数据的*容器*
+, 而Item Loaders提供了构件*装载populating*该容器。
 
-In other words, :ref:`Items <topics-items>` provide the *container* of
-scraped data, while Item Loaders provide the mechanism for *populating* that
-container.
+Item Loaders 被设计用来提供一个既弹性又高效简便的构件，
+以扩展或重写爬虫或源格式(HTML, XML之类的)等区域的解析规则，
+这将不再是后期维护的噩梦。
 
-Item Loaders are designed to provide a flexible, efficient and easy mechanism
-for extending and overriding different field parsing rules, either by spider,
-or by source format (HTML, XML, etc) without becoming a nightmare to maintain.
-
-Using Item Loaders to populate items
+用Item Loaders装载Items
 ====================================
 
 要使用Item Loader, 你必须先将它实例化. 你可以使用类似字典的对象(例如: Item or dict)来进行实例化, 或者不使用对象也可以, 当不用对象进行实例化的时候,Item会自动使用 :attr:`ItemLoader.default_item_class`
