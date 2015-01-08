@@ -108,7 +108,7 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 
    import scrapy
 
-   class DmozSpider(scrapy.Spider):
+   class DmozSpider(scrapy.spider.Spider):
        name = "dmoz"
        allowed_domains = ["dmoz.org"]
        start_urls = [
@@ -177,7 +177,7 @@ Selectors选择器简介
 * ``//div[@class="mine"]``: 选择所有具有 ``class="mine"`` 属性的 ``div`` 元素
 
 上边仅仅是几个简单的XPath例子，XPath实际上要比这远远强大的多。
-如果您想了解的更多，我们推荐 `这篇XPath教程 <http://www.w3schools.com/XPath/default.asp>`_ 。
+如果您想了解的更多，我们推荐 `这篇XPath教程 <http://www.w3school.com.cn/xpath/index.asp>`_ 。
 
 为了配合XPath，Scrapy除了提供了 :class:`~scrapy.selector.Selector`
 之外，还提供了方法来避免每次从response中提取数据时生成selector的麻烦。
@@ -210,22 +210,23 @@ shell的输出类似::
 
     [ ... Scrapy log here ... ]
 
-    2014-01-23 17:11:42-0400 [default] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/> (referer: None)
+    2015-01-07 22:01:53+0800 [domz] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/> (referer: None)
     [s] Available Scrapy objects:
-    [s]   crawler    <scrapy.crawler.Crawler object at 0x3636b50>
+    [s]   crawler    <scrapy.crawler.Crawler object at 0x02CE2530>
     [s]   item       {}
     [s]   request    <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
     [s]   response   <200 http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
-    [s]   settings   <scrapy.settings.Settings object at 0x3fadc50>
-    [s]   spider     <Spider 'default' at 0x3cebf50>
+    [s]   sel        <Selector xpath=None data=u'<html lang="en">\r\n<head>\r\n<meta http-equ'>
+    [s]   settings   <CrawlerSettings module=<module 'tutorial.settings' from 'tutorial\settings.pyc'>>
+    [s]   spider     <DomzSpider 'domz' at 0x302e350>
     [s] Useful shortcuts:
     [s]   shelp()           Shell help (print this help)
     [s]   fetch(req_or_url) Fetch request (or URL) and update local objects
     [s]   view(response)    View response in a browser
+    
+    >>>
 
-    In [1]:
-
-当shell载入后，您将得到一个包含response数据的本地 ``response`` 变量。输入 ``response.body`` 将输出response的包体， 输出 ``response.header`` 可以看到response的包头。
+当shell载入后，您将得到一个包含response数据的本地 ``response`` 变量。输入 ``response.body`` 将输出response的包体， 输出 ``response.headers`` 可以看到response的包头。
 
 更为重要的是，当输入 ``response.selector`` 时，
 您将获取到一个可以用于查询返回数据的selector(选择器)，
@@ -236,19 +237,19 @@ shell的输出类似::
 
 让我们来试试::
 
-   In [1]: response.xpath('//title')
+   In [1]: sel.xpath('//title')
    Out[1]: [<Selector xpath='//title' data=u'<title>Open Directory - Computers: Progr'>]
 
-   In [2]: response.xpath('//title').extract()
+   In [2]: sel.xpath('//title').extract()
    Out[2]: [u'<title>Open Directory - Computers: Programming: Languages: Python: Books</title>']
 
-   In [3]: response.xpath('//title/text()')
+   In [3]: sel.xpath('//title/text()')
    Out[3]: [<Selector xpath='//title/text()' data=u'Open Directory - Computers: Programming:'>]
 
-   In [4]: response.xpath('//title/text()').extract()
+   In [4]: sel.xpath('//title/text()').extract()
    Out[4]: [u'Open Directory - Computers: Programming: Languages: Python: Books']
 
-   In [5]: response.xpath('//title/text()').re('(\w+):')
+   In [5]: sel.xpath('//title/text()').re('(\w+):')
    Out[5]: [u'Computers', u'Programming', u'Languages', u'Python']
 
 提取数据
