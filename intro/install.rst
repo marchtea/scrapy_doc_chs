@@ -40,7 +40,7 @@ Windows
 
     您需要修改 ``PATH`` 环境变量，将Python的可执行程序及额外的脚本添加到系统路径中。将以下路径添加到 ``PATH`` 中::
 
-      C:\Python2.7\;C:\Python2.7\Scripts\;
+      C:\Python27\;C:\Python27\Scripts\;
 
   请打开命令行，并且运行以下命令来修改 ``PATH``::
 
@@ -49,6 +49,10 @@ Windows
   关闭并重新打开命令行窗口，使之生效。运行接下来的命令来确认其输出所期望的Python版本::
 
       python --version
+
+* 从 http://sourceforge.net/projects/pywin32/ 安装 `pywin32` 
+  
+  请确认下载符合您系统的版本(win32或者amd64)
 
 * 从 https://pip.pypa.io/en/latest/installing.html 安装 `pip`_
   
