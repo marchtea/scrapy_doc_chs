@@ -50,6 +50,10 @@ Windows
 
       python --version
 
+* 从 http://sourceforge.net/projects/pywin32/ 安装 `pywin32` 
+  
+  请确认下载符合您系统的版本(win32或者amd64)
+
 * 从 https://pip.pypa.io/en/latest/installing.html 安装 `pip`_
   
   打开命令行窗口，确认 ``pip`` 被正确安装::
