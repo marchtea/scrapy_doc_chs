@@ -240,7 +240,11 @@ DownloadTimeoutMiddleware
 .. class:: DownloadTimeoutMiddleware
 
     该中间件设置
-    :setting:`DOWNLOAD_TIMEOUT` 指定的request下载超时时间.
+    :setting:`DOWNLOAD_TIMEOUT` 或 spider的 :attr:`download_timeout` 属性指定的request下载超时时间.
+
+.. note::
+
+    您也可以使用 :reqmeta:`download_timeout` Request.meta key 来对每个请求设置下载超时时间. 这种方式在 DownloadTimeoutMiddleware 被关闭时仍然有效.
 
 HttpAuthMiddleware
 ------------------

@@ -183,6 +183,23 @@ request_scheduled
     :param spider: 产生该request的spider
     :type spider: :class:`~scrapy.spider.Spider` 对象
 
+request_dropped
+-----------------
+
+.. signal:: request_dropped
+.. function:: request_dropped(request, spider)
+
+    Sent when a :class:`~scrapy.http.Request`, scheduled by the engine to be
+    downloaded later, is rejected by the scheduler.
+
+    The signal does not support returning deferreds from their handlers.
+
+    :param request: the request that reached the scheduler
+    :type request: :class:`~scrapy.http.Request` object
+
+    :param spider: the spider that yielded the request
+    :type spider: :class:`~scrapy.spider.Spider` object
+
 response_received
 -----------------
 

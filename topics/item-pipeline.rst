@@ -21,7 +21,7 @@ Item Pipeline
 
 编写你自己的item pipeline很简单，每个item pipiline组件是一个独立的Python类，同时必须实现以下方法:
 
-.. method:: process_item(item, spider)
+.. method:: process_item(self, item, spider)
 
    每个item pipeline组件都需要调用该方法，这个方法必须返回一个 :class:`~scrapy.item.Item` (或任何继承类)对象，
    或是抛出 :exc:`~scrapy.exceptions.DropItem` 异常，被丢弃的item将不会被之后的pipeline组件所处理。
@@ -36,7 +36,7 @@ Item Pipeline
 
 此外,他们也可以实现以下方法:
 
-.. method:: open_spider(spider)
+.. method:: open_spider(self, spider)
 
    当spider被开启时，这个方法被调用。
 
@@ -49,6 +49,17 @@ Item Pipeline
 
    :param spider: 被关闭的spider
    :type spider: :class:`~scrapy.spider.Spider` 对象
+
+.. method:: from_crawler(cls, crawler)
+
+   If present, this classmethod is called to create a pipeline instance
+   from a :class:`~scrapy.crawler.Crawler`. It must return a new instance
+   of the pipeline. Crawler object provides access to all Scrapy core
+   components like settings and signals; it is a way for pipeline to
+   access them and hook its functionality into Scrapy.
+
+   :param crawler: crawler that uses this pipeline
+   :type crawler: :class:`~scrapy.crawler.Crawler` object
 
 
 Item pipeline 样例
@@ -93,6 +104,53 @@ Item pipeline 样例
 
 .. note:: JsonWriterPipeline的目的只是为了介绍怎样编写item pipeline，如果你想要将所有爬取的item都保存到同一个JSON文件，
     你需要使用 :ref:`Feed exports <topics-feed-exports>` 。
+
+Write items to MongoDB
+----------------------
+
+In this example we'll write items to MongoDB_ using pymongo_.
+MongoDB address and database name are specified in Scrapy settings;
+MongoDB collection is named after item class.
+
+The main point of this example is to show how to use :meth:`from_crawler`
+method and how to clean up the resources properly.
+
+.. note::
+
+    Previous example (JsonWriterPipeline) doesn't clean up resources properly.
+    Fixing it is left as an exercise for the reader.
+
+::
+
+    import pymongo
+
+    class MongoPipeline(object):
+
+        def __init__(self, mongo_uri, mongo_db):
+            self.mongo_uri = mongo_uri
+            self.mongo_db = mongo_db
+
+        @classmethod
+        def from_crawler(cls, crawler):
+            return cls(
+                mongo_uri=crawler.settings.get('MONGO_URI'),
+                mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+            )
+
+        def open_spider(self, spider):
+            self.client = pymongo.MongoClient(self.mongo_uri)
+            self.db = self.client[self.mongo_db]
+
+        def close_spider(self, spider):
+            self.client.close()
+
+        def process_item(self, item, spider):
+            collection_name = item.__class__.__name__
+            self.db[collection_name].insert(dict(item))
+            return item
+
+.. _MongoDB: http://www.mongodb.org/
+.. _pymongo: http://api.mongodb.org/python/current/
 
 
 去重

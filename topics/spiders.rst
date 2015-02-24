@@ -109,6 +109,15 @@ Spider
        因此，第一个被获取到的页面的URL将是该列表之一。
        后续的URL将会从获取到的数据中提取。
 
+   .. attribute:: custom_settings
+
+      A dictionary of settings that will be overridden from the project wide
+      configuration when running this spider. It must be defined as a class
+      attribute since the settings are updated before instantiation.
+
+      For a list of available built-in settings see:
+      :ref:`topics-settings-ref`.
+
    .. attribute:: crawler
 
       This attribute is set by the :meth:`from_crawler` class method after
@@ -455,6 +464,11 @@ CSVFeedSpider
        在CSV文件中用于区分字段的分隔符。类型为string。
        默认为 ``','`` (逗号)。
 
+   .. attribute:: quotechar
+
+       A string with the enclosure character for each field in the CSV file
+       Defaults to ``'"'`` (quotation mark).
+
    .. attribute:: headers
       
        在CSV文件中包含的用来提取字段的行的列表。参考下边的例子。
@@ -480,6 +494,7 @@ CSVFeedSpider例子
         allowed_domains = ['example.com']
         start_urls = ['http://www.example.com/feed.csv']
         delimiter = ';'
+        quotechar = "'"
         headers = ['id', 'name', 'description']
 
         def parse_row(self, response, row):

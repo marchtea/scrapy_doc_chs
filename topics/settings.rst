@@ -381,6 +381,49 @@ DOWNLOAD_TIMEOUT
 
 下载器超时时间(单位: 秒)。
 
+.. note::
+
+    该超时值可以使用 :attr:`download_timeout` 来对每个spider进行设置, 也可以使用
+    :reqmeta:`download_timeout` Request.meta key 来对每个请求进行设置.
+
+    This feature needs Twisted >= 11.1.
+
+.. setting:: DOWNLOAD_MAXSIZE
+
+DOWNLOAD_MAXSIZE
+----------------
+
+Default: `1073741824` (1024MB)
+
+The maximum response size (in bytes) that downloader will download.
+
+If you want to disable it set to 0.
+
+.. note::
+
+    This size can be set per spider using :attr:`download_maxsize`
+    spider attribute and per-request using :reqmeta:`download_maxsize`
+    Request.meta key.
+
+.. setting:: DOWNLOAD_WARNSIZE
+
+DOWNLOAD_WARNSIZE
+-----------------
+
+Default: `33554432` (32Mb)
+
+The response size (in bytes) that downloader will start to warn.
+
+If you want to disable it set to 0.
+
+.. note::
+
+    This size can be set per spider using :attr:`download_warnsize`
+    spider attribute and per-request using :reqmeta:`download_warnsize`
+    Request.meta key.
+
+    This feature needs Twisted >= 11.1.
+
 .. setting:: DUPEFILTER_CLASS
 
 DUPEFILTER_CLASS

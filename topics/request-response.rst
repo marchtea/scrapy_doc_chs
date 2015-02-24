@@ -222,6 +222,8 @@ Those are:
 * :reqmeta:`cookiejar`
 * :reqmeta:`redirect_urls`
 * :reqmeta:`bindaddress`
+* :reqmeta:`dont_obey_robotstxt`
+* :reqmeta:`download_timeout`
 
 .. reqmeta:: bindaddress
 
@@ -229,6 +231,14 @@ bindaddress
 -----------
 
 The IP of the outgoing IP address to use for the performing the request.
+
+.. reqmeta:: download_timeout
+
+download_timeout
+----------------
+
+The amount of time (in secs) that the downloader will wait before timing out.
+See also: :setting:`DOWNLOAD_TIMEOUT`.
 
 .. _topics-request-response-ref-request-subclasses:
 

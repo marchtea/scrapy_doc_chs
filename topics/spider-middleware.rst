@@ -89,7 +89,7 @@ Spider中间件(Middleware)
           :class:`~scrapy.item.Item` 对象的可迭代对象(iterable)
 
         :param spider: 其结果被处理的spider
-        :type spider: :class:`~scrapy.item.Spider` 对象
+        :type spider: :class:`~scrapy.spider.Spider` 对象
 
 
     .. method:: process_spider_exception(response, exception, spider)
@@ -136,7 +136,7 @@ Spider中间件(Middleware)
         :type start_requests: 包含 :class:`~scrapy.http.Request` 的可迭代对象
 
         :param spider: start requests所属的spider
-        :type spider: :class:`~scrapy.item.Spider` 对象
+        :type spider: :class:`~scrapy.spider.Spider` 对象
 
 
 .. _Exception: http://docs.python.org/library/exceptions.html#exceptions.Exception

@@ -58,6 +58,10 @@ Request的生命周期所绑定。这是目前为止最常见的内存泄露的�
     FormRequest                       878   oldest: 7s ago
 
 正如所见，报告也展现了每个类中最老的对象的时间(age)。
+If you're running multiple spiders per process chances are you can
+figure out which spider is leaking by looking at the oldest request or response.
+You can get the oldest object of each class using the
+:func:`~scrapy.utils.trackref.get_oldest` function (from the telnet console).
 
 如果您有内存泄露，那您能找到哪个spider正在泄露的机会是查看最老的request或response。
 您可以使用 :func:`~scrapy.utils.trackref.get_oldest` 方法来获取每个类中最老的对象，
