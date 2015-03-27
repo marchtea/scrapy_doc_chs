@@ -225,7 +225,7 @@ shell的输出类似::
 
     In [1]:
 
-当shell载入后，您将得到一个包含response数据的本地 ``response`` 变量。输入 ``response.body`` 将输出response的包体， 输出 ``response.header`` 可以看到response的包头。
+当shell载入后，您将得到一个包含response数据的本地 ``response`` 变量。输入 ``response.body`` 将输出response的包体， 输出 ``response.headers`` 可以看到response的包头。
 
 更为重要的是，当输入 ``response.selector`` 时，
 您将获取到一个可以用于查询返回数据的selector(选择器)，
