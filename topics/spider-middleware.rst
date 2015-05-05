@@ -4,7 +4,7 @@
 Spider中间件(Middleware)
 ===========================
 
-下载器中间件是介入到Scrapy的spider处理机制的钩子框架，您可以添加代码来处理发送给
+Spider中间件是介入到Scrapy的spider处理机制的钩子框架，您可以添加代码来处理发送给
 :ref:`topics-spiders` 的response及spider产生的item和request。
 
 .. _topics-spider-middleware-setting:
@@ -148,7 +148,7 @@ Spider中间件(Middleware)
 ====================================
 
 本页面介绍了Scrapy自带的所有spider中间件。关于如何使用及编写您自己的中间件，请参考
-:ref:`spider middleware usage guide <topics-downloader-middleware>`.
+:ref:`spider middleware usage guide <topics-spider-middleware>`.
 
 关于默认启用的中间件列表(及其顺序)请参考
 :setting:`SPIDER_MIDDLEWARES_BASE` 设置。
