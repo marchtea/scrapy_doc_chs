@@ -108,7 +108,7 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 
    import scrapy
 
-   class DmozSpider(scrapy.spider.Spider):
+   class DmozSpider(scrapy.spiders.Spider):
        name = "dmoz"
        allowed_domains = ["dmoz.org"]
        start_urls = [
