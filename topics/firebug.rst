@@ -11,7 +11,7 @@
 介绍
 ============
 
-本文档介绍了如何适用 `Firebug`_ (一个Firefox的插件)来使得爬取更为简单，有趣。
+本文档介绍了如何使用 `Firebug`_ (一个Firefox的插件)来使得爬取更为简单，有趣。
 更多有意思的Firefox插件请参考 :ref:`topics-firefox-addons` 。
 使用Firefox插件检查页面需要有些注意事项: :ref:`topics-firefox-livedom` 。
 

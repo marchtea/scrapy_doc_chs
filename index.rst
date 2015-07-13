@@ -35,7 +35,7 @@ Scrapy |version| 文档
    intro/examples
 
 :doc:`intro/overview`
-    了解Scrapy如何祝你一臂之力。
+    了解Scrapy如何助你一臂之力。
 
 :doc:`intro/install`
     安装Scrapy。
