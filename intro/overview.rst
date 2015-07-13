@@ -135,7 +135,7 @@ Scrapy可以助你一臂之力。
             torrent['url'] = response.url
             torrent['name'] = response.xpath("//h1/text()").extract()
             torrent['description'] = response.xpath("//div[@id='description']").extract()
-            torrent['size'] = response.xpath("//div[@id='info-left']/p[2]/text()[2]").extract()
+            torrent['size'] = response.xpath("//div[@id='specifications']/p[2]/text()[2]").extract()
             return torrent
 
 ``TorrentItem`` 的定义在 :ref:`上面 <intro-overview-item>` 。

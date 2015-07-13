@@ -165,7 +165,7 @@ http://slashdot.org 的页面。
             # We want to inspect one specific response.
             if ".org" in response.url:
                 from scrapy.shell import inspect_response
-                inspect_response(response)
+                inspect_response(response, self)
 
             # Rest of parsing code.
 

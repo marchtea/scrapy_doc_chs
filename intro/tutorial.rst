@@ -262,19 +262,19 @@ shell的输出类似::
 
 我们可以通过这段代码选择该页面中网站列表里所有 ``<li>`` 元素::
 
-   sel.xpath('//ul/li')
+   response.xpath('//ul/li')
 
 网站的描述::
 
-   sel.xpath('//ul/li/text()').extract()
+   response.xpath('//ul/li/text()').extract()
 
 网站的标题::
 
-   sel.xpath('//ul/li/a/text()').extract()
+   response.xpath('//ul/li/a/text()').extract()
 
 以及网站的链接::
 
-   sel.xpath('//ul/li/a/@href').extract()
+   response.xpath('//ul/li/a/@href').extract()
 
 之前提到过，每个 ``.xpath()`` 调用返回selector组成的list，因此我们可以拼接更多的 ``.xpath()`` 来进一步获取某个节点。我们将在下边使用这样的特性::
 

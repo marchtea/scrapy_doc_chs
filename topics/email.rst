@@ -59,10 +59,10 @@ MailSender类参考手册
     :type smtpport: int
 
     :param smtptls: 强制使用STARTTLS
-    :type smtpport: boolean
+    :type smtpptls: boolean
 
     :param smtpssl: 强制使用SSL连接 
-    :type smtpport: boolean
+    :type smtpssl: boolean
 
     .. classmethod:: from_settings(settings)
 

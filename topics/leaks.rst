@@ -82,7 +82,7 @@ Request的生命周期所绑定。这是目前为止最常见的内存泄露的�
 假如我们有些spider的代码中有一行类似于这样的代码::
 
     return Request("http://www.somenastyspider.com/product.php?pid=%d" % product_id,
-        callback=self.parse, meta={referer: response}")
+        callback=self.parse, meta={referer: response})
 
 代码中在request中传递了一个response的引用，使得reponse的生命周期与request所绑定，
 进而造成了内存泄露。

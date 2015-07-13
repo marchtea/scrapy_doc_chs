@@ -19,7 +19,7 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 这可以避免多次下载几个项目共享的同一个图片。
 
 `Pillow`_ 是用来生成缩略图，并将图片归一化为JPEG/RGB格式，因此为了使用图片管道，你需要安装这个库。
-`Python Imaging Library`_ (PIL) 在大多数情况下是有效的，但众所周知，在一些设置里会出现问题，因此我们推荐使用 `Pillow`_ 而不是 `PIL <Python Imaging Library>`_.
+`Python Imaging Library`_ (PIL) 在大多数情况下是有效的，但众所周知，在一些设置里会出现问题，因此我们推荐使用 `Pillow`_ 而不是PIL.
 
 .. _Pillow: https://github.com/python-imaging/Pillow
 .. _Python Imaging Library: http://www.pythonware.com/products/pil/
