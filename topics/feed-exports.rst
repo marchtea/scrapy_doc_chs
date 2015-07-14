@@ -32,7 +32,7 @@ JSON
 ----
 
  * :setting:`FEED_FORMAT`: ``json``
- * 使用的exporter: :class:`~scrapy.contrib.exporter.JsonItemExporter`
+ * 使用的exporter: :class:`~scrapy.exporter.JsonItemExporter`
  * 大数据量情况下使用JSON请参见 :ref:`这个警告 <json-with-large-data>` 
 
 .. _topics-feed-format-jsonlines:
@@ -41,7 +41,7 @@ JSON lines
 ----------
 
  * :setting:`FEED_FORMAT`: ``jsonlines``
- * 使用的exporter: :class:`~scrapy.contrib.exporter.JsonLinesItemExporter`
+ * 使用的exporter: :class:`~scrapy.exporter.JsonLinesItemExporter`
 
 .. _topics-feed-format-csv:
 
@@ -49,7 +49,11 @@ CSV
 ---
 
  * :setting:`FEED_FORMAT`: ``csv``
- * 使用的exporter: :class:`~scrapy.contrib.exporter.CsvItemExporter`
+ * 使用的exporter: :class:`~scrapy.exporter.CsvItemExporter`
+ * To specify columns to export and their order use
+   :setting:`FEED_EXPORT_FIELDS`. Other feed exporters can also use this
+   option, but it is important for CSV because unlike many other export
+   formats CSV uses a fixed header.
 
 .. _topics-feed-format-xml:
 
@@ -57,7 +61,7 @@ XML
 ---
 
  * :setting:`FEED_FORMAT`: ``xml``
- * 使用的exporter: :class:`~scrapy.contrib.exporter.XmlItemExporter`
+ * 使用的exporter: :class:`~scrapy.exporter.XmlItemExporter`
 
 .. _topics-feed-format-pickle:
 
@@ -65,7 +69,7 @@ Pickle
 ------
 
  * :setting:`FEED_FORMAT`: ``pickle``
- * 使用的exporter: :class:`~scrapy.contrib.exporter.PickleItemExporter`
+ * 使用的exporter: :class:`~scrapy.exporter.PickleItemExporter`
 
 .. _topics-feed-format-marshal:
 
@@ -73,7 +77,7 @@ Marshal
 -------
 
  * :setting:`FEED_FORMAT`: ``marshal``
- * 使用的exporter: :class:`~scrapy.contrib.exporter.MarshalItemExporter`
+ * 使用的exporter: :class:`~scrapy.exporter.MarshalItemExporter`
 
 
 .. _topics-feed-storage:
@@ -191,8 +195,9 @@ feed输出到Scrapy进程的标准输出。
  * :setting:`FEED_STORAGES`
  * :setting:`FEED_EXPORTERS`
  * :setting:`FEED_STORE_EMPTY`
+ * :setting:`FEED_EXPORT_FIELDS`
 
-.. currentmodule:: scrapy.contrib.feedexport
+.. currentmodule:: scrapy.extensions.feedexport
 
 .. setting:: FEED_URI
 
@@ -213,6 +218,26 @@ FEED_FORMAT
 
 输出feed的序列化格式。可用的值请参见
 :ref:`topics-feed-format` 。
+
+.. setting:: FEED_EXPORT_FIELDS
+
+FEED_EXPORT_FIELDS
+------------------
+
+Default: ``None``
+
+A list of fields to export, optional.
+Example: ``FEED_EXPORT_FIELDS = ["foo", "bar", "baz"]``.
+
+Use FEED_EXPORT_FIELDS option to define fields to export and their order.
+
+When FEED_EXPORT_FIELDS is empty or None (default), Scrapy uses fields
+defined in dicts or :class:`~.Item` subclasses a spider is yielding.
+
+If an exporter requires a fixed set of fields (this is the case for
+:ref:`CSV <topics-feed-format-csv>` export format) and FEED_EXPORT_FIELDS
+is empty or None, then Scrapy tries to infer field names from the
+exported data - currently it uses field names from the first item.
 
 .. setting:: FEED_STORE_EMPTY
 
@@ -241,11 +266,11 @@ FEED_STORAGES_BASE
 Default:: 
 
     {
-        '': 'scrapy.contrib.feedexport.FileFeedStorage',
-        'file': 'scrapy.contrib.feedexport.FileFeedStorage',
-        'stdout': 'scrapy.contrib.feedexport.StdoutFeedStorage',
-        's3': 'scrapy.contrib.feedexport.S3FeedStorage',
-        'ftp': 'scrapy.contrib.feedexport.FTPFeedStorage',
+        '': 'scrapy.extensions.feedexport.FileFeedStorage',
+        'file': 'scrapy.extensions.feedexport.FileFeedStorage',
+        'stdout': 'scrapy.extensions.feedexport.StdoutFeedStorage',
+        's3': 'scrapy.extensions.feedexport.S3FeedStorage',
+        'ftp': 'scrapy.extensions.feedexport.FTPFeedStorage',
     }
 
 包含Scrapy内置支持的feed存储端的字典。
@@ -269,11 +294,11 @@ FEED_EXPORTERS_BASE
 Default:: 
 
     FEED_EXPORTERS_BASE = {
-        'json': 'scrapy.contrib.exporter.JsonItemExporter',
-        'jsonlines': 'scrapy.contrib.exporter.JsonLinesItemExporter',
-        'csv': 'scrapy.contrib.exporter.CsvItemExporter',
-        'xml': 'scrapy.contrib.exporter.XmlItemExporter',
-        'marshal': 'scrapy.contrib.exporter.MarshalItemExporter',
+        'json': 'scrapy.exporters.JsonItemExporter',
+        'jsonlines': 'scrapy.exporters.JsonLinesItemExporter',
+        'csv': 'scrapy.exporters.CsvItemExporter',
+        'xml': 'scrapy.exporters.XmlItemExporter',
+        'marshal': 'scrapy.exporters.MarshalItemExporter',
     }
 
 包含Scrapy内置支持的feed输出器(exporter)的字典。

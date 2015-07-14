@@ -150,7 +150,7 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
    topics/leaks
    topics/media-pipeline
    topics/ubuntu
-   topics/deployment
+   topics/deploy
    topics/autothrottle
    topics/benchmarking
    topics/jobs
@@ -185,7 +185,7 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 :doc:`topics/ubuntu`
     在Ubuntu下下载最新的Scrapy。
 
-:doc:`topics/deployment`
+:doc:`topics/deploy`
     在远程服务器上部署、运行Scrapy spiders。
 
 :doc:`topics/autothrottle`

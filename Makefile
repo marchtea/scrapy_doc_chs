@@ -8,6 +8,7 @@ PYTHON       = python
 SPHINXOPTS   =
 PAPER        =
 SOURCES      =
+SHELL        = /bin/bash
 
 ALLSPHINXOPTS = -b $(BUILDER) -d build/doctrees -D latex_paper_size=$(PAPER) \
                 $(SPHINXOPTS) . build/$(BUILDER) $(SOURCES)
@@ -28,7 +29,6 @@ build:
 	mkdir -p build/$(BUILDER) build/doctrees
 	-sphinx-build $(ALLSPHINXOPTS)
 	@echo
-
 
 html: BUILDER = html
 html: build
@@ -82,6 +82,9 @@ pydoc-topics: build
 
 htmlview: html
 	 $(PYTHON) -c "import webbrowser; webbrowser.open('build/html/index.html')"
+
+watch: htmlview
+	watchmedo shell-command -p '*.rst' -c 'make html' -R -D
 
 clean:
 	-rm -rf build/*

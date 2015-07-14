@@ -180,7 +180,8 @@ Selectors选择器简介
 * ``//div[@class="mine"]``: 选择所有具有 ``class="mine"`` 属性的 ``div`` 元素
 
 上边仅仅是几个简单的XPath例子，XPath实际上要比这远远强大的多。
-如果您想了解的更多，我们推荐 `通过这些例子来学习XPath<http://zvon.org/comp/r/tut-XPath_1.html>`_, 以及 `这篇教程学习"how to think in XPath" <http://plasmasturm.org/log/xpath101/>`_.
+如果您想了解的更多，我们推荐 `通过这些例子来学习XPath
+<http://zvon.org/comp/r/tut-XPath_1.html>`_, 以及 `这篇教程学习"how to think in XPath" <http://plasmasturm.org/log/xpath101/>`_.
 
 .. note:: **CSS vs XPath:** you can go a long way extracting data from web pages
   using only CSS selectors. However, XPath offers more power because besides

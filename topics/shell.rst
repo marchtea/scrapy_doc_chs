@@ -171,8 +171,8 @@ http://slashdot.org 的页面。
 
 当运行spider时，您将得到类似下列的输出::
 
-    2014-01-23 17:48:31-0400 [myspider] DEBUG: Crawled (200) <GET http://example.com> (referer: None)
-    2014-01-23 17:48:31-0400 [myspider] DEBUG: Crawled (200) <GET http://example.org> (referer: None)
+    2014-01-23 17:48:31-0400 [scrapy] DEBUG: Crawled (200) <GET http://example.com> (referer: None)
+    2014-01-23 17:48:31-0400 [scrapy] DEBUG: Crawled (200) <GET http://example.org> (referer: None)
     [s] Available Scrapy objects:
     [s]   crawler    <scrapy.crawler.Crawler object at 0x1e16b50>
     ...
@@ -193,7 +193,7 @@ http://slashdot.org 的页面。
 最后您可以点击Ctrl-D(Windows下Ctrl-Z)来退出终端，恢复爬取::
 
     >>> ^D
-    2014-01-23 17:50:03-0400 [myspider] DEBUG: Crawled (200) <GET http://example.net> (referer: None)
+    2014-01-23 17:50:03-0400 [scrapy] DEBUG: Crawled (200) <GET http://example.net> (referer: None)
     ...
 
 注意: 由于该终端屏蔽了Scrapy引擎，您在这个终端中不能使用 ``fetch`` 快捷命令(shortcut)。

@@ -34,6 +34,10 @@ Scrapy中文文档翻译计划
   * spiders.rst
   * practices.rst
   * tutorial.rst
+  * commands.rst
+  * settings.rst
+  * feed-exports.rst
+  * media-pipeline.rst
 
 剩余的章节已经翻译完毕。希望各位在查看文档的同时，对于翻译不准确的部分给予反馈(open issue)。感谢各位的支持。
 

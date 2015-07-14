@@ -124,16 +124,13 @@ Logging
 记录(logging)是另一个获取到spider运行信息的方法。虽然不是那么方便，
 但好处是log的内容在以后的运行中也可以看到::
 
-    from scrapy import log
-
     def parse_details(self, response):
         item = response.meta.get('item', None)
         if item:
             # populate more `item` fields
             return item
         else:
-            self.log('No item received for %s' % response.url,
-                level=log.WARNING)
+            self.logger.warning('No item received for %s', response.url)
 
 更多内容请参见 :ref:`topics-logging` 部分。
 

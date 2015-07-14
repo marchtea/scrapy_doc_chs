@@ -30,8 +30,7 @@
 比如::
 
     EXTENSIONS = {
-        'scrapy.contrib.corestats.CoreStats': 500,
-        'scrapy.webservice.WebService': 500,
+        'scrapy.extensions.corestats.CoreStats': 500,
         'scrapy.telnet.TelnetConsole': 500,
     }
 
@@ -58,17 +57,14 @@
 需要将其顺序(order)设置为 ``None`` 。比如::
 
     EXTENSIONS = {
-        'scrapy.contrib.corestats.CoreStats': None,
+        'scrapy.extensions.corestats.CoreStats': None,
     }
 
 实现你的扩展
 ==========================
 
-实现你的扩展很简单。每个扩展是一个单一的Python class，它不需要实现任何特殊的方法。
-
-Scrapy扩展(包括middlewares和pipelines)的主要入口是 ``from_crawler`` 类方法，
-它接收一个 ``Crawler`` 类的实例，该实例是控制Scrapy crawler的主要对象。
-如果扩展需要，你可以通过这个对象访问settings，signals，stats，控制爬虫的行为。
+每个扩展是一个单一的Python class. Scrapy扩展(包括middlewares和pipelines)的主要入口是 ``from_crawler`` 类方法，
+它接收一个 ``Crawler`` 类的实例.通过这个对象访问settings，signals，stats，控制爬虫的行为。
 
 通常来说，扩展关联到 :ref:`signals <topics-signals>` 并执行它们触发的任务。
 
@@ -90,8 +86,11 @@ items的数量通过 ``MYEXT_ITEMCOUNT`` 配置项设置。
 
 以下是扩展的代码::
 
+    import logging
     from scrapy import signals
     from scrapy.exceptions import NotConfigured
+
+    logger = logging.getLogger(__name__)
 
     class SpiderOpenCloseLogging(object):
 
@@ -131,15 +130,15 @@ items的数量通过 ``MYEXT_ITEMCOUNT`` 配置项设置。
             return ext
 
         def spider_opened(self, spider):
-            spider.log("opened spider %s" % spider.name)
+            logger.info("opened spider %s", spider.name)
 
         def spider_closed(self, spider):
-            spider.log("closed spider %s" % spider.name)
+            logger.info("closed spider %s", spider.name)
 
         def item_scraped(self, item, spider):
             self.items_scraped += 1
             if self.items_scraped % self.item_count == 0:
-                spider.log("scraped %d items" % self.items_scraped)
+                logger.info("scraped %d items", self.items_scraped)
                 
 
 .. _topics-extensions-ref:
@@ -153,7 +152,7 @@ items的数量通过 ``MYEXT_ITEMCOUNT`` 配置项设置。
 记录统计扩展(Log Stats extension)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: scrapy.contrib.logstats
+.. module:: scrapy.extensions.logstats
    :synopsis: 记录基本统计(stats)
 
 .. class:: LogStats
@@ -163,24 +162,12 @@ items的数量通过 ``MYEXT_ITEMCOUNT`` 配置项设置。
 核心统计扩展(Core Stats extension)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: scrapy.contrib.corestats
+.. module:: scrapy.extensions.corestats
    :synopsis: Core stats collection
 
 .. class:: CoreStats
 
 如果统计收集器(stats collection)启用了，该扩展开启核心统计收集(参考 :ref:`topics-stats`)。
-
-.. _topics-extensions-ref-webservice:
-
-Web service 扩展
-~~~~~~~~~~~~~~~~~~~~~
-
-.. module:: scrapy.webservice
-   :synopsis: Web service
-
-.. class:: scrapy.webservice.WebService
-
-参考 :ref:`webservice <topics-webservice>` 。
 
 .. _topics-extensions-ref-telnetconsole:
 
@@ -203,10 +190,10 @@ telnet控制台通过 :setting:`TELNETCONSOLE_ENABLED` 配置项开启，
 内存使用扩展(Memory usage extension)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: scrapy.contrib.memusage
+.. module:: scrapy.extensions.memusage
    :synopsis: Memory usage extension
 
-.. class:: scrapy.contrib.memusage.MemoryUsage
+.. class:: scrapy.extensions.memusage.MemoryUsage
 
 .. note:: This extension does not work in Windows.
 
@@ -229,10 +216,10 @@ Scrapy进程退出。
 内存调试扩展(Memory debugger extension)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: scrapy.contrib.memdebug
+.. module:: scrapy.extensions.memdebug
    :synopsis: Memory debugger extension
 
-.. class:: scrapy.contrib.memdebug.MemoryDebugger
+.. class:: scrapy.extensions.memdebug.MemoryDebugger
 
 该扩展用于调试内存使用量，它收集以下信息：
 
@@ -246,10 +233,10 @@ Scrapy进程退出。
 关闭spider扩展
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: scrapy.contrib.closespider
+.. module:: scrapy.extensions.closespider
    :synopsis: Close spider extension
 
-.. class:: scrapy.contrib.closespider.CloseSpider
+.. class:: scrapy.extensions.closespider.CloseSpider
 
 当某些状况发生，spider会自动关闭。每种情况使用指定的关闭原因。
 
@@ -310,16 +297,16 @@ CLOSESPIDER_ERRORCOUNT
 StatsMailer extension
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: scrapy.contrib.statsmailer
+.. module:: scrapy.extensions.statsmailer
    :synopsis: StatsMailer extension
 
-.. class:: scrapy.contrib.statsmailer.StatsMailer
+.. class:: scrapy.extensions.statsmailer.StatsMailer
 
 这个简单的扩展可用来在一个域名爬取完毕时发送提醒邮件，
 包含Scrapy收集的统计信息。
 邮件会发送个通过 :setting:`STATSMAILER_RCPTS` 指定的所有接收人。
 
-.. module:: scrapy.contrib.debug
+.. module:: scrapy.extensions.debug
    :synopsis: Extensions for debugging Scrapy
 
 Debugging extensions
@@ -328,7 +315,7 @@ Debugging extensions
 Stack trace dump extension
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. class:: scrapy.contrib.debug.StackTraceDump
+.. class:: scrapy.extensions.debug.StackTraceDump
 
 当收到 `SIGQUIT` 或 `SIGUSR2` 信号，spider进程的信息将会被存储下来。
 存储的信息包括：
@@ -355,7 +342,7 @@ Stack trace dump extension
 调试扩展(Debugger extension)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. class:: scrapy.contrib.debug.Debugger
+.. class:: scrapy.extensions.debug.Debugger
 
 当收到 `SIGUSR2` 信号，将会在Scrapy进程中调用 `Python debugger`_ 。
 debugger退出后，Scrapy进程继续正常运行。
@@ -364,5 +351,5 @@ debugger退出后，Scrapy进程继续正常运行。
 
 该扩展只在POSIX兼容平台上工作(比如不能再Windows上运行)。
 
-.. _Python debugger: http://docs.python.org/library/pdb.html
+.. _Python debugger: https://docs.python.org/2/library/pdb.html
 .. _Debugging in Python: http://www.ferg.org/papers/debugging_in_python.html

@@ -68,7 +68,7 @@ Scrapy提供了方便的收集数据的机制。数据以key/value方式存储�
 您可以通过 :setting:`STATS_CLASS` 设置来选择。默认使用的是
 :class:`MemoryStatsCollector` 。
 
-.. module:: scrapy.statscol
+.. module:: scrapy.statscollectors
    :synopsis: Stats Collectors
 
 MemoryStatsCollector

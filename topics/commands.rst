@@ -12,6 +12,31 @@ Scrapy是通过 ``scrapy`` 命令行工具进行控制的。
 
 Scrapy tool 针对不同的目的提供了多个命令，每个命令支持不同的参数和选项。
 
+(The ``scrapy deploy`` command has been removed in 1.0 in favor of the
+standalone ``scrapyd-deploy``. See `Deploying your project`_.)
+
+Configuration settings
+======================
+
+Scrapy will look for configuration parameters in ini-style ``scrapy.cfg`` files
+in standard locations:
+
+1. ``/etc/scrapy.cfg`` or ``c:\scrapy\scrapy.cfg`` (system-wide),
+2. ``~/.config/scrapy.cfg`` (``$XDG_CONFIG_HOME``) and ``~/.scrapy.cfg`` (``$HOME``)
+   for global (user-wide) settings, and
+3. ``scrapy.cfg`` inside a scrapy project's root (see next section).
+
+Settings from these files are merged in the listed order of preference:
+user-defined values have higher priority than system-wide defaults
+and project-wide settings will override all others, when defined.
+
+Scrapy also understands, and can be configured through, a number of environment
+variables. Currently these are:
+
+* ``SCRAPY_SETTINGS_MODULE`` (See :ref:`topics-settings-module-envvar`)
+* ``SCRAPY_PROJECT``
+
+
 .. _topics-project-structure:
 
 默认的Scrapy项目结构
@@ -129,7 +154,6 @@ Scrapy提供了两种类型的命令。一种必须在Scrapy项目中运行(针�
 * :command:`edit`
 * :command:`parse`
 * :command:`genspider`
-* :command:`deploy`
 * :command:`bench`
 
 .. command:: startproject
@@ -344,7 +368,7 @@ parse
 
 * ``--pipelines``: 在pipeline中处理item
 
-* ``--rules`` or ``-r``: 使用 :class:`~scrapy.contrib.spiders.CrawlSpider` 规则来发现用来解析返回(response)的回调函数
+* ``--rules`` or ``-r``: 使用 :class:`~scrapy.spiders.CrawlSpider` 规则来发现用来解析返回(response)的回调函数
 
 * ``--noitems``: 不显示爬取到的item 
 
@@ -415,18 +439,6 @@ version
 
 输出Scrapy版本。配合 ``-v`` 运行时，该命令同时输出Python, Twisted以及平台的信息，方便bug提交。
 
-.. command:: deploy
-
-deploy
-------
-
-.. versionadded:: 0.11
-
-* 语法: ``scrapy deploy [ <target:project> | -l <target> | -L ]``
-* 是否需要项目: *yes*
-
-将项目部署到Scrapyd服务。查看 `部署您的项目`_ 。
-
 .. command:: bench
 
 bench
@@ -444,7 +456,7 @@ bench
 
 您也可以通过 :setting:`COMMANDS_MODULE` 来添加您自己的项目命令。您可以以 `scrapy/commands`_ 中Scrapy commands为例来了解如何实现您的命令。
 
-.. _scrapy/commands: https://github.com/scrapy/scrapy/blob/master/scrapy/commands
+.. _scrapy/commands: https://github.com/scrapy/scrapy/tree/master/scrapy/commands
 .. setting:: COMMANDS_MODULE
 
 COMMANDS_MODULE
@@ -502,6 +514,7 @@ The following example adds ``my_command`` command::
       ],
     },
    )
+
 Register commands via setup.py entry points
 -------------------------------------------
 

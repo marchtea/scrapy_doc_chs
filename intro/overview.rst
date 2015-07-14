@@ -7,7 +7,7 @@
 Scrapy是一个为了爬取网站数据，提取结构性数据而编写的应用框架。
 可以应用在包括数据挖掘，信息处理或存储历史数据等一系列的程序中。
 
-其最初是为了 `页面抓取`_ (更确切来说, `网络抓取`_ )所设计的，
+其最初是为了 `网络抓取`_  所设计的，
 也可以应用在获取API所返回的数据(例如 `Amazon Associates Web Services`_ ) 或者通用的网络爬虫。
 
 本文档将通过介绍Scrapy背后的概念使您对其工作原理有所了解，
@@ -219,7 +219,6 @@ Scrapy可以助你一臂之力。
 
 .. _下载Scrapy: http://scrapy.org/download/
 .. _社区: http://scrapy.org/community/
-.. _页面抓取: http://en.wikipedia.org/wiki/Screen_scraping
 .. _网络抓取: http://en.wikipedia.org/wiki/Web_scraping
 .. _Amazon Associates Web Services: https://affiliate-program.amazon.com/gp/advertising/api/detail/main.html
 .. _Mininova: http://www.mininova.org

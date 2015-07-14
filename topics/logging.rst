@@ -4,116 +4,223 @@
 Logging
 =======
 
-Scrapy提供了log功能。您可以通过
-:mod:`scrapy.log` 模块使用。当前底层实现使用了 `Twisted logging`_ ，不过可能在之后会有所变化。
+.. note::
+    :mod:`scrapy.log` has been deprecated alongside its functions in favor of
+    explicit calls to the Python standard logging. Keep reading to learn more
+    about the new logging system.
 
-.. _Twisted logging: http://twistedmatrix.com/projects/core/documentation/howto/logging.html
+Scrapy uses `Python's builtin logging system
+<https://docs.python.org/2/library/logging.html>`_ for event logging. We'll
+provide some simple examples to get you started, but for more advanced
+use-cases it's strongly suggested to read thoroughly its documentation.
 
-log服务必须通过显示调用 :func:`scrapy.log.start` 来开启。
+Logging works out of the box, and can be configured to some extent with the
+Scrapy settings listed in :ref:`topics-logging-settings`.
+
+Scrapy calls :func:`scrapy.utils.log.configure_logging` to set some reasonable
+defaults and handle those settings in :ref:`topics-logging-settings` when
+running commands, so it's recommended to manually call it if you're running
+Scrapy from scripts as described in :ref:`run-from-script`.
 
 .. _topics-logging-levels:
 
 Log levels
 ==========
 
-Scrapy提供5层logging级别:
+Python's builtin logging defines 5 different levels to indicate severity on a
+given log message. Here are the standard ones, listed in decreasing order:
 
-1. :data:`~scrapy.log.CRITICAL` - 严重错误(critical)
-2. :data:`~scrapy.log.ERROR` - 一般错误(regular errors)
-3. :data:`~scrapy.log.WARNING` - 警告信息(warning messages)
-4. :data:`~scrapy.log.INFO` - 一般信息(informational messages)
-5. :data:`~scrapy.log.DEBUG` - 调试信息(debugging messages)
+1. ``logging.CRITICAL`` - for critical errors (highest severity)
+2. ``logging.ERROR`` - for regular errors
+3. ``logging.WARNING`` - for warning messages
+4. ``logging.INFO`` - for informational messages
+5. ``logging.DEBUG`` - for debugging messages (lowest severity)
 
-如何设置log级别
-========================
+How to log messages
+===================
 
-您可以通过终端选项(command line option) `--loglevel/-L` 或 :setting:`LOG_LEVEL` 来设置log级别。
+Here's a quick example of how to log a message using the ``logging.WARNING``
+level::
 
-如何记录信息(log messages)
-================================
+    import logging
+    logging.warning("This is a warning")
 
-下面给出如何使用 ``WARNING`` 级别来记录信息的例子::
+There are shortcuts for issuing log messages on any of the standard 5 levels,
+and there's also a general ``logging.log`` method which takes a given level as
+argument.  If you need so, last example could be rewrote as::
 
-    from scrapy import log
-    log.msg("This is a warning", level=log.WARNING)
+    import logging
+    logging.log(logging.WARNING, "This is a warning")
 
-在Spider中添加log(Logging from Spiders)
-========================================
+On top of that, you can create different "loggers" to encapsulate messages (For
+example, a common practice it's to create different loggers for every module).
+These loggers can be configured independently, and they allow hierarchical
+constructions.
 
-在spider中添加log的推荐方式是使用Spider的
-:meth:`~scrapy.spider.Spider.log` 方法。该方法会自动在调用
-:func:`scrapy.log.msg` 时赋值 ``spider`` 参数。其他的参数则直接传递给
-:func:`~scrapy.log.msg` 方法。
+Last examples use the root logger behind the scenes, which is a top level
+logger where all messages are propagated to (unless otherwise specified). Using
+``logging`` helpers is merely a shortcut for getting the root logger
+explicitly, so this is also an equivalent of last snippets::
 
-scrapy.log模块
-=================
+    import logging
+    logger = logging.getLogger()
+    logger.warning("This is a warning")
 
-.. module:: scrapy.log
-   :synopsis: Logging facility
+You can use a different logger just by getting its name with the
+``logging.getLogger`` function::
 
-.. function:: start(logfile=None, loglevel=None, logstdout=None)
+    import logging
+    logger = logging.getLogger('mycustomlogger')
+    logger.warning("This is a warning")
 
-    启动log功能。该方法必须在记录(log)任何信息前被调用。否则调用前的信息将会丢失。
+Finally, you can ensure having a custom logger for any module you're working on
+by using the ``__name__`` variable, which is populated with current module's
+path::
 
-    :param logfile: 用于保存log输出的文件路径。如果被忽略，
-        :setting:`LOG_FILE` 设置会被使用。 
-        如果两个参数都是 ``None`` ，log将会被输出到标准错误流(standard error)。
-    :type logfile: str
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning("This is a warning")
 
-    :param loglevel: 记录的最低的log级别. 可用的值有:
-        :data:`CRITICAL`, :data:`ERROR`, :data:`WARNING`, :data:`INFO` and
-        :data:`DEBUG`.
+.. seealso::
 
-    :param logstdout: 如果为 ``True`` ，
-        所有您的应用的标准输出(包括错误)将会被记录(logged instead)。
-        例如，如果您调用 "print 'hello'" ，则'hello' 会在Scrapy的log中被显示。
-        如果被忽略，则 :setting:`LOG_STDOUT` 设置会被使用。
+    Module logging, `HowTo <https://docs.python.org/2/howto/logging.html>`_
+        Basic Logging Tutorial
 
-    :type logstdout: boolean
+    Module logging, `Loggers <https://docs.python.org/2/library/logging.html#logger-objects>`_
+        Further documentation on loggers
 
-.. function:: msg(message, level=INFO, spider=None)
+.. _topics-logging-from-spiders:
 
-    记录信息(Log a message)
+Logging from Spiders
+====================
 
-    :param message: log的信息
-    :type message: str
+Scrapy provides a :data:`~scrapy.spiders.Spider.logger` within each Spider
+instance, that can be accessed and used like this::
 
-    :param level: 该信息的log级别. 参考
-        :ref:`topics-logging-levels`.
+    import scrapy
 
-    :param spider: 记录该信息的spider. 当记录的信息和特定的spider有关联时，该参数必须被使用。
-    :type spider: :class:`~scrapy.spider.Spider` 对象
+    class MySpider(scrapy.Spider):
 
-.. data:: CRITICAL
+        name = 'myspider'
+        start_urls = ['http://scrapinghub.com']
 
-    严重错误的Log级别
+        def parse(self, response):
+            self.logger.info('Parse function called on %s', response.url)
 
-.. data:: ERROR
+That logger is created using the Spider's name, but you can use any custom
+Python logger you want. For example::
 
-    错误的Log级别
-    Log level for errors
+    import logging
+    import scrapy
 
-.. data:: WARNING
+    logger = logging.getLogger('mycustomlogger')
 
-    警告的Log级别
-    Log level for warnings
+    class MySpider(scrapy.Spider):
 
-.. data:: INFO
+        name = 'myspider'
+        start_urls = ['http://scrapinghub.com']
 
-    记录信息的Log级别(生产部署时推荐的Log级别)
+        def parse(self, response):
+            logger.info('Parse function called on %s', response.url)
 
-.. data:: DEBUG
+.. _topics-logging-configuration:
 
-    调试信息的Log级别(开发时推荐的Log级别)
+Logging configuration
+=====================
 
-Logging设置
-================
+Loggers on their own don't manage how messages sent through them are displayed.
+For this task, different "handlers" can be attached to any logger instance and
+they will redirect those messages to appropriate destinations, such as the
+standard output, files, emails, etc.
 
-以下设置可以被用来配置logging:
+By default, Scrapy sets and configures a handler for the root logger, based on
+the settings below.
 
+.. _topics-logging-settings:
+
+Logging settings
+----------------
+
+These settings can be used to configure the logging:
+
+* :setting:`LOG_FILE`
 * :setting:`LOG_ENABLED`
 * :setting:`LOG_ENCODING`
-* :setting:`LOG_FILE`
 * :setting:`LOG_LEVEL`
+* :setting:`LOG_FORMAT`
+* :setting:`LOG_DATEFORMAT`
 * :setting:`LOG_STDOUT`
+
+First couple of settings define a destination for log messages. If
+:setting:`LOG_FILE` is set, messages sent through the root logger will be
+redirected to a file named :setting:`LOG_FILE` with encoding
+:setting:`LOG_ENCODING`. If unset and :setting:`LOG_ENABLED` is ``True``, log
+messages will be displayed on the standard error. Lastly, if
+:setting:`LOG_ENABLED` is ``False``, there won't be any visible log output.
+
+:setting:`LOG_LEVEL` determines the minimum level of severity to display, those
+messages with lower severity will be filtered out. It ranges through the
+possible levels listed in :ref:`topics-logging-levels`.
+
+:setting:`LOG_FORMAT` and :setting:`LOG_DATEFORMAT` specify formatting strings
+used as layouts for all messages. Those strings can contain any placeholders
+listed in `logging's logrecord attributes docs
+<https://docs.python.org/2/library/logging.html#logrecord-attributes>`_ and
+`datetime's strftime and strptime directives
+<https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior>`_
+respectively.
+
+Command-line options
+--------------------
+
+There are command-line arguments, available for all commands, that you can use
+to override some of the Scrapy settings regarding logging.
+
+* ``--logfile FILE``
+    Overrides :setting:`LOG_FILE`
+* ``--loglevel/-L LEVEL``
+    Overrides :setting:`LOG_LEVEL`
+* ``--nolog``
+    Sets :setting:`LOG_ENABLED` to ``False``
+
+.. seealso::
+
+    Module `logging.handlers <https://docs.python.org/2/library/logging.handlers.html>`_
+        Further documentation on available handlers
+
+scrapy.utils.log module
+=======================
+
+.. module:: scrapy.utils.log
+   :synopsis: Logging utils
+
+.. autofunction:: configure_logging
+
+    ``configure_logging`` is automatically called when using Scrapy commands,
+    but needs to be called explicitly when running custom scripts. In that
+    case, its usage is not required but it's recommended.
+
+    If you plan on configuring the handlers yourself is still recommended you
+    call this function, passing `install_root_handler=False`. Bear in mind
+    there won't be any log output set by default in that case.
+
+    To get you started on manually configuring logging's output, you can use
+    `logging.basicConfig()`_ to set a basic root handler. This is an example
+    on how to redirect ``INFO`` or higher messages to a file::
+
+        import logging
+        from scrapy.utils.log import configure_logging
+
+        configure_logging(install_root_handler=False)
+        logging.basicConfig(
+            filename='log.txt',
+            format='%(levelname)s: %(message)s',
+            level=logging.INFO
+        )
+
+    Refer to :ref:`run-from-script` for more details about using Scrapy this
+    way.
+
+.. _logging.basicConfig(): https://docs.python.org/2/library/logging.html#logging.basicConfig
+
 
