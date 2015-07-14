@@ -8,12 +8,18 @@ Items
    :synopsis: Item and Field classes
 
 爬取的主要目标就是从非结构性的数据源提取结构性数据，例如网页。
-Scrapy提供 :class:`Item` 类来满足这样的需求。
+Scrapy spider可以以python的dict来返回提取的数据.虽然dict很方便，并且用起来也熟悉，但是其缺少结构性，容易打错字段的名字或者返回不一致的数据，尤其在具有多个spider的大项目中。。
 
+为了定义常用的输出数据，Scrapy提供了 :class:`Item` 类。
 :class:`Item` 对象是种简单的容器，保存了爬取到得数据。
 其提供了 `类似于词典(dictionary-like)`_ 的API以及用于声明可用字段的简单语法。
 
-.. _类似于词典(dictionary-like): http://docs.python.org/library/stdtypes.html#dict
+许多Scrapy组件使用了Item提供的额外信息: 
+exporter根据Item声明的字段来导出数据、
+序列化可以通过Item字段的元数据(metadata)来定义、 :mod:`trackref` 追踪Item实例来帮助寻找内存泄露
+(see :ref:`topics-leaks-trackrefs`) 等等。
+
+.. _类似于词典(dictionary-like): https://docs.python.org/library/stdtypes.html#dict
 
 .. _topics-items-declaring:
 
@@ -32,8 +38,8 @@ Item使用简单的class定义语法以及 :class:`Field` 对象来声明。例�
 
 .. note:: 熟悉 `Django`_ 的朋友一定会注意到Scrapy Item定义方式与 `Django Models`_ 很类似, 不过没有那么多不同的字段类型(Field type)，更为简单。
 
-.. _Django: http://www.djangoproject.com/
-.. _Django Models: http://docs.djangoproject.com/en/dev/topics/db/models/
+.. _Django: https://www.djangoproject.com/
+.. _Django Models: https://docs.djangoproject.com/en/dev/topics/db/models/
 
 .. _topics-items-fields:
 
@@ -50,8 +56,6 @@ Item字段(Item Fields)
 
 需要注意的是，用来声明item的 :class:`Field` 对象并没有被赋值为class的属性。
 不过您可以通过 :attr:`Item.fields` 属性进行访问。
-
-以上就是所有您需要知道的如何声明item的内容了。
 
 与Item配合
 ==================
@@ -192,7 +196,7 @@ Item对象
 
         一个包含了item所有声明的字段的字典，而不仅仅是获取到的字段。该字典的key是字段(field)的名字，值是 :ref:`Item声明 <topics-items-declaring>` 中使用到的 :class:`Field` 对象。
 
-.. _dict API: http://docs.python.org/library/stdtypes.html#dict
+.. _dict API: https://docs.python.org/library/stdtypes.html#dict
 
 字段(Field)对象
 ===========================
@@ -201,6 +205,6 @@ Item对象
 
     :class:`Field` 仅仅是内置的 `dict`_ 类的一个别名，并没有提供额外的方法或者属性。换句话说， :class:`Field` 对象完完全全就是Python字典(dict)。被用来基于类属性(class attribute)的方法来支持 :ref:`item声明语法 <topics-items-declaring>` 。
 
-.. _dict: http://docs.python.org/library/stdtypes.html#dict
+.. _dict: https://docs.python.org/library/stdtypes.html#dict
 
 

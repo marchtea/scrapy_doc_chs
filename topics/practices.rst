@@ -17,30 +17,90 @@
 需要注意的是，Scrapy是在Twisted异步网络库上构建的，
 因此其必须在Twisted reactor里运行。
 
-另外，在spider运行结束后，您必须自行关闭Twisted reactor。
-这可以通过设置 ``signals.spider_closed`` 信号的处理器(handler)来实现。
+First utility you can use to run your spiders is
+:class:`scrapy.crawler.CrawlerProcess`. This class will start a Twisted reactor
+for you, configuring the logging and setting shutdown handlers. This class is
+the one used by all Scrapy commands.
+
+Here's an example showing how to run a single spider with it.
+
+::
+
+    import scrapy
+    from scrapy.crawler import CrawlerProcess
+
+    class MySpider(scrapy.Spider):
+        # Your spider definition
+        ...
+
+    process = CrawlerProcess({
+        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+    })
+
+    process.crawl(MySpider)
+    process.start() # the script will block here until the crawling is finished
+
+Make sure to check :class:`~scrapy.crawler.CrawlerProcess` documentation to get
+acquainted with its usage details.
+
+If you are inside a Scrapy project there are some additional helpers you can
+use to import those components within the project. You can automatically import
+your spiders passing their name to :class:`~scrapy.crawler.CrawlerProcess`, and
+use ``get_project_settings`` to get a :class:`~scrapy.settings.Settings`
+instance with your project settings.
 
 下面给出了如何实现的例子，使用 `testspiders`_ 项目作为例子。
 
 ::
 
-    from twisted.internet import reactor
-    from scrapy.crawler import Crawler
-    from scrapy import log, signals
-    from testspiders.spiders.followall import FollowAllSpider
+    from scrapy.crawler import CrawlerProcess
     from scrapy.utils.project import get_project_settings
 
-    spider = FollowAllSpider(domain='scrapinghub.com')
-    settings = get_project_settings()
-    crawler = Crawler(settings)
-    crawler.signals.connect(reactor.stop, signal=signals.spider_closed)
-    crawler.configure()
-    crawler.crawl(spider)
-    crawler.start()
-    log.start()
-    reactor.run() # the script will block here until the spider_closed signal was sent
+    process = CrawlerProcess(get_project_settings())
+
+    # 'followall' is the name of one of the spiders of the project.
+    process.crawl('testspider', domain='scrapinghub.com')
+    process.start() # the script will block here until the crawling is finished
+
+There's another Scrapy utility that provides more control over the crawling
+process: :class:`scrapy.crawler.CrawlerRunner`. This class is a thin wrapper
+that encapsulates some simple helpers to run multiple crawlers, but it won't
+start or interfere with existing reactors in any way.
+
+Using this class the reactor should be explicitly run after scheduling your
+spiders. It's recommended you use :class:`~scrapy.crawler.CrawlerRunner`
+instead of :class:`~scrapy.crawler.CrawlerProcess` if your application is
+already using Twisted and you want to run Scrapy in the same reactor.
+
+Note that you will also have to shutdown the Twisted reactor yourself after the
+spider is finished. This can be achieved by adding callbacks to the deferred
+returned by the :meth:`CrawlerRunner.crawl
+<scrapy.crawler.CrawlerRunner.crawl>` method.
+
+Here's an example of its usage, along with a callback to manually stop the
+reactor after `MySpider` has finished running.
+
+::
+
+    from twisted.internet import reactor
+    import scrapy
+    from scrapy.crawler import CrawlerRunner
+    from scrapy.utils.log import configure_logging
+
+    class MySpider(scrapy.Spider):
+        # Your spider definition
+        ...
+
+    configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
+    runner = CrawlerRunner()
+
+    d = runner.crawl(MySpider)
+    d.addBoth(lambda _: reactor.stop())
+    reactor.run() # the script will block here until the crawling is finished
 
 .. seealso:: `Twisted Reactor Overview`_.
+
+.. _run-multiple-spiders:
 
 同一进程运行多个spider
 ============================================
@@ -50,28 +110,79 @@
 :ref:`内部(internal)API <topics-api>`
 也支持单进程多个spider。
 
-下面以 `testspiders`_ 作为例子:
+Here is an example that runs multiple spiders simultaneously:
 
 ::
 
+    import scrapy
+    from scrapy.crawler import CrawlerProcess
+
+    class MySpider1(scrapy.Spider):
+        # Your first spider definition
+        ...
+
+    class MySpider2(scrapy.Spider):
+        # Your second spider definition
+        ...
+
+    process = CrawlerProcess()
+    process.crawl(MySpider1)
+    process.crawl(MySpider2)
+    process.start() # the script will block here until all crawling jobs are finished
+
+Same example using :class:`~scrapy.crawler.CrawlerRunner`:
+
+::
+
+    import scrapy
     from twisted.internet import reactor
-    from scrapy.crawler import Crawler
-    from scrapy import log
-    from testspiders.spiders.followall import FollowAllSpider
-    from scrapy.utils.project import get_project_settings
+    from scrapy.crawler import CrawlerRunner
+    from scrapy.utils.log import configure_logging
 
-    def setup_crawler(domain):
-        spider = FollowAllSpider(domain=domain)
-        settings = get_project_settings()
-        crawler = Crawler(settings)
-        crawler.configure()
-        crawler.crawl(spider)
-        crawler.start()
+    class MySpider1(scrapy.Spider):
+        # Your first spider definition
+        ...
 
-    for domain in ['scrapinghub.com', 'insophia.com']:
-        setup_crawler(domain)
-    log.start()
-    reactor.run()
+    class MySpider2(scrapy.Spider):
+        # Your second spider definition
+        ...
+
+    configure_logging()
+    runner = CrawlerRunner()
+    runner.crawl(MySpider1)
+    runner.crawl(MySpider2)
+    d = runner.join()
+    d.addBoth(lambda _: reactor.stop())
+
+    reactor.run() # the script will block here until all crawling jobs are finished
+
+Same example but running the spiders sequentially by chaining the deferreds:
+
+::
+
+    from twisted.internet import reactor, defer
+    from scrapy.crawler import CrawlerRunner
+    from scrapy.utils.log import configure_logging
+
+    class MySpider1(scrapy.Spider):
+        # Your first spider definition
+        ...
+
+    class MySpider2(scrapy.Spider):
+        # Your second spider definition
+        ...
+
+    configure_logging()
+    runner = CrawlerRunner()
+
+    @defer.inlineCallbacks
+    def crawl():
+        yield runner.crawl(MySpider1)
+        yield runner.crawl(MySpider2)
+        reactor.stop()
+
+    crawl()
+    reactor.run() # the script will block here until the last crawl call is finished
 
 .. seealso:: :ref:`run-from-script`.
 
@@ -129,21 +240,6 @@ Scrapy并没有提供内置的机制支持分布式(多服务器)爬取。不过
 .. _Google cache: http://www.googleguide.com/cached_pages.html
 .. _testspiders: https://github.com/scrapinghub/testspiders
 .. _Twisted Reactor Overview: http://twistedmatrix.com/documents/current/core/howto/reactor-basics.html
-.. _Crawlera: http://crawlera.com
+.. _Crawlera: http://scrapinghub.com/crawlera
 
 .. _dynamic-item-classes:
-
-动态创建Item类
-================================
-
-对于有些应用，item的结构由用户输入或者其他变化的情况所控制。您可以动态创建class。
-
-::
-
-
-	from scrapy.item import DictItem, Field
-
-	def create_item_class(class_name, field_list):
-        fields = {field_name: Field() for field_name in field_list}
-
-        return type(class_name, (DictItem,), {'fields': fields})

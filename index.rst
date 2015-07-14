@@ -1,8 +1,8 @@
 .. _topics-index:
 
-==============================
+===========================================================
 Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
-==============================
+===========================================================
 
 本文档涵盖了所有Scrapy的内容。
 
@@ -17,8 +17,8 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 * 在 `#scrapy IRC channel`_ 提问
 * 在 `issue tracker`_ 中提交Scrapy的bug
 
-.. _scrapy-users的邮件列表: http://groups.google.com/group/scrapy-users/
-.. _提问问题: http://groups.google.com/group/scrapy-users/
+.. _scrapy-users的邮件列表: https://groups.google.com/group/scrapy-users/
+.. _提问问题: https://groups.google.com/group/scrapy-users/
 .. _#scrapy IRC channel: irc://irc.freenode.net/scrapy
 .. _issue tracker: https://github.com/scrapy/scrapy/issues
 
@@ -55,20 +55,21 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
    :hidden:
 
    topics/commands
-   topics/items
    topics/spiders
    topics/selectors
+   topics/items
    topics/loaders
    topics/shell
    topics/item-pipeline
    topics/feed-exports
+   topics/request-response
    topics/link-extractors
+   topics/settings
+   topics/exceptions
+
 
 :doc:`topics/commands`
     学习用于管理Scrapy项目的命令行工具
-
-:doc:`topics/items`
-    定义爬取的数据
 
 :doc:`topics/spiders`
     编写爬取网站的规则
@@ -79,6 +80,9 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 :doc:`topics/shell`
     在交互环境中测试提取数据的代码
 
+:doc:`topics/items`
+    定义爬取的数据
+
 :doc:`topics/loaders`
     使用爬取到的数据填充item
 
@@ -88,8 +92,19 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 :doc:`topics/feed-exports`
     以不同格式输出爬取数据到不同的存储端
 
+:doc:`topics/request-response`
+    了解代表HTTP请求(request)和返回(response)的class.
+
 :doc:`topics/link-extractors`
     方便用于提取后续跟进链接的类。
+
+:doc:`topics/settings`
+    了解如何配置Scrapy以及所有的 :ref:`available 配置 <topics-settings-ref>`
+
+:doc:`topics/exceptions`
+    查看所有已有的异常及相应的意义.
+
+
 
 内置服务
 =================
@@ -133,13 +148,12 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
    topics/firefox
    topics/firebug
    topics/leaks
-   topics/images
+   topics/media-pipeline
    topics/ubuntu
-   topics/scrapyd
+   topics/deployment
    topics/autothrottle
    topics/benchmarking
    topics/jobs
-   topics/djangoitem
 
 :doc:`faq`
     常见问题的解决办法。
@@ -165,14 +179,14 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 :doc:`topics/leaks`
     了解如何查找并让您的爬虫避免内存泄露。
 
-:doc:`topics/images`
-    下载爬取的item中的图片。
+:doc:`topics/media-pipeline`
+    下载爬取的item中的文件及图片。
 
 :doc:`topics/ubuntu`
     在Ubuntu下下载最新的Scrapy。
 
-:doc:`topics/scrapyd`
-    在生产环境中部署您的Scrapy项目。
+:doc:`topics/deployment`
+    在远程服务器上部署、运行Scrapy spiders。
 
 :doc:`topics/autothrottle`
     根据负载(load)动态调节爬取速度。
@@ -182,9 +196,6 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 
 :doc:`topics/jobs`
     学习如何停止和恢复爬虫
-
-:doc:`topics/djangoitem`
-    使用Django模型编写爬取的item
 
 .. _extending-scrapy:
 
@@ -199,6 +210,9 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
    topics/spider-middleware
    topics/extensions
    topics/api
+   topics/signals
+   topics/exporters
+
 
 :doc:`topics/architecture`
     了解Scrapy架构。
@@ -215,32 +229,8 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 :doc:`topics/api`
     在extension(扩展)和middleware(中间件)使用api来扩展Scrapy的功能
 
-参考
-=========
-
-.. toctree::
-   :hidden:
-
-   topics/request-response
-   topics/settings
-   topics/signals
-   topics/exceptions
-   topics/exporters
-
-:doc:`topics/commands`
-    学习命令行工具及所有 :ref:`可用的命令 <topics-commands-ref>` 。
-
-:doc:`topics/request-response`
-    了解代表HTTP请求和回复的request,response类
-
-:doc:`topics/settings`
-    了解如何配置Scrapy及所有 :ref:`可用的设置 <topics-settings-ref>` 。
-
 :doc:`topics/signals`
     查看如何使用及所有可用的信号
-
-:doc:`topics/exceptions`
-    查看所有可用的exception以及相应的意义。
 
 :doc:`topics/exporters`
     快速将您爬取到的item导出到文件中(XML, CSV等格式)
@@ -255,7 +245,6 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
    news
    contributing
    versioning
-   experimental/index
 
 :doc:`news`
     了解最近的Scrapy版本的修改。
@@ -265,6 +254,3 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 
 :doc:`versioning`
     了解Scrapy如何命名版本以及API的稳定性。
-
-:doc:`experimental/index`
-    了解最新的特性

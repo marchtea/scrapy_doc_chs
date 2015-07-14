@@ -12,11 +12,11 @@ Spider类定义了如何爬取某个(或某些)网站。包括了爬取的动作
 1. 以初始的URL初始化Request，并设置回调函数。
    当该request下载完毕并返回时，将生成response，并作为参数传给该回调函数。
 
-   spider中初始的request是通过调用 :meth:`~scrapy.spider.Spider.start_requests` 来获取的。
-   :meth:`~scrapy.spider.Spider.start_requests` 读取 :attr:`~scrapy.spider.Spider.start_urls` 中的URL，
-   并以 :attr:`~scrapy.spider.Spider.parse` 为回调函数生成 :class:`~scrapy.http.Request` 。
+   spider中初始的request是通过调用 :meth:`~scrapy.spiders.Spider.start_requests` 来获取的。
+   :meth:`~scrapy.spiders.Spider.start_requests` 读取 :attr:`~scrapy.spiders.Spider.start_urls` 中的URL，
+   并以 :attr:`~scrapy.spiders.Spider.parse` 为回调函数生成 :class:`~scrapy.http.Request` 。
 
-2. 在回调函数内分析返回的(网页)内容，返回 :class:`~scrapy.item.Item` 对象或者 :class:`~scrapy.http.Request` 或者一个包括二者的可迭代容器。
+2. 在回调函数内分析返回的(网页)内容，返回 :class:`~scrapy.item.Item` 对象、dict、 :class:`~scrapy.http.Request` 或者一个包括三者的可迭代容器。
    返回的Request对象之后会经过Scrapy处理，下载相应的内容，并调用设置的callback函数(函数可相同)。
 
 3. 在回调函数内，您可以使用 :ref:`topics-selectors`
@@ -29,64 +29,19 @@ Spider类定义了如何爬取某个(或某些)网站。包括了爬取的动作
 虽然该循环对任何类型的spider都(多少)适用，但Scrapy仍然为了不同的需求提供了多种默认spider。
 之后将讨论这些spider。
 
-.. _spiderargs:
-
-Spider参数
-================
-
-Spider可以通过接受参数来修改其功能。
-spider参数一般用来定义初始URL或者指定限制爬取网站的部分。
-您也可以使用其来配置spider的任何功能。
-
-在运行 :command:`crawl` 时添加 ``-a`` 可以传递Spider参数::
-
-    scrapy crawl myspider -a category=electronics
-
-Spider在构造器(constructor)中获取参数::
-
-    import scrapy
-
-    class MySpider(Spider):
-        name = 'myspider'
-
-        def __init__(self, category=None, *args, **kwargs):
-            super(MySpider, self).__init__(*args, **kwargs)
-            self.start_urls = ['http://www.example.com/categories/%s' % category]
-            # ...
-            
-Spider参数也可以通过Scrapyd的 ``schedule.json`` API来传递。
-参见 `Scrapyd documentation`_.
+.. module:: scrapy.spiders
+   :synopsis: Spiders base class, spider manager and spider middleware
 
 .. _topics-spiders-ref:
 
-内置Spider参考手册
-==========================
-
-Scrapy提供多种方便的通用spider供您继承使用。
-这些spider为一些常用的爬取情况提供方便的特性，
-例如根据某些规则跟进某个网站的所有链接、根据 `Sitemaps`_ 来进行爬取，或者分析XML/CSV源。
-
-下面spider的示例中，我们假定您有个项目在 ``myproject.items`` 模块中声明了 ``TestItem``::
-
-    import scrapy
-
-    class TestItem(scrapy.Item):
-        id = scrapy.Field()
-        name = scrapy.Field()
-        description = scrapy.Field()
-
-
-.. module:: scrapy.spider
-   :synopsis: Spiders base class, spider manager and spider middleware
-
-Spider
-------
+scrapy.Spider
+=============
 
 .. class:: Spider()
 
    Spider是最简单的spider。每个其他的spider必须继承自该类(包括Scrapy自带的其他spider以及您自己编写的spider)。
    Spider并没有提供什么特殊的功能。
-   其仅仅请求给定的 ``start_urls``/``start_requests`` ，并根据返回的结果(resulting responses)调用spider的 ``parse`` 方法。
+   其仅仅提供了 :meth:`start_requests` 的默认实现，读取并请求spider属性中的 :attr:`start_urls`, 并根据返回的结果(resulting responses)调用spider的 ``parse`` 方法。
 
    .. attribute:: name
 
@@ -100,7 +55,7 @@ Spider
    .. attribute:: allowed_domains
 
        可选。包含了spider允许爬取的域名(domain)列表(list)。
-       当 :class:`~scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware` 启用时，
+       当 :class:`~scrapy.spidermiddlewares.offsite.OffsiteMiddleware` 启用时，
        域名不在列表中的URL不会被跟进。
 
    .. attribute:: start_urls
@@ -108,6 +63,59 @@ Spider
        URL列表。当没有制定特定的URL时，spider将从该列表中开始进行爬取。
        因此，第一个被获取到的页面的URL将是该列表之一。
        后续的URL将会从获取到的数据中提取。
+
+   .. attribute:: custom_settings
+
+      A dictionary of settings that will be overridden from the project wide
+      configuration when running this spider. It must be defined as a class
+      attribute since the settings are updated before instantiation.
+
+      For a list of available built-in settings see:
+      :ref:`topics-settings-ref`.
+
+   .. attribute:: crawler
+
+      This attribute is set by the :meth:`from_crawler` class method after
+      initializating the class, and links to the
+      :class:`~scrapy.crawler.Crawler` object to which this spider instance is
+      bound.
+
+      Crawlers encapsulate a lot of components in the project for their single
+      entry access (such as extensions, middlewares, signals managers, etc).
+      See :ref:`topics-api-crawler` to know more about them.
+
+   .. attribute:: settings
+
+      Configuration on which this spider is been ran. This is a
+      :class:`~scrapy.settings.Settings` instance, see the
+      :ref:`topics-settings` topic for a detailed introduction on this subject.
+
+   .. attribute:: logger
+
+      Python logger created with the Spider's :attr:`name`. You can use it to
+      send log messages through it as described on
+      :ref:`topics-logging-from-spiders`.
+
+   .. method:: from_crawler(crawler, \*args, \**kwargs)
+
+       This is the class method used by Scrapy to create your spiders.
+
+       You probably won't need to override this directly, since the default
+       implementation acts as a proxy to the :meth:`__init__` method, calling
+       it with the given arguments `args` and named arguments `kwargs`.
+
+       Nonetheless, this method sets the :attr:`crawler` and :attr:`settings`
+       attributes in the new instance, so they can be accessed later inside the
+       spider's code.
+
+       :param crawler: crawler to which the spider will be bound
+       :type crawler: :class:`~scrapy.crawler.Crawler` instance
+
+       :param args: arguments passed to the :meth:`__init__` method
+       :type args: list
+
+       :param kwargs: keyword arguments passed to the :meth:`__init__` method
+       :type kwargs: dict
 
    .. method:: start_requests()
 
@@ -122,15 +130,18 @@ Spider
        如果您想要修改最初爬取某个网站的Request对象，您可以重写(override)该方法。
        例如，如果您需要在启动时以POST登录某个网站，你可以这么写::
 
-           def start_requests(self):
-               return [scrapy.FormRequest("http://www.example.com/login",
-                                          formdata={'user': 'john', 'pass': 'secret'},
-                                          callback=self.logged_in)]
+           class MySpider(scrapy.Spider):
+               name = 'myspider'
+                
+               def start_requests(self):
+                   return [scrapy.FormRequest("http://www.example.com/login",
+                                              formdata={'user': 'john', 'pass': 'secret'},
+                                              callback=self.logged_in)]
 
-           def logged_in(self, response):
-               # here you would extract links to follow and return Requests for
-               # each of them, with another callback
-               pass
+               def logged_in(self, response):
+                   # here you would extract links to follow and return Requests for
+                   # each of them, with another callback
+                   pass
 
    .. method:: make_requests_from_url(url)
 
@@ -149,7 +160,7 @@ Spider
        :class:`Spider` 对其他的Request的回调函数也有相同的要求。
 
        该方法及其他的Request回调函数必须返回一个包含 
-       :class:`~scrapy.http.Request` 及(或) :class:`~scrapy.item.Item`
+       :class:`~scrapy.http.Request`、dict 或 :class:`~scrapy.item.Item`
        的可迭代的对象。
 
        :param response: 用于分析的response
@@ -160,15 +171,15 @@ Spider
        使用 :func:`scrapy.log.msg` 方法记录(log)message。
        log中自动带上该spider的 :attr:`name` 属性。
        更多数据请参见 :ref:`topics-logging` 。
+       封装了通过Spiders的 :attr:`logger` 来发送log消息的方法，并且保持了向后兼容性。
+       更多内容请参考 
+       :ref:`topics-logging-from-spiders`.
 
    .. method:: closed(reason)
 
        当spider关闭时，该函数被调用。
        该方法提供了一个替代调用signals.connect()来监听 :signal:`spider_closed` 信号的快捷方式。
 
-
-Spider样例
-~~~~~~~~~~~~~~
 
 让我们来看一个例子::
 
@@ -184,12 +195,11 @@ Spider样例
         ]
 
         def parse(self, response):
-            self.log('A response from %s just arrived!' % response.url)
+            self.logger.info('A response from %s just arrived!', response.url)
 
-另一个在单个回调函数中返回多个Request以及Item的例子::
+在单个回调函数中返回多个Request以及Item的例子::
 
     import scrapy
-    from myproject.items import MyItem
 
     class MySpider(scrapy.Spider):
         name = 'example.com'
@@ -203,13 +213,85 @@ Spider样例
         def parse(self, response):
             sel = scrapy.Selector(response)
             for h3 in response.xpath('//h3').extract():
+                yield {"title": h3}
+
+            for url in response.xpath('//a/@href').extract():
+                yield scrapy.Request(url, callback=self.parse)
+                
+除了 :attr:`~.start_urls` ，你也可以直接使用 :meth:`~.start_requests` ;
+您也可以使用 :ref:`topics-items` 来给予数据更多的结构性(give data more structure)::
+
+    import scrapy
+    from myproject.items import MyItem
+
+    class MySpider(scrapy.Spider):
+        name = 'example.com'
+        allowed_domains = ['example.com']
+        
+        def start_requests(self):
+            yield scrapy.Request('http://www.example.com/1.html', self.parse)
+            yield scrapy.Request('http://www.example.com/2.html', self.parse)
+            yield scrapy.Request('http://www.example.com/3.html', self.parse)
+
+        def parse(self, response):
+            for h3 in response.xpath('//h3').extract():
                 yield MyItem(title=h3)
 
             for url in response.xpath('//a/@href').extract():
                 yield scrapy.Request(url, callback=self.parse)
+    
+.. _spiderargs:
 
-.. module:: scrapy.contrib.spiders
-   :synopsis: Collection of generic spiders
+Spider arguments
+================
+
+Spiders can receive arguments that modify their behaviour. Some common uses for
+spider arguments are to define the start URLs or to restrict the crawl to
+certain sections of the site, but they can be used to configure any
+functionality of the spider.
+
+Spider arguments are passed through the :command:`crawl` command using the
+``-a`` option. For example::
+
+    scrapy crawl myspider -a category=electronics
+
+Spiders receive arguments in their constructors::
+
+    import scrapy
+
+    class MySpider(scrapy.Spider):
+        name = 'myspider'
+
+        def __init__(self, category=None, *args, **kwargs):
+            super(MySpider, self).__init__(*args, **kwargs)
+            self.start_urls = ['http://www.example.com/categories/%s' % category]
+            # ...
+
+Spider arguments can also be passed through the Scrapyd ``schedule.json`` API.
+See `Scrapyd documentation`_.
+
+.. _builtin-spiders:
+                
+Generic Spiders
+===============
+
+Scrapy comes with some useful generic spiders that you can use, to subclass
+your spiders from. Their aim is to provide convenient functionality for a few
+common scraping cases, like following all links on a site based on certain
+rules, crawling from `Sitemaps`_, or parsing a XML/CSV feed.
+
+For the examples used in the following spiders, we'll assume you have a project
+with a ``TestItem`` declared in a ``myproject.items`` module::
+
+    import scrapy
+
+    class TestItem(scrapy.Item):
+        id = scrapy.Field()
+        name = scrapy.Field()
+        description = scrapy.Field()
+
+
+.. currentmodule:: scrapy.spiders
 
 CrawlSpider
 -----------
@@ -273,8 +355,8 @@ CrawlSpider样例
 接下来给出配合rule使用CrawlSpider的例子::
 
     import scrapy
-    from scrapy.contrib.spiders import CrawlSpider, Rule
-    from scrapy.contrib.linkextractors import LinkExtractor
+    from scrapy.spiders import CrawlSpider, Rule
+    from scrapy.linkextractors import LinkExtractor
 
     class MySpider(CrawlSpider):
         name = 'example.com'
@@ -290,7 +372,7 @@ CrawlSpider样例
         )
 
         def parse_item(self, response):
-            self.log('Hi, this is an item page! %s' % response.url)
+            self.logger.info('Hi, this is an item page! %s', response.url)
 
             item = scrapy.Item()
             item['id'] = response.xpath('//td[@id="item_id"]/text()').re(r'ID: (\d+)')
@@ -381,8 +463,7 @@ XMLFeedSpider例子
 
 该spider十分易用。下边是其中一个例子::
 
-    from scrapy import log
-    from scrapy.contrib.spiders import XMLFeedSpider
+    from scrapy.spiders import XMLFeedSpider
     from myproject.items import TestItem
 
     class MySpider(XMLFeedSpider):
@@ -393,7 +474,7 @@ XMLFeedSpider例子
         itertag = 'item'
 
         def parse_node(self, response, node):
-            log.msg('Hi, this is a <%s> node!: %s' % (self.itertag, ''.join(node.extract())))
+            self.logger.info('Hi, this is a <%s> node!: %s', self.itertag, ''.join(node.extract()))
 
             item = TestItem()
             item['id'] = node.xpath('@id').extract()
@@ -417,6 +498,11 @@ CSVFeedSpider
        在CSV文件中用于区分字段的分隔符。类型为string。
        默认为 ``','`` (逗号)。
 
+   .. attribute:: quotechar
+
+       A string with the enclosure character for each field in the CSV file
+       Defaults to ``'"'`` (quotation mark).
+
    .. attribute:: headers
       
        在CSV文件中包含的用来提取字段的行的列表。参考下边的例子。
@@ -433,8 +519,7 @@ CSVFeedSpider例子
 下面的例子和之前的例子很像，但使用了
 :class:`CSVFeedSpider`::
 
-    from scrapy import log
-    from scrapy.contrib.spiders import CSVFeedSpider
+    from scrapy.spiders import CSVFeedSpider
     from myproject.items import TestItem
 
     class MySpider(CSVFeedSpider):
@@ -442,10 +527,11 @@ CSVFeedSpider例子
         allowed_domains = ['example.com']
         start_urls = ['http://www.example.com/feed.csv']
         delimiter = ';'
+        quotechar = "'"
         headers = ['id', 'name', 'description']
 
         def parse_row(self, response, row):
-            log.msg('Hi, this is a row!: %r' % row)
+            self.logger.info('Hi, this is a row!: %r', row)
 
             item = TestItem()
             item['id'] = row['id']
@@ -516,7 +602,7 @@ SitemapSpider样例
 
 简单的例子: 使用 ``parse`` 处理通过sitemap发现的所有url::
 
-    from scrapy.contrib.spiders import SitemapSpider
+    from scrapy.spiders import SitemapSpider
 
     class MySpider(SitemapSpider):
         sitemap_urls = ['http://www.example.com/sitemap.xml']
@@ -526,7 +612,7 @@ SitemapSpider样例
 
 用特定的函数处理某些url，其他的使用另外的callback::
 
-    from scrapy.contrib.spiders import SitemapSpider
+    from scrapy.spiders import SitemapSpider
 
     class MySpider(SitemapSpider):
         sitemap_urls = ['http://www.example.com/sitemap.xml']
@@ -543,7 +629,7 @@ SitemapSpider样例
 
 跟进 `robots.txt`_ 文件定义的sitemap并只跟进包含有 ``..sitemap_shop`` 的url::
 
-    from scrapy.contrib.spiders import SitemapSpider
+    from scrapy.spiders import SitemapSpider
 
     class MySpider(SitemapSpider):
         sitemap_urls = ['http://www.example.com/robots.txt']
@@ -557,7 +643,7 @@ SitemapSpider样例
 
 在SitemapSpider中使用其他url::
 
-    from scrapy.contrib.spiders import SitemapSpider
+    from scrapy.spiders import SitemapSpider
 
     class MySpider(SitemapSpider):
         sitemap_urls = ['http://www.example.com/robots.txt']
@@ -579,7 +665,7 @@ SitemapSpider样例
             pass # ... scrape other here ...
 
 .. _Sitemaps: http://www.sitemaps.org
-.. _Sitemap index files: http://www.sitemaps.org/protocol.php#index
+.. _Sitemap index files: http://www.sitemaps.org/protocol.html#index
 .. _robots.txt: http://www.robotstxt.org/
 .. _后缀: http://en.wikipedia.org/wiki/Top-level_domain
-.. _Scrapyd documentation: http://scrapyd.readthedocs.org/
+.. _Scrapyd documentation: http://scrapyd.readthedocs.org/en/latest/

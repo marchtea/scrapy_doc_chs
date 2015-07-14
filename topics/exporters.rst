@@ -4,7 +4,7 @@
 Item Exporters
 ==============
 
-.. module:: scrapy.contrib.exporter
+.. module:: scrapy.exporters
    :synopsis: Item Exporters
 
 当你抓取了你要的数据(Items)，你就会想要将他们持久化或导出它们，并应用在其他的程序。这是整个抓取过程的目的。
@@ -27,7 +27,7 @@ Item Exporters
 这里，你可以看到一个 :doc:`Item Pipeline <item-pipeline>` ，它使用 Item Exporter 导出 items 到不同的文件，每个 spider 一个::
 
    from scrapy import signals
-   from scrapy.contrib.exporter import XmlItemExporter
+   from scrapy.exporters import XmlItemExporter
 
    class XmlExportPipeline(object):
 
@@ -76,6 +76,10 @@ B默认情况下，该字段值将不变的传递到序列化库，如何对其�
 
 您可以在 :ref:`field metadata <topics-items-fields>` 声明一个 serializer。该 serializer 必须可调用，并返回它的序列化形式。
 
+如果您使用 :class:`~.Item` , 您可以在
+:ref:`field metadata <topics-items-fields>` 中声明一个 serializer. 
+该serializer必须为 callable , 并且接受一个值，返回其序列化形式。
+
 
 实例::
 
@@ -98,7 +102,7 @@ B默认情况下，该字段值将不变的传递到序列化库，如何对其�
 
 实例::
 
-      from scrapy.contrib.exporter import XmlItemExporter
+      from scrapy.exporter import XmlItemExporter
 
       class ProductXmlExporter(XmlItemExporter):
 
@@ -139,8 +143,8 @@ BaseItemExporter
       field 中声明 <topics-exporters-serializers>` 并返回它的值. 如果没有发现   serializer, 则值不会改变，除非你使用 ``unicode`` 值并编码到
       ``str``， 编码可以在 :attr:`encoding` 属性中声明.
 
-      :param field: the field being serialized
-      :type field: :class:`~scrapy.item.Field` object
+      :param field: 将要被序列化的field. 如果一个dict(而不是 :class:`~.Item`) 被导出, *field* 值为一个空dict.
+      :type field: :class:`~scrapy.item.Field` object 或 一个空的dict
 
       :param name: the name of the field being serialized
       :type name: str
@@ -163,11 +167,16 @@ BaseItemExporter
 
       一些 exporters (例如 :class:`CsvItemExporter`) 按照定义在属性中fields的次序依次输出.
 
+      当spider返回dict而不是 :class:`~Item` 的实例(instance)时, 一些export可能需要fields_to_export来正确的导出数据.
+
    .. attribute:: export_empty_fields
 
       是否在输出数据中包含为空的item fields.
       默认值是 ``False``. 一些 exporters (例如 :class:`CsvItemExporter`)
       会忽略此属性并输出所有fields.
+      
+      dict类型的item忽略该选项。
+
 
    .. attribute:: encoding
 
@@ -248,7 +257,7 @@ CsvItemExporter
       Color TV,1200
       DVD player,200
 
-.. _csv.writer: http://docs.python.org/library/csv.html#csv.writer
+.. _csv.writer: https://docs.python.org/library/csv.html#csv.writer
 
 PickleItemExporter
 ------------------
@@ -268,7 +277,7 @@ PickleItemExporter
 
    Pickle 不是可读的格式，这里不提供实例.
 
-.. _pickle module documentation: http://docs.python.org/library/pickle.html
+.. _pickle module documentation: https://docs.python.org/library/pickle.html
 
 PprintItemExporter
 ------------------
@@ -306,7 +315,7 @@ JsonItemExporter
 
    .. warning:: JSON 是一个简单而有弹性的格式, 但对大量数据的扩展性不是很好，因为这里会将整个对象放入内存. 如果你要JSON既强大又简单,可以考虑 :class:`JsonLinesItemExporter` , 或把输出对象分为多个块.
 
-.. _JSONEncoder: http://docs.python.org/library/json.html#json.JSONEncoder
+.. _JSONEncoder: https://docs.python.org/library/json.html#json.JSONEncoder
 
 JsonLinesItemExporter
 ---------------------
@@ -324,4 +333,4 @@ JsonLinesItemExporter
 
    这个类能很好的处理大量数据. 
 
-.. _JSONEncoder: http://docs.python.org/library/json.html#json.JSONEncoder
+.. _JSONEncoder: https://docs.python.org/library/json.html#json.JSONEncoder

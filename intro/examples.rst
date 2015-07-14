@@ -13,5 +13,5 @@
 `Snipplr上的scrapy标签`_ 是用来分享spider，middeware，extension或者script代码片段。欢迎(并鼓励)在那分享您的代码。
 
 .. _dirbot: https://github.com/scrapy/dirbot
-.. _Downloads: https://github.com/scrapy/dirbot/archives/master
+.. _Downloads: https://github.com/scrapy/dirbot/downloads
 .. _Snipplr上的scrapy标签: http://snipplr.com/all/tags/scrapy/

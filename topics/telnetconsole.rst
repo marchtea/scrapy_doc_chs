@@ -63,7 +63,7 @@ telnet为了方便提供了一些默认定义的变量:
 | ``hpy``        | 针对内存调试 (参考 :ref:`topics-leaks`)                           |
 +----------------+-------------------------------------------------------------------+
 
-.. _pprint.pprint: http://docs.python.org/library/pprint.html#pprint.pprint
+.. _pprint.pprint: https://docs.python.org/library/pprint.html#pprint.pprint
 
 Telnet console usage examples
 =============================

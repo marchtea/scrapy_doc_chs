@@ -66,7 +66,7 @@ item_scraped
     该信号支持返回deferreds。
 
     :param item: 爬取到的item
-    :type item: :class:`~scrapy.item.Item` 对象
+    :type item: dict 或 :class:`~scrapy.item.Item` 对象
 
     :param spider: 爬取item的spider
     :type spider: :class:`~scrapy.spider.Spider` 对象
@@ -86,7 +86,7 @@ item_dropped
     该信号支持返回deferreds。
 
     :param item: :ref:`topics-item-pipeline` 丢弃的item
-    :type item: :class:`~scrapy.item.Item` 对象
+    :type item: dict 或 :class:`~scrapy.item.Item` 对象
 
     :param spider: 爬取item的spider
     :type spider: :class:`~scrapy.spider.Spider` 对象

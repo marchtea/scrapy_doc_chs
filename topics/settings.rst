@@ -13,6 +13,8 @@ Scrapy设定(settings)提供了定制Scrapy组件的方法。您可以控制包�
 
 内置设定列表请参考 :ref:`topics-settings-ref` 。
 
+.. _topics-settings-module-envvar:
+
 指定设定(Designating the settings)
 ====================================
 
@@ -22,7 +24,7 @@ Scrapy设定(settings)提供了定制Scrapy组件的方法。您可以控制包�
 ``SCRAPY_SETTINGS_MODULE`` 必须以Python路径语法编写, 如 ``myproject.settings`` 。
 注意，设定模块应该在 Python `import search path`_ 中。
 
-.. _import search path: http://docs.python.org/2/tutorial/modules.html#the-module-search-path
+.. _import search path: https://docs.python.org/2/tutorial/modules.html#the-module-search-path
 
 获取设定值(Populating the settings)
 ====================================
@@ -31,9 +33,10 @@ Scrapy设定(settings)提供了定制Scrapy组件的方法。您可以控制包�
 下面以优先级降序的方式给出方式列表:
 
  1. 命令行选项(Command line Options)(最高优先级)
- 2. 项目设定模块(Project settings module)
- 3. 命令默认设定模块(Default settings per-command)
- 4. 全局默认设定(Default global settings) (最低优先级)
+ 2. 每个spider的设定
+ 3. 项目设定模块(Project settings module)
+ 4. 命令默认设定模块(Default settings per-command)
+ 5. 全局默认设定(Default global settings) (最低优先级)
 
 这些设定(settings)由scrapy内部很好的进行了处理，不过您仍可以使用API调用来手动处理。
 详情请参考 :ref:`topics-api-settings`.
@@ -52,19 +55,26 @@ Scrapy设定(settings)提供了定制Scrapy组件的方法。您可以控制包�
 
     scrapy crawl myspider -s LOG_FILE=scrapy.log
 
-2. 项目设定模块(Project settings module)
+2. Settings per-spider
+----------------------
+
+Spiders (See the :ref:`topics-spiders` chapter for reference) can define their
+own settings that will take precedence and override the project ones. They can
+do so by setting their :attr:`scrapy.spiders.Spider.custom_settings` attribute.
+
+3. 项目设定模块(Project settings module)
 ------------------------------------------
 
 项目设定模块是您Scrapy项目的标准配置文件。
 其是获取大多数设定的方法。例如:: ``myproject.settings`` 。
 
-3. 命令默认设定(Default settings per-command)
+4. 命令默认设定(Default settings per-command)
 -----------------------------------------------
 
 每个 :doc:`Scrapy tool </topics/commands>` 命令拥有其默认设定，并覆盖了全局默认的设定。
 这些设定在命令的类的 ``default_settings`` 属性中指定。
 
-4. 默认全局设定(Default global settings)
+5. 默认全局设定(Default global settings)
 -------------------------------------------
 
 全局默认设定存储在 ``scrapy.settings.default_settings`` 模块，
@@ -208,7 +218,7 @@ DEFAULT_REQUEST_HEADERS
     }
 
 Scrapy HTTP Request使用的默认header。由
-:class:`~scrapy.contrib.downloadermiddleware.defaultheaders.DefaultHeadersMiddleware`
+:class:`~scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware`
 产生。
 
 .. setting:: DEPTH_LIMIT
@@ -258,6 +268,24 @@ DNSCACHE_ENABLED
 
 是否启用DNS内存缓存(DNS in-memory cache)。
 
+.. setting:: DNSCACHE_SIZE
+
+DNSCACHE_SIZE
+----------------
+
+Default: ``10000``
+
+DNS in-memory cache size.
+
+.. setting:: DNS_TIMEOUT
+
+DNS_TIMEOUT
+----------------
+
+Default: ``60``
+
+Timeout for processing of DNS queries in seconds. Float is supported.
+
 .. setting:: DOWNLOADER
 
 DOWNLOADER
@@ -285,20 +313,20 @@ DOWNLOADER_MIDDLEWARES_BASE
 默认::
 
     {
-        'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware': 100,
-        'scrapy.contrib.downloadermiddleware.httpauth.HttpAuthMiddleware': 300,
-        'scrapy.contrib.downloadermiddleware.downloadtimeout.DownloadTimeoutMiddleware': 350,
-        'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': 400,
-        'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 500,
-        'scrapy.contrib.downloadermiddleware.defaultheaders.DefaultHeadersMiddleware': 550,
-        'scrapy.contrib.downloadermiddleware.redirect.MetaRefreshMiddleware': 580,
-        'scrapy.contrib.downloadermiddleware.httpcompression.HttpCompressionMiddleware': 590,
-        'scrapy.contrib.downloadermiddleware.redirect.RedirectMiddleware': 600,
-        'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware': 700,
-        'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 750,
-        'scrapy.contrib.downloadermiddleware.chunked.ChunkedTransferMiddleware': 830,
-        'scrapy.contrib.downloadermiddleware.stats.DownloaderStats': 850,
-        'scrapy.contrib.downloadermiddleware.httpcache.HttpCacheMiddleware': 900,
+        'scrapy.downloadermiddlewares.robotstxt.RobotsTxtMiddleware': 100,
+        'scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware': 300,
+        'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
+        'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': 400,
+        'scrapy.downloadermiddlewares.retry.RetryMiddleware': 500,
+        'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware': 550,
+        'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware': 580,
+        'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 590,
+        'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': 600,
+        'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': 700,
+        'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 750,
+        'scrapy.downloadermiddlewares.chunked.ChunkedTransferMiddleware': 830,
+        'scrapy.downloadermiddlewares.stats.DownloaderStats': 850,
+        'scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware': 900,
     }
 
 包含Scrapy默认启用的下载中间件的字典。
@@ -380,12 +408,51 @@ DOWNLOAD_TIMEOUT
 
 下载器超时时间(单位: 秒)。
 
+.. setting:: DOWNLOAD_MAXSIZE
+
+DOWNLOAD_MAXSIZE
+----------------
+
+Default: `1073741824` (1024MB)
+
+The maximum response size (in bytes) that downloader will download.
+
+If you want to disable it set to 0.
+
+.. reqmeta:: download_maxsize
+
+.. note::
+
+    This size can be set per spider using :attr:`download_maxsize`
+    spider attribute and per-request using :reqmeta:`download_maxsize`
+    Request.meta key.
+
+    This feature needs Twisted >= 11.1.
+
+.. setting:: DOWNLOAD_WARNSIZE
+
+DOWNLOAD_WARNSIZE
+-----------------
+
+Default: `33554432` (32MB)
+
+The response size (in bytes) that downloader will start to warn.
+
+If you want to disable it set to 0.
+
+.. note::
+
+    This size can be set per spider using :attr:`download_warnsize`
+    spider attribute and per-request using :reqmeta:`download_warnsize`
+    Request.meta key.
+
+    This feature needs Twisted >= 11.1.
 .. setting:: DUPEFILTER_CLASS
 
 DUPEFILTER_CLASS
 ----------------
 
-默认: ``'scrapy.dupefilter.RFPDupeFilter'``
+默认: ``'scrapy.dupefilters.RFPDupeFilter'``
 
 用于检测过滤重复请求的类。
 
@@ -432,16 +499,15 @@ EXTENSIONS_BASE
 默认::
 
     {
-        'scrapy.contrib.corestats.CoreStats': 0,
-        'scrapy.webservice.WebService': 0,
+        'scrapy.extensions.corestats.CoreStats': 0,
         'scrapy.telnet.TelnetConsole': 0,
-        'scrapy.contrib.memusage.MemoryUsage': 0,
-        'scrapy.contrib.memdebug.MemoryDebugger': 0,
-        'scrapy.contrib.closespider.CloseSpider': 0,
-        'scrapy.contrib.feedexport.FeedExporter': 0,
-        'scrapy.contrib.logstats.LogStats': 0,
-        'scrapy.contrib.spiderstate.SpiderState': 0,
-        'scrapy.contrib.throttle.AutoThrottle': 0,
+        'scrapy.extensions.memusage.MemoryUsage': 0,
+        'scrapy.extensions.memdebug.MemoryDebugger': 0,
+        'scrapy.extensions.closespider.CloseSpider': 0,
+        'scrapy.extensions.feedexport.FeedExporter': 0,
+        'scrapy.extensions.logstats.LogStats': 0,
+        'scrapy.extensions.spiderstate.SpiderState': 0,
+        'scrapy.extensions.throttle.AutoThrottle': 0,
     }
 
 可用的插件列表。需要注意，有些插件需要通过设定来启用。默认情况下，
@@ -507,6 +573,31 @@ LOG_FILE
 
 logging输出的文件名。如果为None，则使用标准错误输出(standard error)。
 
+.. setting:: LOG_FORMAT
+
+LOG_FORMAT
+----------
+
+Default: ``'%(asctime)s [%(name)s] %(levelname)s: %(message)s'``
+
+String for formatting log messsages. Refer to the `Python logging documentation`_ for the whole list of available
+placeholders.
+
+.. _Python logging documentation: https://docs.python.org/2/library/logging.html#logrecord-attributes
+
+.. setting:: LOG_DATEFORMAT
+
+LOG_DATEFORMAT
+--------------
+
+Default: ``'%Y-%m-%d %H:%M:%S'``
+
+String for formatting date/time, expansion of the ``%(asctime)s`` placeholder
+in :setting:`LOG_FORMAT`. Refer to the `Python datetime documentation`_ for the whole list of available
+directives.
+
+.. _Python datetime documentation: https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior
+
 .. setting:: LOG_LEVEL
 
 LOG_LEVEL
@@ -556,7 +647,7 @@ MEMUSAGE_ENABLED
 
 默认: ``False``
 
-Scope: ``scrapy.contrib.memusage``
+Scope: ``scrapy.extensions.memusage``
 
 是否启用内存使用插件。当Scrapy进程占用的内存超出限制时，该插件将会关闭Scrapy进程，
 同时发送email进行通知。
@@ -570,7 +661,7 @@ MEMUSAGE_LIMIT_MB
 
 默认: ``0``
 
-Scope: ``scrapy.contrib.memusage``
+Scope: ``scrapy.extensions.memusage``
 
 在关闭Scrapy之前所允许的最大内存数(单位: MB)(如果 MEMUSAGE_ENABLED为True)。
 如果为0，将不做限制。
@@ -584,7 +675,7 @@ MEMUSAGE_NOTIFY_MAIL
 
 默认: ``False``
 
-Scope: ``scrapy.contrib.memusage``
+Scope: ``scrapy.extensions.memusage``
 
 达到内存限制时通知的email列表。
 
@@ -601,7 +692,7 @@ MEMUSAGE_REPORT
 
 默认: ``False``
 
-Scope: ``scrapy.contrib.memusage``
+Scope: ``scrapy.extensions.memusage``
 
 每个spider被关闭时是否发送内存使用报告。
 
@@ -614,7 +705,7 @@ MEMUSAGE_WARNING_MB
 
 默认: ``0``
 
-Scope: ``scrapy.contrib.memusage``
+Scope: ``scrapy.extensions.memusage``
 
 在发送警告email前所允许的最大内存数(单位: MB)(如果 MEMUSAGE_ENABLED为True)。
 如果为0，将不发送警告。
@@ -651,6 +742,17 @@ RANDOMIZE_DOWNLOAD_DELAY
 
 
 .. _wget: http://www.gnu.org/software/wget/manual/wget.html
+
+.. setting:: REACTOR_THREADPOOL_MAXSIZE
+
+REACTOR_THREADPOOL_MAXSIZE
+--------------------------
+
+Default: ``10``
+
+The maximum limit for Twisted Reactor thread pool size. This is common multi-purpose thread pool used by various
+Scrapy components. Threaded DNS Resolver, BlockingFeedStorage, S3FilesStore just to name a few. Increase this value if
+you're experiencing problems with insufficient blocking IO.
 
 .. setting:: REDIRECT_MAX_TIMES
 
@@ -690,7 +792,7 @@ ROBOTSTXT_OBEY
 
 默认: ``False``
 
-Scope: ``scrapy.contrib.downloadermiddleware.robotstxt``
+Scope: ``scrapy.downloadermiddlewares.robotstxt``
 
 如果启用，Scrapy将会尊重 robots.txt策略。更多内容请查看
 :ref:`topics-dlmw-robots` 。
@@ -732,6 +834,16 @@ SPIDER_CONTRACTS_BASE
 :setting:`SPIDER_CONTRACTS` 。更多内容请参考
 :ref:`topics-contracts` 。
 
+.. setting:: SPIDER_LOADER_CLASS
+
+SPIDER_LOADER_CLASS
+--------------------
+
+Default: ``'scrapy.spiderloader.SpiderLoader'``
+
+The class that will be used for loading spiders, which must implement the
+:ref:`topics-api-spiderloader`.
+
 .. setting:: SPIDER_MIDDLEWARES
 
 SPIDER_MIDDLEWARES
@@ -750,11 +862,11 @@ SPIDER_MIDDLEWARES_BASE
 默认::
 
     {
-        'scrapy.contrib.spidermiddleware.httperror.HttpErrorMiddleware': 50,
-        'scrapy.contrib.spidermiddleware.offsite.OffsiteMiddleware': 500,
-        'scrapy.contrib.spidermiddleware.referer.RefererMiddleware': 700,
-        'scrapy.contrib.spidermiddleware.urllength.UrlLengthMiddleware': 800,
-        'scrapy.contrib.spidermiddleware.depth.DepthMiddleware': 900,
+        'scrapy.spidermiddlewares.httperror.HttpErrorMiddleware': 50,
+        'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': 500,
+        'scrapy.spidermiddlewares.referer.RefererMiddleware': 700,
+        'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware': 800,
+        'scrapy.spidermiddlewares.depth.DepthMiddleware': 900,
     }
 
 保存项目中默认启用的spider中间件的字典。
@@ -780,7 +892,7 @@ Scrapy搜索spider的模块列表。
 STATS_CLASS
 -----------
 
-默认: ``'scrapy.statscol.MemoryStatsCollector'``
+默认: ``'scrapy.statscollectors.MemoryStatsCollector'``
 
 收集数据的类。该类必须实现
 :ref:`topics-api-stats`.
@@ -804,7 +916,7 @@ STATSMAILER_RCPTS
 默认: ``[]`` (空list)
 
 spider完成爬取后发送Scrapy数据。更多内容请查看
-:class:`~scrapy.contrib.statsmailer.StatsMailer` 。
+:class:`~scrapy.extensions.statsmailer.StatsMailer` 。
 
 .. setting:: TELNETCONSOLE_ENABLED
 
@@ -842,7 +954,7 @@ URLLENGTH_LIMIT
 
 默认: ``2083``
 
-Scope: ``contrib.spidermiddleware.urllength``
+Scope: ``spidermiddlewares.urllength``
 
 爬取URL的最大长度。更多关于该设定的默认值信息请查看: 
 http://www.boutell.com/newfaq/misc/urllength.html
@@ -855,6 +967,14 @@ USER_AGENT
 默认: ``"Scrapy/VERSION (+http://scrapy.org)"``
 
 爬取的默认User-Agent，除非被覆盖。
+
+Settings documented elsewhere:
+------------------------------
+
+The following settings are documented elsewhere, please check each specific
+case to see how to enable and use them.
+
+.. settingslist::
 
 .. _Amazon web services: http://aws.amazon.com/
 .. _breadth-first order: http://en.wikipedia.org/wiki/Breadth-first_search

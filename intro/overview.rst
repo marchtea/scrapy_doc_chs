@@ -221,7 +221,7 @@ Scrapy可以助你一臂之力。
 .. _社区: http://scrapy.org/community/
 .. _页面抓取: http://en.wikipedia.org/wiki/Screen_scraping
 .. _网络抓取: http://en.wikipedia.org/wiki/Web_scraping
-.. _Amazon Associates Web Services: http://aws.amazon.com/associates/
+.. _Amazon Associates Web Services: https://affiliate-program.amazon.com/gp/advertising/api/detail/main.html
 .. _Mininova: http://www.mininova.org
 .. _XPath: http://www.w3.org/TR/xpath
 .. _XPath参考: http://www.w3.org/TR/xpath

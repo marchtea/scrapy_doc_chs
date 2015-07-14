@@ -19,8 +19,8 @@ Scrapy提供了内置的机制来提取数据(叫做
 
 .. _BeautifulSoup: http://www.crummy.com/software/BeautifulSoup/
 .. _lxml: http://lxml.de/
-.. _jinja2: http://jinja.pocoo.org/2/
-.. _Django: http://www.djangoproject.com
+.. _jinja2: http://jinja.pocoo.org/
+.. _Django: https://www.djangoproject.com
 
 .. _faq-python-versions:
 
@@ -51,7 +51,7 @@ Scrapy是否从Django中"剽窃"了X呢？
 
 如果Scrapy能启发其他的项目，我们将为此而自豪。欢迎来抄(steal)我们！
 
-.. _Django: http://www.djangoproject.com
+.. _Django: https://www.djangoproject.com
 
 Scrapy支持HTTP代理么？
 -----------------------------------
@@ -207,7 +207,7 @@ dump到XML文件::
 `样例爬虫`_ 。
 
 .. _这篇文章: http://search.cpan.org/~ecarroll/HTML-TreeBuilderX-ASP_NET-0.09/lib/HTML/TreeBuilderX/ASP_NET.pm
-.. _样例爬虫: http://github.com/AmbientLighter/rpn-fas/blob/master/fas/spiders/rnp.py
+.. _样例爬虫: https://github.com/AmbientLighter/rpn-fas/blob/master/fas/spiders/rnp.py
 
 分析大XML/CSV数据源的最好方法是?
 ----------------------------------------------------

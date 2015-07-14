@@ -23,7 +23,7 @@ Scrapy选择器构建于 `lxml`_ 库之上，这意味着它们在速度和解�
 
 .. _BeautifulSoup: http://www.crummy.com/software/BeautifulSoup/
 .. _lxml: http://lxml.de/
-.. _ElementTree: http://docs.python.org/library/xml.etree.elementtree.html
+.. _ElementTree: https://docs.python.org/library/xml.etree.elementtree.html
 .. _cssselect: https://pypi.python.org/pypi/cssselect/
 .. _XPath: http://www.w3.org/TR/xpath
 .. _CSS: http://www.w3.org/TR/selectors
@@ -112,6 +112,21 @@ Scrapy selector是以 **文字(text)** 或 :class:`~scrapy.http.TextResponse` �
     >>> response.xpath('//title/text()').extract()
     [u'Example website']
 
+如果想要提取到第一个匹配到的元素, 必须调用 ``.extract_first()`` selector
+
+    >>> response.xpath('//div[@id="images"]/a/text()').extract_first()
+    u'Name: My image 1 '
+
+如果没有匹配的元素，则返回 ``None``:
+
+    >>> response.xpath('//div/[id="not-exists"]/text()').extract_first() is None
+    True
+
+您也可以设置默认的返回值，替代 ``None`` :
+
+    >>> sel.xpath('//div/[id="not-exists"]/text()').extract_first(default='not-found')
+    'not-found'
+
 注意CSS选择器可以使用CSS3伪元素(pseudo-elements)来选择文字或者属性节点::
 
     >>> response.css('title::text').extract()
@@ -192,6 +207,12 @@ Scrapy selector是以 **文字(text)** 或 :class:`~scrapy.http.TextResponse` �
      u'My image 3',
      u'My image 4',
      u'My image 5']
+
+另外还有一个糅合了 ``.extract_first()`` 与 ``.re()`` 的函数
+``.re_first()`` . 使用该函数可以提取第一个匹配到的字符串::
+
+    >>> response.xpath('//a[contains(@href, "image")]/text()').re_first(r'Name:\s*(.*)')
+    u'My image 1'
 
 .. _topics-selectors-relative-xpaths:
 
@@ -322,7 +343,7 @@ set     \http://exslt.org/sets                   `集合操作`_
     ...   ...
     ... </div>
     ... """
-    >>>
+    >>> sel = Selector(text=doc, type="html")
     >>> for scope in sel.xpath('//div[@itemscope]'):
     ...     print "current scope:", scope.xpath('@itemtype').extract()
     ...     props = scope.xpath('''
@@ -357,9 +378,9 @@ set     \http://exslt.org/sets                   `集合操作`_
 
 在这里，我们首先在 ``itemscope`` 元素上迭代，对于其中的每一个元素，我们寻找所有的 ``itemprops`` 元素，并排除那些本身在另一个 ``itemscope`` 内的元素。 
 
-.. _EXSLT: http://www.exslt.org/
-.. _正则表达式: http://www.exslt.org/regexp/index.html
-.. _集合操作: http://www.exslt.org/set/index.html
+.. _EXSLT: http://exslt.org/
+.. _正则表达式: http://exslt.org/regexp/index.html
+.. _集合操作: http://exslt.org/set/index.html
 
 
 Some XPath tips

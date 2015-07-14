@@ -14,20 +14,3 @@
 .. warning::
 
    本部分文档一直处于修改中。请自行承担使用风险。
-
-使用外部库插入命令
------------------------
-
-你可以使用外部库通过增加 `scrapy.commands` 部分到 `setup.py` 的entry_points中来插入Scrapy命令。
-
-增加 `my_command` 命令的例子::
-
-  from setuptools import setup, find_packages
-
-  setup(name='scrapy-mymodule',
-    entry_points={
-      'scrapy.commands': [
-        'my_command=my_scrapy_module.commands:MyCommand',
-      ],
-    },
-   )

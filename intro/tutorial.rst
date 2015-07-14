@@ -23,8 +23,8 @@ Scrapy由 Python_ 编写。如果您刚接触并且好奇这门语言的特性�
 对于想从Python开始学习的编程新手， 
 `非程序员的Python学习资料列表`_ 将是您的选择。
 
-.. _Python: http://www.python.org
-.. _非程序员的Python学习资料列表: http://wiki.python.org/moin/BeginnersGuide/NonProgrammers
+.. _Python: https://www.python.org
+.. _非程序员的Python学习资料列表: https://wiki.python.org/moin/BeginnersGuide/NonProgrammers
 .. _Learn Python The Hard Way: http://learnpythonthehardway.org/book/
 
 创建项目
@@ -39,29 +39,27 @@ Scrapy由 Python_ 编写。如果您刚接触并且好奇这门语言的特性�
 
    tutorial/
        scrapy.cfg
+
        tutorial/
            __init__.py
+
            items.py
+
            pipelines.py
+
            settings.py
+
            spiders/
                __init__.py
                ...
 
-这些文件分别是:
-
-* ``scrapy.cfg``: 项目的配置文件
-* ``tutorial/``: 该项目的python模块。之后您将在此加入代码。
-* ``tutorial/items.py``: 项目中的item文件.
-* ``tutorial/pipelines.py``: 项目中的pipelines文件.
-* ``tutorial/settings.py``: 项目的设置文件.
-* ``tutorial/spiders/``: 放置spider代码的目录.
-
 定义Item
 =================
 
-`Item` 是保存爬取到的数据的容器；其使用方法和python字典类似，
-并且提供了额外保护机制来避免拼写错误导致的未定义字段错误。
+`Item` 是保存爬取到的数据的容器；其使用方法和python字典类似。虽然您也可以在Scrapy中直接使用dict，但是 `Item`
+提供了额外保护机制来避免拼写错误导致的未定义字段错误。
+They can also be used with :ref:`Item Loaders
+<topics-loaders>`, a mechanism with helpers to conveniently populate `Items`.
 
 类似在ORM中做的一样，您可以通过创建一个 :class:`scrapy.Item <scrapy.item.Item>` 类，
 并且定义类型为 :class:`scrapy.Field <scrapy.item.Field>` 的类属性来定义一个Item。
@@ -89,17 +87,17 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 其包含了一个用于下载的初始URL，如何跟进网页中的链接以及如何分析页面中的内容，
 提取生成 :ref:`item <topics-items>` 的方法。
 
-为了创建一个Spider，您必须继承 :class:`scrapy.Spider <scrapy.spider.Spider>` 类，
-且定义以下三个属性:
+为了创建一个Spider，您必须继承 :class:`scrapy.Spider <scrapy.spiders.Spider>` 类，
+且定义一些属性:
 
-* :attr:`~scrapy.spider.Spider.name`: 用于区别Spider。
+* :attr:`~scrapy.spiders.Spider.name`: 用于区别Spider。
   该名字必须是唯一的，您不可以为不同的Spider设定相同的名字。
 
-* :attr:`~scrapy.spider.Spider.start_urls`: 包含了Spider在启动时进行爬取的url列表。
+* :attr:`~scrapy.spiders.Spider.start_urls`: 包含了Spider在启动时进行爬取的url列表。
   因此，第一个被获取到的页面将是其中之一。
   后续的URL则从初始的URL获取到的数据中提取。 
 
-* :meth:`~scrapy.spider.Spider.parse` 是spider的一个方法。
+* :meth:`~scrapy.spiders.Spider.parse` 是spider的一个方法。
   被调用时，每个初始URL完成下载后生成的 :class:`~scrapy.http.Response`
   对象将会作为唯一的参数传递给该函数。
   该方法负责解析返回的数据(response data)，提取数据(生成item)以及生成需要进一步处理的URL的 :class:`~scrapy.http.Request` 对象。
@@ -117,7 +115,7 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
        ]
 
        def parse(self, response):
-           filename = response.url.split("/")[-2]
+           filename = response.url.split("/")[-2] + '.html'
            with open(filename, 'wb') as f:
                f.write(response.body)
 
@@ -128,6 +126,9 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 
    scrapy crawl dmoz
 
+This command runs the spider with name ``dmoz`` that we've just added, that
+will send some requests for the ``dmoz.org`` domain. You will get an output
+similar to this::
 ``crawl dmoz`` 启动用于爬取 ``dmoz.org`` 的spider，您将得到类似的输出::
 
     2014-01-23 18:13:07-0400 [scrapy] INFO: Scrapy started (bot: tutorial)
@@ -137,21 +138,23 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
     2014-01-23 18:13:07-0400 [scrapy] INFO: Enabled downloader middlewares: ...
     2014-01-23 18:13:07-0400 [scrapy] INFO: Enabled spider middlewares: ...
     2014-01-23 18:13:07-0400 [scrapy] INFO: Enabled item pipelines: ...
-    2014-01-23 18:13:07-0400 [dmoz] INFO: Spider opened
-    2014-01-23 18:13:08-0400 [dmoz] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/> (referer: None)
-    2014-01-23 18:13:09-0400 [dmoz] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/> (referer: None)
-    2014-01-23 18:13:09-0400 [dmoz] INFO: Closing spider (finished)
+    2014-01-23 18:13:07-0400 [scrapy] INFO: Spider opened
+    2014-01-23 18:13:08-0400 [scrapy] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/> (referer: None)
+    2014-01-23 18:13:09-0400 [scrapy] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/> (referer: None)
+    2014-01-23 18:13:09-0400 [scrapy] INFO: Closing spider (finished)
 
-查看包含 ``[dmoz]`` 的输出，可以看到输出的log中包含定义在 ``start_urls`` 的初始URL，并且与spider中是一一对应的。在log中可以看到其没有指向其他页面( ``(referer:None)`` )。
+.. note::
+    最后你可以看到有一行log包含定义在 ``start_urls`` 的初始URL，并且与spider中是一一对应的。在log中可以看到其没有指向其他页面( ``(referer:None)`` )。
 
-除此之外，更有趣的事情发生了。就像我们 ``parse`` 方法指定的那样，有两个包含url所对应的内容的文件被创建了: *Book* , *Resources* 。
+
+现在，查看当前目录，您将会注意到有两个包含url所对应的内容的文件被创建了: *Book* , *Resources*,正如我们的 ``parse`` 方法里做的一样。
 
 刚才发生了什么？
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Scrapy为Spider的 ``start_urls`` 属性中的每个URL创建了 :class:`scrapy.Request <scrapy.http.Request>` 对象，并将 ``parse`` 方法作为回调函数(callback)赋值给了Request。
 
-Request对象经过调度，执行生成 :class:`scrapy.http.Response` 对象并送回给spider :meth:`~scrapy.spider.Spider.parse` 方法。
+Request对象经过调度，执行生成 :class:`scrapy.http.Response` 对象并送回给spider :meth:`~scrapy.spiders.Spider.parse` 方法。
 
 提取Item
 ----------------
@@ -177,9 +180,16 @@ Selectors选择器简介
 * ``//div[@class="mine"]``: 选择所有具有 ``class="mine"`` 属性的 ``div`` 元素
 
 上边仅仅是几个简单的XPath例子，XPath实际上要比这远远强大的多。
-如果您想了解的更多，我们推荐 `这篇XPath教程 <http://www.w3schools.com/XPath/default.asp>`_ 。
+如果您想了解的更多，我们推荐 `通过这些例子来学习XPath<http://zvon.org/comp/r/tut-XPath_1.html>`_, 以及 `这篇教程学习"how to think in XPath" <http://plasmasturm.org/log/xpath101/>`_.
 
-为了配合XPath，Scrapy除了提供了 :class:`~scrapy.selector.Selector`
+.. note:: **CSS vs XPath:** you can go a long way extracting data from web pages
+  using only CSS selectors. However, XPath offers more power because besides
+  navigating the structure, it can also look at the content: you're
+  able to select things like: *the link that contains the text 'Next Page'*.
+  Because of this, we encourage you to learn about XPath even if you
+  already know how to construct CSS selectors.
+
+为了配合CSS与XPath，Scrapy除了提供了 :class:`~scrapy.selector.Selector`
 之外，还提供了方法来避免每次从response中提取数据时生成selector的麻烦。
 
 Selector有四个基本的方法(点击相应的方法可以看到详细的API文档):
@@ -196,7 +206,7 @@ Selector有四个基本的方法(点击相应的方法可以看到详细的API�
 在Shell中尝试Selector选择器
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-为了介绍Selector的使用方法，接下来我们将要使用内置的 :ref:`Scrapy shell <topics-shell>` 。Scrapy Shell需要您预装好IPython(一个扩展的Python终端)。
+为了介绍Selector的使用方法，接下来我们将要使用内置的 :ref:`Scrapy shell <topics-shell>` 。Scrapy Shell需要您预装好 `IPython <http://ipython.org/>`_ (一个扩展的Python终端)。
 
 您需要进入项目的根目录，执行下列命令来启动shell::
 
@@ -210,7 +220,7 @@ shell的输出类似::
 
     [ ... Scrapy log here ... ]
 
-    2014-01-23 17:11:42-0400 [default] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/> (referer: None)
+    2014-01-23 17:11:42-0400 [scrapy] DEBUG: Crawled (200) <GET http://www.dmoz.org/Computers/Programming/Languages/Python/Books/> (referer: None)
     [s] Available Scrapy objects:
     [s]   crawler    <scrapy.crawler.Crawler object at 0x3636b50>
     [s]   item       {}
@@ -227,10 +237,19 @@ shell的输出类似::
 
 当shell载入后，您将得到一个包含response数据的本地 ``response`` 变量。输入 ``response.body`` 将输出response的包体， 输出 ``response.headers`` 可以看到response的包头。
 
+#TODO..
 更为重要的是，当输入 ``response.selector`` 时，
 您将获取到一个可以用于查询返回数据的selector(选择器)，
 以及映射到 ``response.selector.xpath()`` 、 ``response.selector.css()`` 的
 快捷方法(shortcut): ``response.xpath()`` 和 ``response.css()`` 。
+
+More importantly ``response`` has a ``selector`` attribute which is an instance of
+:class:`~scrapy.selector.Selector` class, instantiated with this particular ``response``.
+You can run queries on ``response`` by calling ``response.selector.xpath()`` or
+``response.selector.css()``. There are also some convenience shortcuts like ``response.xpath()``
+or ``response.xml()`` which map directly to ``response.selector.xpath()`` and
+``response.selector.css()``.
+
 
 同时，shell根据response提前初始化了变量 ``sel`` 。该selector根据response的类型自动选择最合适的分析规则(XML vs HTML)。
 
@@ -321,7 +340,7 @@ shell的输出类似::
    >>> item['title']
    'Example title'
 
-一般来说，Spider将会将爬取到的数据以 :class:`~scrapy.item.Item` 对象返回。所以为了将爬取的数据返回，我们最终的代码将是::
+为了将爬取的数据返回，我们最终的代码将是::
 
     import scrapy
 
@@ -347,14 +366,97 @@ shell的输出类似::
 
 现在对dmoz.org进行爬取将会产生 ``DmozItem`` 对象::
 
-   [dmoz] DEBUG: Scraped from <200 http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
+   [scrapy] DEBUG: Scraped from <200 http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
         {'desc': [u' - By David Mertz; Addison Wesley. Book in progress, full text, ASCII format. Asks for feedback. [author website, Gnosis Software, Inc.\n],
          'link': [u'http://gnosis.cx/TPiP/'],
          'title': [u'Text Processing in Python']}
-   [dmoz] DEBUG: Scraped from <200 http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
+   [scrapy] DEBUG: Scraped from <200 http://www.dmoz.org/Computers/Programming/Languages/Python/Books/>
         {'desc': [u' - By Sean McGrath; Prentice Hall PTR, 2000, ISBN 0130211192, has CD-ROM. Methods to build XML applications fast, Python tutorial, DOM and SAX, new Pyxie open source XML processing library. [Prentice Hall PTR]\n'],
          'link': [u'http://www.informit.com/store/product.aspx?isbn=0130211192'],
          'title': [u'XML Processing with Python']}
+
+Following links
+===============
+
+Let's say, instead of just scraping the stuff in *Books* and *Resources* pages,
+you want everything that is under the `Python directory
+<http://www.dmoz.org/Computers/Programming/Languages/Python/>`_.
+
+Now that you know how to extract data from a page, why not extract the links
+for the pages you are interested, follow them and then extract the data you
+want for all of them?
+
+Here is a modification to our spider that does just that::
+
+    import scrapy
+
+    from tutorial.items import DmozItem
+
+    class DmozSpider(scrapy.Spider):
+        name = "dmoz"
+        allowed_domains = ["dmoz.org"]
+        start_urls = [
+            "http://www.dmoz.org/Computers/Programming/Languages/Python/",
+        ]
+
+        def parse(self, response):
+            for href in response.css("ul.directory.dir-col > li > a::attr('href')"):
+                url = response.urljoin(response.url, href.extract())
+                yield scrapy.Request(url, callback=self.parse_dir_contents)
+
+        def parse_dir_contents(self, response):
+            for sel in response.xpath('//ul/li'):
+                item = DmozItem()
+                item['title'] = sel.xpath('a/text()').extract()
+                item['link'] = sel.xpath('a/@href').extract()
+                item['desc'] = sel.xpath('text()').extract()
+                yield item
+
+Now the `parse()` method only extract the interesting links from the page,
+builds a full absolute URL using the `response.urljoin` method (since the links can
+be relative) and yields new requests to be sent later, registering as callback
+the method `parse_dir_contents()` that will ultimately scrape the data we want.
+
+What you see here is the Scrapy's mechanism of following links: when you yield
+a Request in a callback method, Scrapy will schedule that request to be sent
+and register a callback method to be executed when that request finishes.
+
+Using this, you can build complex crawlers that follow links according to rules
+you define, and extract different kinds of data depending on the page it's
+visiting.
+
+A common pattern is a callback method that extract some items, looks for a link
+to follow to the next page and then yields a `Request` with the same callback
+for it::
+
+    def parse_articles_follow_next_page(self, response):
+        for article in response.xpath("//article"):
+            item = ArticleItem()
+
+            ... extract article data here
+
+            yield item
+
+        next_page = response.css("ul.navigation > li.next-page > a::attr('href')")
+        if next_page:
+            url = response.urljoin(next_page[0].extract())
+            yield Request(url, self.parse_articles_follow_next_page)
+
+This creates a sort of loop, following all the links to the next page until it
+doesn't find one -- handy for crawling blogs, forums and other sites with
+pagination.
+
+Another common pattern is to build an item with data from more than one page,
+using a `trick to pass additional data to the callbacks
+<topics-request-response-ref-request-callback-arguments>`_.
+
+
+.. note::
+    As an example spider that leverages this mechanism, check out the
+    :class:`~scrapy.spiders.CrawlSpider` class for a generic spider
+    that implements a small rules engine that you can use to write your
+    crawlers on top of it.
+
 
 保存爬取到的数据
 ========================

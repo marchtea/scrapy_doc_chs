@@ -27,6 +27,14 @@ Scrapy中文文档翻译计划
   * versioning.rst
   * contributing.rst(可翻可不翻)
 
+最新修改仍未翻译:
+
+  * settings.rst
+  * item-pipeline.rst
+  * spiders.rst
+  * practices.rst
+  * tutorial.rst
+
 剩余的章节已经翻译完毕。希望各位在查看文档的同时，对于翻译不准确的部分给予反馈(open issue)。感谢各位的支持。
 
 关于版本

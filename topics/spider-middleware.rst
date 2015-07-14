@@ -79,13 +79,13 @@ Spider中间件是介入到Scrapy的spider处理机制的钩子框架，您可�
         当Spider处理response返回result时，该方法被调用。
 
         :meth:`process_spider_output` 必须返回包含
-        :class:`~scrapy.http.Request` 或 :class:`~scrapy.item.Item` 对象的可迭代对象(iterable)。
+        :class:`~scrapy.http.Request` 、dict 或 :class:`~scrapy.item.Item` 对象的可迭代对象(iterable)。
 
         :param response: 生成该输出的response
         :type response: :class:`~scrapy.http.Response` 对象
 
         :param result: spider返回的result
-        :type result: 包含 :class:`~scrapy.http.Request` 或
+        :type result: 包含 :class:`~scrapy.http.Request` 、dict 或
           :class:`~scrapy.item.Item` 对象的可迭代对象(iterable)
 
         :param spider: 其结果被处理的spider
@@ -98,7 +98,7 @@ Spider中间件是介入到Scrapy的spider处理机制的钩子框架，您可�
         该方法被调用。
 
         :meth:`process_spider_exception` 必须要么返回 ``None`` ，
-        要么返回一个包含 :class:`~scrapy.http.Response` 或 :class:`~scrapy.item.Item` 对象的可迭代对象(iterable)。
+        返回一个包含 :class:`~scrapy.http.Response` 、dict 或 :class:`~scrapy.item.Item` 对象的可迭代对象(iterable)。
 
         如果其返回 ``None`` ，Scrapy将继续处理该异常，调用中间件链中的其他中间件的
         :meth:`process_spider_exception` 方法，直到所有中间件都被调用，该异常到达引擎(异常将被记录并被忽略)。
@@ -197,8 +197,10 @@ spider的 ``handle_httpstatus_list`` 属性或
 
 .. reqmeta:: handle_httpstatus_list
    
+.. reqmeta:: handle_httpstatus_all
+
 :attr:`Request.meta <scrapy.http.Request.meta>` 
-中的 ``handle_httpstatus_list`` 键也可以用来指定每个request所允许的response code。
+中的 ``handle_httpstatus_list`` 键也可以用来指定每个request所允许的response code。此外，您可以通过指定request的 ``handle_httpstatus_all`` 键来允许任何的返回值。
 
 不过请记住，除非您知道您在做什么，否则处理非200返回一般来说是个糟糕的决定。
 

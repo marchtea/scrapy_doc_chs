@@ -42,7 +42,11 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 使用样例
 =============
 
-为了使用图片管道，你仅需要 :ref:`启动它<topics-images-enabling>` 并用 ``image_urls`` 和 ``images`` 定义一个项目::
+为了使用图片管道，你仅需要 :ref:`启用<topics-images-enabling>` .
+
+接着，如果spider返回一个具有 'image_urls' 键的dict，则pipeline会提取相对应的结果。
+
+如果你更喜欢使用 :class:`~.Item` 来自定义item， 则需要设置 ``image_urls`` 和 ``images`` 字段::
 
     import scrapy
 

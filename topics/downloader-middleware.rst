@@ -37,7 +37,7 @@
 
     DOWNLOADER_MIDDLEWARES = {
         'myproject.middlewares.CustomDownloaderMiddleware': 543,
-        'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
+        'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     }
 
 最后，请注意，有些中间件需要通过特定的设置来启用。更多内容请查看相关中间件文档。
@@ -47,7 +47,7 @@
 
 编写下载器中间件十分简单。每个中间件组件是一个定义了以下一个或多个方法的Python类:
 
-.. module:: scrapy.contrib.downloadermiddleware
+.. module:: scrapy.downloadermiddlewares
 
 .. class:: DownloaderMiddleware
 
@@ -79,7 +79,7 @@
       :type request: :class:`~scrapy.http.Request` 对象
 
       :param spider: 该request对应的spider
-      :type spider: :class:`~scrapy.spider.Spider` 对象
+      :type spider: :class:`~scrapy.spiders.Spider` 对象
 
    .. method:: process_response(request, response, spider)
 
@@ -102,7 +102,7 @@
       :type response: :class:`~scrapy.http.Response` 对象 
 
       :param spider: response所对应的spider
-      :type spider: :class:`~scrapy.spider.Spider` 对象
+      :type spider: :class:`~scrapy.spiders.Spider` 对象
 
    .. method:: process_exception(request, exception, spider)
 
@@ -131,7 +131,7 @@
       :type exception:  ``Exception`` 对象
 
       :param spider: request对应的spider
-      :type spider: :class:`~scrapy.spider.Spider` 对象 
+      :type spider: :class:`~scrapy.spiders.Spider` 对象 
 
 .. _topics-downloader-middleware-ref:
 
@@ -149,7 +149,7 @@
 CookiesMiddleware
 -----------------
 
-.. module:: scrapy.contrib.downloadermiddleware.cookies
+.. module:: scrapy.downloadermiddlewares.cookies
    :synopsis: Cookies Downloader Middleware
 
 .. class:: CookiesMiddleware
@@ -209,21 +209,21 @@ COOKIES_DEBUG
 
 下边是启用 :setting:`COOKIES_DEBUG` 的记录的样例::
 
-    2011-04-06 14:35:10-0300 [diningcity] INFO: Spider opened
-    2011-04-06 14:35:10-0300 [diningcity] DEBUG: Sending cookies to: <GET http://www.diningcity.com/netherlands/index.html>
+    2011-04-06 14:35:10-0300 [scrapy] INFO: Spider opened
+    2011-04-06 14:35:10-0300 [scrapy] DEBUG: Sending cookies to: <GET http://www.diningcity.com/netherlands/index.html>
             Cookie: clientlanguage_nl=en_EN
-    2011-04-06 14:35:14-0300 [diningcity] DEBUG: Received cookies from: <200 http://www.diningcity.com/netherlands/index.html>
+    2011-04-06 14:35:14-0300 [scrapy] DEBUG: Received cookies from: <200 http://www.diningcity.com/netherlands/index.html>
             Set-Cookie: JSESSIONID=B~FA4DC0C496C8762AE4F1A620EAB34F38; Path=/
             Set-Cookie: ip_isocode=US
             Set-Cookie: clientlanguage_nl=en_EN; Expires=Thu, 07-Apr-2011 21:21:34 GMT; Path=/
-    2011-04-06 14:49:50-0300 [diningcity] DEBUG: Crawled (200) <GET http://www.diningcity.com/netherlands/index.html> (referer: None)
+    2011-04-06 14:49:50-0300 [scrapy] DEBUG: Crawled (200) <GET http://www.diningcity.com/netherlands/index.html> (referer: None)
     [...]
 
 
 DefaultHeadersMiddleware
 ------------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.defaultheaders
+.. module:: scrapy.downloadermiddlewares.defaultheaders
    :synopsis: Default Headers Downloader Middleware
 
 .. class:: DefaultHeadersMiddleware
@@ -234,7 +234,7 @@ DefaultHeadersMiddleware
 DownloadTimeoutMiddleware
 -------------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.downloadtimeout
+.. module:: scrapy.downloadermiddlewares.downloadtimeout
    :synopsis: Download timeout middleware
 
 .. class:: DownloadTimeoutMiddleware
@@ -245,7 +245,7 @@ DownloadTimeoutMiddleware
 HttpAuthMiddleware
 ------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.httpauth
+.. module:: scrapy.downloadermiddlewares.httpauth
    :synopsis: HTTP Auth downloader middleware
 
 .. class:: HttpAuthMiddleware
@@ -256,7 +256,7 @@ HttpAuthMiddleware
 
     样例::
 
-        from scrapy.contrib.spiders import CrawlSpider
+        from scrapy.spiders import CrawlSpider
 
         class SomeIntranetSiteSpider(CrawlSpider):
 
@@ -272,7 +272,7 @@ HttpAuthMiddleware
 HttpCacheMiddleware
 -------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.httpcache
+.. module:: scrapy.downloadermiddlewares.httpcache
    :synopsis: HTTP Cache downloader middleware
 
 .. class:: HttpCacheMiddleware
@@ -311,7 +311,7 @@ Dummpy策略对于测试spider十分有用。其能使spider运行更快(不需�
 
 使用这个策略请设置:
 
-* :setting:`HTTPCACHE_POLICY` 为 ``scrapy.contrib.httpcache.DummyPolicy``
+* :setting:`HTTPCACHE_POLICY` 为 ``scrapy.extensions.httpcache.DummyPolicy``
 
 
 .. _httpcache-policy-rfc2616:
@@ -334,17 +334,27 @@ RFC2616策略
 * 根据response包头的 `Last-Modified` 验证老旧的response。
 * 根据response包头的 `ETag` 验证老旧的response。
 * 为接收到的response设置缺失的 `Date` 字段。
+* 支持request中cache-control指定的 `max-stale`
+
+  通过该字段，使得spider完整支持了RFC2616缓存策略，但避免了多次请求下情况下的重验证问题(revalidation on a request-by-request basis).
+  后者仍然需要HTTP标准进行确定.
+
+  例子: 
+
+  在Request的包头中添加 `Cache-Control: max-stale=600` 表明接受未超过600秒的超时时间的response.
+
+  更多请参考: RFC2616, 14.9.3
 
 目前仍然缺失:
 
-* `Pragma: no-cache` 支持 http://www.mnot.net/cache_docs/#PRAGMA
+* `Pragma: no-cache` 支持 http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.1
 * `Vary` 字段支持 http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.6
 * 当update或delete之后失效相应的response http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.10
 * ... 以及其他可能缺失的特性 ..
 
 使用这个策略，设置:
 
-* :setting:`HTTPCACHE_POLICY` 为 ``scrapy.contrib.httpcache.RFC2616Policy``
+* :setting:`HTTPCACHE_POLICY` 为 ``scrapy.extensions.httpcache.RFC2616Policy``
 
 
 .. _httpcache-storage-fs:
@@ -356,7 +366,7 @@ Filesystem storage backend (默认值)
 
 使用该存储端，设置:
 
-* :setting:`HTTPCACHE_STORAGE` 为 ``scrapy.contrib.httpcache.FilesystemCacheStorage``
+* :setting:`HTTPCACHE_STORAGE` 为 ``scrapy.extensions.httpcache.FilesystemCacheStorage``
 
 每个request/response组存储在不同的目录中，包含下列文件:
 
@@ -387,7 +397,7 @@ DBM storage backend
 
 使用该存储端，设置:
 
-* :setting:`HTTPCACHE_STORAGE` 为 ``scrapy.contrib.httpcache.DbmCacheStorage``
+* :setting:`HTTPCACHE_STORAGE` 为 ``scrapy.extensions.httpcache.DbmCacheStorage``
 
 .. _httpcache-storage-leveldb:
 
@@ -404,11 +414,11 @@ the scrapy shell in parallel for the same spider.
 
 In order to use this storage backend:
 
-* set :setting:`HTTPCACHE_STORAGE` to ``scrapy.contrib.httpcache.LeveldbCacheStorage``
+* set :setting:`HTTPCACHE_STORAGE` to ``scrapy.extensions.httpcache.LeveldbCacheStorage``
 * install `LevelDB python bindings`_ like ``pip install leveldb``
 
 .. _LevelDB: http://code.google.com/p/leveldb/
-.. _leveldb python bindings: http://pypi.python.org/pypi/leveldb
+.. _leveldb python bindings: https://pypi.python.org/pypi/leveldb
 
 
 HTTPCache中间件设置
@@ -429,6 +439,10 @@ HTTP缓存是否开启。
 
 .. versionchanged:: 0.11
    在0.11版本前，是使用 :setting:`HTTPCACHE_DIR` 来开启缓存。
+
+.. reqmeta:: dont_cache
+
+   您可以通过设置 :reqmeta:`dont_cache` 元数据为True来避免缓存.
 
 .. setting:: HTTPCACHE_EXPIRATION_SECS
 
@@ -490,7 +504,7 @@ HTTPCACHE_IGNORE_SCHEMES
 HTTPCACHE_STORAGE
 ^^^^^^^^^^^^^^^^^
 
-默认: ``'scrapy.contrib.httpcache.FilesystemCacheStorage'``
+默认: ``'scrapy.extensions.httpcache.FilesystemCacheStorage'``
 
 实现缓存存储后端的类。
 
@@ -513,15 +527,27 @@ HTTPCACHE_POLICY
 
 .. versionadded:: 0.18
 
-默认: ``'scrapy.contrib.httpcache.DummyPolicy'``
+默认: ``'scrapy.extensions.httpcache.DummyPolicy'``
 
 实现缓存策略的类。
+
+.. setting:: HTTPCACHE_GZIP
+
+HTTPCACHE_GZIP
+^^^^^^^^^^^^^^
+
+.. versionadded:: 0.25
+
+默认: ``False``
+
+如果启用，scrapy将会使用gzip压缩所有缓存的数据.
+该设定只针对文件系统后端(Filesystem backend)有效。
 
 
 HttpCompressionMiddleware
 -------------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.httpcompression
+.. module:: scrapy.downloadermiddlewares.httpcompression
    :synopsis: Http Compression Middleware
 
 .. class:: HttpCompressionMiddleware
@@ -544,7 +570,7 @@ Compression Middleware(压缩中间件)是否开启。
 ChunkedTransferMiddleware
 -------------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.chunked
+.. module:: scrapy.downloadermiddlewares.chunked
    :synopsis: Chunked Transfer Middleware
 
 .. class:: ChunkedTransferMiddleware
@@ -554,10 +580,12 @@ ChunkedTransferMiddleware
 HttpProxyMiddleware
 -------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.httpproxy
+.. module:: scrapy.downloadermiddlewares.httpproxy
    :synopsis: Http Proxy Middleware
 
 .. versionadded:: 0.8
+
+.. reqmeta:: proxy
 
 .. class:: HttpProxyMiddleware
 
@@ -570,13 +598,15 @@ HttpProxyMiddleware
    * ``https_proxy``
    * ``no_proxy``
 
-.. _urllib: http://docs.python.org/library/urllib.html
-.. _urllib2: http://docs.python.org/library/urllib2.html
+   您也可以针对每个请求设置 ``proxy`` 元数据, 其形式类似于 ``http://some_proxy_server:port``.
+
+.. _urllib: https://docs.python.org/library/urllib.html
+.. _urllib2: https://docs.python.org/library/urllib2.html
 
 RedirectMiddleware
 ------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.redirect
+.. module:: scrapy.downloadermiddlewares.redirect
    :synopsis: Redirection Middleware
 
 .. class:: RedirectMiddleware
@@ -666,7 +696,7 @@ REDIRECT_MAX_METAREFRESH_DELAY
 RetryMiddleware
 ---------------
 
-.. module:: scrapy.contrib.downloadermiddleware.retry
+.. module:: scrapy.downloadermiddlewares.retry
    :synopsis: Retry Middleware
 
 .. class:: RetryMiddleware
@@ -731,7 +761,7 @@ RETRY_HTTP_CODES
 RobotsTxtMiddleware
 -------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.robotstxt
+.. module:: scrapy.downloadermiddlewares.robotstxt
    :synopsis: robots.txt middleware
 
 .. class:: RobotsTxtMiddleware
@@ -747,7 +777,7 @@ RobotsTxtMiddleware
 DownloaderStats
 ---------------
 
-.. module:: scrapy.contrib.downloadermiddleware.stats
+.. module:: scrapy.downloadermiddlewares.stats
    :synopsis: Downloader Stats Middleware
 
 .. class:: DownloaderStats
@@ -759,7 +789,7 @@ DownloaderStats
 UserAgentMiddleware
 -------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.useragent
+.. module:: scrapy.downloadermiddlewares.useragent
    :synopsis: User Agent Middleware
 
 .. class:: UserAgentMiddleware
@@ -773,7 +803,7 @@ UserAgentMiddleware
 AjaxCrawlMiddleware
 -------------------
 
-.. module:: scrapy.contrib.downloadermiddleware.ajaxcrawl
+.. module:: scrapy.downloadermiddlewares.ajaxcrawl
 
 .. class:: AjaxCrawlMiddleware
 
@@ -803,5 +833,5 @@ AjaxCrawlMiddleware是否启用。您可能需要针对 :ref:`通用爬虫 <topi
 
 
 .. _DBM: http://en.wikipedia.org/wiki/Dbm
-.. _anydbm: http://docs.python.org/library/anydbm.html
+.. _anydbm: https://docs.python.org/library/anydbm.html
 .. _chunked transfer encoding: http://en.wikipedia.org/wiki/Chunked_transfer_encoding
