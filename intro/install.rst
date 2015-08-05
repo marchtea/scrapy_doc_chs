@@ -66,14 +66,14 @@ Windows
 
 
 Ubuntu 9.10及以上版本 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 **不要** 使用Ubuntu提供的 ``python-scrapy`` ，相较于最新版的Scrapy，该包版本太旧，并且运行速度也较为缓慢。
 
 您可以使用官方提供的 :ref:`Ubuntu Packages <topics-ubuntu>` 。该包解决了全部依赖问题，并且与最新的bug修复保持持续更新。
 
 Archlinux
-~~~~~~~~~
+---------
 
 您可以依照通用的方式或者从 `AUR Scrapy package` 来安装Scrapy::
 
