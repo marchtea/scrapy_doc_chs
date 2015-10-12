@@ -159,7 +159,7 @@ Scrapy提供了一个 :doc:`item pipeline </topics/item-pipeline>` ，来下载�
 
 .. setting:: IMAGES_MIN_WIDTH
 
-你可以丢掉那些过小的图片，只需在:setting:`IMAGES_MIN_HEIGHT` 和 :setting:`IMAGES_MIN_WIDTH` 设置中指定最小允许的尺寸。
+你可以丢掉那些过小的图片，只需在 :setting:`IMAGES_MIN_HEIGHT` 和 :setting:`IMAGES_MIN_WIDTH` 设置中指定最小允许的尺寸。
 
 比如::
 
