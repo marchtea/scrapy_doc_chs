@@ -14,7 +14,7 @@ Spider中间件(Middleware)
 
 要启用spider中间件，您可以将其加入到
 :setting:`SPIDER_MIDDLEWARES` 设置中。
-该设置是一个字典，键位中间件的路径，值为中间件的顺序(order)。
+该设置是一个字典，键为中间件的路径，值为中间件的顺序(order)。
 
 样例::
 
