@@ -2,6 +2,7 @@ from docutils.parsers.rst.roles import set_classes
 from docutils import nodes
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import make_refnode
+from operator import itemgetter
 
 
 class settingslist_node(nodes.General, nodes.Element):
@@ -13,8 +14,24 @@ class SettingsListDirective(Directive):
         return [settingslist_node('')]
 
 
-def is_setting_node(node):
-    return node.tagname == 'pending_xref' and node['reftype'] == 'setting'
+def is_setting_index(node):
+    if node.tagname == 'index':
+        # index entries for setting directives look like:
+        # [(u'pair', u'SETTING_NAME; setting', u'std:setting-SETTING_NAME', '')]
+        entry_type, info, refid, _ = node['entries'][0]
+        return entry_type == 'pair' and info.endswith('; setting')
+    return False
+
+
+def get_setting_target(node):
+    # target nodes are placed next to the node in the doc tree
+    return node.parent[node.parent.index(node) + 1]
+
+
+def get_setting_name_and_refid(node):
+    """Extract setting name from directive index node"""
+    entry_type, info, refid, _ = node['entries'][0]
+    return info.replace('; setting', ''), refid
 
 
 def collect_scrapy_settings_refs(app, doctree):
@@ -23,41 +40,42 @@ def collect_scrapy_settings_refs(app, doctree):
     if not hasattr(env, 'scrapy_all_settings'):
         env.scrapy_all_settings = []
 
-    for node in doctree.traverse(is_setting_node):
-        try:
-            targetnode = node.parent[node.parent.index(node) - 1]
-            if not isinstance(targetnode, nodes.target):
-                raise IndexError
-        except IndexError:
-            targetid = "setting-%d" % env.new_serialno('setting')
-            targetnode = nodes.target('', '', ids=[targetid])
-            node.replace_self([targetnode, node])
+    for node in doctree.traverse(is_setting_index):
+        targetnode = get_setting_target(node)
+        assert isinstance(targetnode, nodes.target), "Next node is not a target"
+
+        setting_name, refid = get_setting_name_and_refid(node)
 
         env.scrapy_all_settings.append({
             'docname': env.docname,
-            'lineno': node.line,
-            'node': node.deepcopy(),
-            'target': targetnode,
+            'setting_name': setting_name,
+            'refid': refid,
         })
 
 
 def make_setting_element(setting_data, app, fromdocname):
-    text = nodes.Text(setting_data['node'].astext())
-    targetid = ''  # TODO: resolve to a proper id
     refnode = make_refnode(app.builder, fromdocname,
-                           setting_data['docname'], targetid, text)
-
+                           todocname=setting_data['docname'],
+                           targetid=setting_data['refid'],
+                           child=nodes.Text(setting_data['setting_name']))
     p = nodes.paragraph()
-    p.append(refnode)
-    return p
+    p += refnode
+
+    item = nodes.list_item()
+    item += p
+    return item
 
 
 def replace_settingslist_nodes(app, doctree, fromdocname):
     env = app.builder.env
 
     for node in doctree.traverse(settingslist_node):
-        node.replace_self([make_setting_element(d, app, fromdocname)
-                           for d in env.scrapy_all_settings])
+        settings_list = nodes.bullet_list()
+        settings_list.extend([make_setting_element(d, app, fromdocname)
+                              for d in sorted(env.scrapy_all_settings,
+                                              key=itemgetter('setting_name'))
+                              if fromdocname != d['docname']])
+        node.replace_self(settings_list)
 
 
 def setup(app):
@@ -91,7 +109,6 @@ def setup(app):
 
     app.connect('doctree-read', collect_scrapy_settings_refs)
     app.connect('doctree-resolved', replace_settingslist_nodes)
-
 
 def source_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
     ref = 'https://github.com/scrapy/scrapy/blob/master/' + text
