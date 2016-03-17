@@ -27,6 +27,7 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 ===========
 
 .. toctree::
+   :caption: First steps
    :hidden:
 
    intro/overview
@@ -52,6 +53,7 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 ==============
 
 .. toctree::
+   :caption: Basic concepts
    :hidden:
 
    topics/commands
@@ -110,6 +112,7 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 =================
 
 .. toctree::
+   :caption: Built-in services
    :hidden:
 
    topics/logging
@@ -138,6 +141,7 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 =========================
 
 .. toctree::
+   :caption: Solving specific problems
    :hidden:
 
    faq
@@ -203,6 +207,7 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 ================
 
 .. toctree::
+   :caption: Extending Scrapy
    :hidden:
 
    topics/architecture
@@ -240,6 +245,7 @@ Scrapy |version| 文档(未完成,大部分仍与0.24相同,请谨慎参考)
 ============
 
 .. toctree::
+   :caption: All the rest
    :hidden:
 
    news

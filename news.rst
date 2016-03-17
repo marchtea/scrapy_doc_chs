@@ -3,6 +3,82 @@
 Release notes
 =============
 
+1.0.5 (2016-02-04)
+------------------
+
+- FIX: [Backport] Ignore bogus links in LinkExtractors (fixes :issue:`907`, :commit:`108195e`)
+- TST: Changed buildbot makefile to use 'pytest' (:commit:`1f3d90a`)
+- DOC: Fixed typos in tutorial and media-pipeline (:commit:`808a9ea` and :commit:`803bd87`)
+- DOC: Add AjaxCrawlMiddleware to DOWNLOADER_MIDDLEWARES_BASE in settings docs (:commit:`aa94121`)
+
+1.0.4 (2015-12-30)
+------------------
+
+- Ignoring xlib/tx folder, depending on Twisted version. (:commit:`7dfa979`)
+- Run on new travis-ci infra (:commit:`6e42f0b`)
+- Spelling fixes (:commit:`823a1cc`)
+- escape nodename in xmliter regex (:commit:`da3c155`)
+- test xml nodename with dots (:commit:`4418fc3`)
+- TST don't use broken Pillow version in tests (:commit:`a55078c`)
+- disable log on version command. closes #1426 (:commit:`86fc330`)
+- disable log on startproject command (:commit:`db4c9fe`)
+- Add PyPI download stats badge (:commit:`df2b944`)
+- don't run tests twice on Travis if a PR is made from a scrapy/scrapy branch (:commit:`a83ab41`)
+- Add Python 3 porting status badge to the README (:commit:`73ac80d`)
+- fixed RFPDupeFilter persistence (:commit:`97d080e`)
+- TST a test to show that dupefilter persistence is not working (:commit:`97f2fb3`)
+- explicit close file on file:// scheme handler (:commit:`d9b4850`)
+- Disable dupefilter in shell (:commit:`c0d0734`)
+- DOC: Add captions to toctrees which appear in sidebar (:commit:`aa239ad`)
+- DOC Removed pywin32 from install instructions as it's already declared as dependency. (:commit:`10eb400`)
+- Added installation notes about using Conda for Windows and other OSes. (:commit:`1c3600a`)
+- Fixed minor grammar issues. (:commit:`7f4ddd5`)
+- fixed a typo in the documentation. (:commit:`b71f677`)
+- Version 1 now exists (:commit:`5456c0e`)
+- fix another invalid xpath error (:commit:`0a1366e`)
+- fix ValueError: Invalid XPath: //div/[id="not-exists"]/text() on selectors.rst (:commit:`ca8d60f`)
+- Typos corrections (:commit:`7067117`)
+- fix typos in downloader-middleware.rst and exceptions.rst, middlware -> middleware (:commit:`32f115c`)
+- Add note to ubuntu install section about debian compatibility (:commit:`23fda69`)
+- Replace alternative OSX install workaround with virtualenv (:commit:`98b63ee`)
+- Reference Homebrew's homepage for installation instructions (:commit:`1925db1`)
+- Add oldest supported tox version to contributing docs (:commit:`5d10d6d`)
+- Note in install docs about pip being already included in python>=2.7.9 (:commit:`85c980e`)
+- Add non-python dependencies to Ubuntu install section in the docs (:commit:`fbd010d`)
+- Add OS X installation section to docs (:commit:`d8f4cba`)
+- DOC(ENH): specify path to rtd theme explicitly (:commit:`de73b1a`)
+- minor: scrapy.Spider docs grammar (:commit:`1ddcc7b`)
+- Make common practices sample code match the comments (:commit:`1b85bcf`)
+- nextcall repetitive calls (heartbeats). (:commit:`55f7104`)
+- Backport fix compatibility with Twisted 15.4.0 (:commit:`b262411`)
+- pin pytest to 2.7.3 (:commit:`a6535c2`)
+- Merge pull request #1512 from mgedmin/patch-1 (:commit:`8876111`)
+- Merge pull request #1513 from mgedmin/patch-2 (:commit:`5d4daf8`)
+- Typo (:commit:`f8d0682`)
+- Fix list formatting (:commit:`5f83a93`)
+- fix scrapy squeue tests after recent changes to queuelib (:commit:`3365c01`)
+- Merge pull request #1475 from rweindl/patch-1 (:commit:`2d688cd`)
+- Update tutorial.rst (:commit:`fbc1f25`)
+- Merge pull request #1449 from rhoekman/patch-1 (:commit:`7d6538c`)
+- Small grammatical change (:commit:`8752294`)
+- Add openssl version to version command (:commit:`13c45ac`)
+
+1.0.3 (2015-08-11)
+------------------
+
+- add service_identity to scrapy install_requires (:commit:`cbc2501`)
+- Workaround for travis#296 (:commit:`66af9cd`)
+
+1.0.2 (2015-08-06)
+------------------
+
+- Twisted 15.3.0 does not raises PicklingError serializing lambda functions (:commit:`b04dd7d`)
+- Minor method name fix (:commit:`6f85c7f`)
+- minor: scrapy.Spider grammar and clarity (:commit:`9c9d2e0`)
+- Put a blurb about support channels in CONTRIBUTING (:commit:`c63882b`)
+- Fixed typos (:commit:`a9ae7b0`)
+- Fix doc reference. (:commit:`7c8a4fe`)
+
 1.0.1 (2015-07-01)
 ------------------
 
@@ -522,7 +598,7 @@ Enhancements
 - Document `request_scheduled` signal (:issue:`746`)
 - Add a note about reporting security issues (:issue:`697`)
 - Add LevelDB http cache storage backend (:issue:`626`, :issue:`500`)
-- Sort spider list output of `scrapy list` command (:issue:`742`) 
+- Sort spider list output of `scrapy list` command (:issue:`742`)
 - Multiple documentation enhancemens and fixes
   (:issue:`575`, :issue:`587`, :issue:`590`, :issue:`596`, :issue:`610`,
   :issue:`617`, :issue:`618`, :issue:`627`, :issue:`613`, :issue:`643`,
@@ -938,7 +1014,7 @@ Scrapy changes:
 - StackTraceDump extension: also dump trackref live references (:commit:`fe2ce93`)
 - nested items now fully supported in JSON and JSONLines exporters
 - added :reqmeta:`cookiejar` Request meta key to support multiple cookie sessions per spider
-- decoupled encoding detection code to `w3lib.encoding`_, and ported Scrapy code to use that mdule
+- decoupled encoding detection code to `w3lib.encoding`_, and ported Scrapy code to use that module
 - dropped support for Python 2.5. See http://blog.scrapinghub.com/2012/02/27/scrapy-0-15-dropping-support-for-python-2-5/
 - dropped support for Twisted 2.5
 - added :setting:`REFERER_ENABLED` setting, to control referer middleware
@@ -1247,7 +1323,7 @@ New features
 - Added ``dont_click`` argument to ``FormRequest.from_response()`` method (:rev:`1813`, :rev:`1816`)
 - Added ``clickdata`` argument to ``FormRequest.from_response()`` method (:rev:`1802`, :rev:`1803`)
 - Added support for HTTP proxies (``HttpProxyMiddleware``) (:rev:`1781`, :rev:`1785`)
-- Offiste spider middleware now logs messages when filtering out requests (:rev:`1841`)
+- Offsite spider middleware now logs messages when filtering out requests (:rev:`1841`)
 
 Backwards-incompatible changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
