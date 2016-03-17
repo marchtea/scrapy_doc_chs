@@ -26,7 +26,7 @@
 Firebug提供了非常实用的 `检查元素`_ 功能。该功能允许您将鼠标悬浮在不同的页面元素上，
 显示相应元素的HTML代码。否则，您只能十分痛苦的在HTML的body中手动搜索标签。
 
-.. _检查元素: http://www.youtube.com/watch?v=-pT_pDe54aA
+.. _检查元素: https://www.youtube.com/watch?v=-pT_pDe54aA
 
 在下列截图中，您将看到 `检查元素`_ 的执行效果。
 
@@ -64,14 +64,14 @@ Firebug提供了非常实用的 `检查元素`_ 功能。该功能允许您将�
         follow=True,
     ),
 
-:class:`~scrapy.contrib.spiders.Rule` 对象指导基于
-:class:`~scrapy.contrib.spiders.CrawlSpider` 的spider如何跟进目录链接。
+:class:`~scrapy.spiders.Rule` 对象指导基于
+:class:`~scrapy.spiders.CrawlSpider` 的spider如何跟进目录链接。
 ``parse_category`` 是spider的方法，用于从页面中处理也提取数据。
 
 spider的代码如下::
 
-   from scrapy.contrib.linkextractors import LinkExtractor
-   from scrapy.contrib.spiders import CrawlSpider, Rule
+   from scrapy.linkextractors import LinkExtractor
+   from scrapy.spiders import CrawlSpider, Rule
 
    class GoogleDirectorySpider(CrawlSpider):
        name = 'directory.google.com'
@@ -145,4 +145,4 @@ or tags which Therefer   in page HTML
 sources may on Firebug inspects the live DOM 
 )
 
-.. _被Google关闭: http://searchenginewatch.com/article/2096661/Google-Directory-Has-Been-Shut-Down
+.. _被Google关闭: http://searchenginewatch.com/sew/news/2096661/google-directory-shut
