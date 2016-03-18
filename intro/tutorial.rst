@@ -126,10 +126,8 @@ Spider是用户编写用于从单个网站(或者一些网站)爬取数据的类
 
    scrapy crawl dmoz
 
-This command runs the spider with name ``dmoz`` that we've just added, that
-will send some requests for the ``dmoz.org`` domain. You will get an output
-similar to this::
-``crawl dmoz`` 启动用于爬取 ``dmoz.org`` 的spider，您将得到类似的输出::
+该命令启动了我们刚刚添加的 ``dmoz`` spider, 向 ``dmoz.org`` 发送一些请求。
+您将会得到类似的输出::
 
     2014-01-23 18:13:07-0400 [scrapy] INFO: Scrapy started (bot: tutorial)
     2014-01-23 18:13:07-0400 [scrapy] INFO: Optional features available: ...
@@ -183,12 +181,11 @@ Selectors选择器简介
 如果您想了解的更多，我们推荐 `通过这些例子来学习XPath
 <http://zvon.org/comp/r/tut-XPath_1.html>`_, 以及 `这篇教程学习"how to think in XPath" <http://plasmasturm.org/log/xpath101/>`_.
 
-.. note:: **CSS vs XPath:** you can go a long way extracting data from web pages
-  using only CSS selectors. However, XPath offers more power because besides
-  navigating the structure, it can also look at the content: you're
-  able to select things like: *the link that contains the text 'Next Page'*.
-  Because of this, we encourage you to learn about XPath even if you
-  already know how to construct CSS selectors.
+.. note:: **CSS vs XPath:** 您可以仅仅使用CSS Selector来从网页中
+  提取数据。不过, XPath提供了更强大的功能。其不仅仅能指明数据所在的路径，
+  还能查看数据: 比如，您可以这么进行选择: 
+  *包含文字 'Next Page' 的链接* 。 正因为如此，即使您已经了解如何使用
+  CSS selector， 我们仍推荐您使用XPath。
 
 为了配合CSS与XPath，Scrapy除了提供了 :class:`~scrapy.selector.Selector`
 之外，还提供了方法来避免每次从response中提取数据时生成selector的麻烦。
@@ -239,17 +236,12 @@ shell的输出类似::
 当shell载入后，您将得到一个包含response数据的本地 ``response`` 变量。输入 ``response.body`` 将输出response的包体， 输出 ``response.headers`` 可以看到response的包头。
 
 #TODO..
-更为重要的是，当输入 ``response.selector`` 时，
-您将获取到一个可以用于查询返回数据的selector(选择器)，
-以及映射到 ``response.selector.xpath()`` 、 ``response.selector.css()`` 的
-快捷方法(shortcut): ``response.xpath()`` 和 ``response.css()`` 。
-
-More importantly ``response`` has a ``selector`` attribute which is an instance of
-:class:`~scrapy.selector.Selector` class, instantiated with this particular ``response``.
-You can run queries on ``response`` by calling ``response.selector.xpath()`` or
-``response.selector.css()``. There are also some convenience shortcuts like ``response.xpath()``
-or ``response.xml()`` which map directly to ``response.selector.xpath()`` and
-``response.selector.css()``.
+更为重要的是, ``response`` 拥有一个 ``selector`` 属性,
+该属性是以该特定 ``response`` 初始化的类 :class:`~scrapy.selector.Selector` 的对象。
+您可以通过使用 ``response.selector.xpath()`` 或 ``response.selector.css()``
+来对 ``response`` 进行查询。 此外，scrapy也对 ``response.selector.xpath()`` 
+及 ``response.selector.css()`` 提供了一些快捷方式, 例如
+``response.xpath()`` 或 ``response.css()`` ，
 
 
 同时，shell根据response提前初始化了变量 ``sel`` 。该selector根据response的类型自动选择最合适的分析规则(XML vs HTML)。
@@ -376,18 +368,18 @@ or ``response.xml()`` which map directly to ``response.selector.xpath()`` and
          'link': [u'http://www.informit.com/store/product.aspx?isbn=0130211192'],
          'title': [u'XML Processing with Python']}
 
-Following links
-===============
+追踪链接(Following links)
+==========================
 
-Let's say, instead of just scraping the stuff in *Books* and *Resources* pages,
-you want everything that is under the `Python directory
-<http://www.dmoz.org/Computers/Programming/Languages/Python/>`_.
+接下来, 不仅仅满足于爬取 *Books* 及 *Resources* 页面，
+您想要获取获取所有 `Python directory
+<http://www.dmoz.org/Computers/Programming/Languages/Python/>`_
+的内容。
 
-Now that you know how to extract data from a page, why not extract the links
-for the pages you are interested, follow them and then extract the data you
-want for all of them?
+既然已经能从页面上爬取数据了,为什么不提取您感兴趣的页面的链接,追踪他们,
+读取这些链接的数据呢?
 
-Here is a modification to our spider that does just that::
+下面是实现这个功能的改进版spider::
 
     import scrapy
 
@@ -413,22 +405,19 @@ Here is a modification to our spider that does just that::
                 item['desc'] = sel.xpath('text()').extract()
                 yield item
 
-Now the `parse()` method only extract the interesting links from the page,
-builds a full absolute URL using the `response.urljoin` method (since the links can
-be relative) and yields new requests to be sent later, registering as callback
-the method `parse_dir_contents()` that will ultimately scrape the data we want.
+现在， `parse()` 仅仅从页面中提取我们感兴趣的链接，使用
+`response.urljoin` 方法构造一个绝对路径的URL(页面上的链接都是相对路径的)，
+产生(yield)一个请求， 该请求使用 `parse_dir_contents()` 方法作为回调函数,
+用于最终产生我们想要的数据.。
 
-What you see here is the Scrapy's mechanism of following links: when you yield
-a Request in a callback method, Scrapy will schedule that request to be sent
-and register a callback method to be executed when that request finishes.
+这里展现的即是Scrpay的追踪链接的机制: 当您在回调函数中yield一个Request后,
+Scrpay将会调度,发送该请求,并且在该请求完成时,调用所注册的回调函数。
 
-Using this, you can build complex crawlers that follow links according to rules
-you define, and extract different kinds of data depending on the page it's
-visiting.
+基于此方法,您可以根据您所定义的跟进链接的规则,创建复杂的crawler,并且,
+根据所访问的页面,提取不同的数据.
 
-A common pattern is a callback method that extract some items, looks for a link
-to follow to the next page and then yields a `Request` with the same callback
-for it::
+一种常见的方法是,回调函数负责提取一些item,查找能跟进的页面的链接,
+并且使用相同的回调函数yield一个 `Request`::
 
     def parse_articles_follow_next_page(self, response):
         for article in response.xpath("//article"):
@@ -441,22 +430,23 @@ for it::
         next_page = response.css("ul.navigation > li.next-page > a::attr('href')")
         if next_page:
             url = response.urljoin(next_page[0].extract())
-            yield Request(url, self.parse_articles_follow_next_page)
+            yield scrapy.Request(url, self.parse_articles_follow_next_page)
 
-This creates a sort of loop, following all the links to the next page until it
-doesn't find one -- handy for crawling blogs, forums and other sites with
-pagination.
+上述代码将创建一个循环,跟进所有下一页的链接,直到找不到为止 -- 
+对于爬取博客、论坛以及其他做了分页的网站十分有效。
 
-Another common pattern is to build an item with data from more than one page,
-using a `trick to pass additional data to the callbacks
-<topics-request-response-ref-request-callback-arguments>`_.
+
+另一种常见的需求是从多个页面构建item的数据, 这可以使用
+:ref:`在回调函数中传递信息的技巧
+<topics-request-response-ref-request-callback-arguments>`.
 
 
 .. note::
-    As an example spider that leverages this mechanism, check out the
-    :class:`~scrapy.spiders.CrawlSpider` class for a generic spider
-    that implements a small rules engine that you can use to write your
-    crawlers on top of it.
+    上述代码仅仅作为阐述scrapy机制的样例spider, 想了解
+    如何实现一个拥有小型的规则引擎(rule engine)的通用spider 
+    来构建您的crawler,
+    请查看 :class:`~scrapy.spiders.CrawlSpider`
+
 
 
 保存爬取到的数据

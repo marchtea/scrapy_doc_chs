@@ -138,8 +138,8 @@ Scrapy收集并按照终端(command line)的要求将这些结果写入到了JSO
 * 内置 :ref:`Telnet终端 <topics-telnetconsole>` ，通过在Scrapy进程中钩入Python终端，使您可以查看并且调试爬虫
 
 * 以及其他一些特性，例如可重用的，从 `Sitemaps`_ 及 XML/CSV feeds中爬取网站的爬虫、
-  可以 :ref:`自动下载 <topics-media-images>` 爬取到的数据中的图片(或者其他资源)的media pipeline、
-  带缓存的DNS解析器，还有更多的特性。
+  可以 :ref:`自动下载 <topics-media-pipeline>` 爬取到的数据中的图片(或者其他资源)的media pipeline、
+  带缓存的DNS解析器，以及更多的特性。
 
 接下来
 ============
