@@ -144,7 +144,7 @@ Scrapy收集并按照终端(command line)的要求将这些结果写入到了JSO
 接下来
 ============
 
-下一步当然是 `下载Scrapy`_ 了， 您可以阅读 :ref:`入门教程 <intro-tutorial>` 并加入 `社区`_ 。感谢您的支持!
+下一步当然是 :ref:`下载Scrapy <intro-install>` 了， 您可以阅读 :ref:`入门教程 <intro-tutorial>` 并加入 `社区`_ 。感谢您的支持!
 
 .. _社区: http://scrapy.org/community/
 .. _网络抓取: http://en.wikipedia.org/wiki/Web_scraping
