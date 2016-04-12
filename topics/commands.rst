@@ -12,28 +12,28 @@ Scrapy是通过 ``scrapy`` 命令行工具进行控制的。
 
 Scrapy tool 针对不同的目的提供了多个命令，每个命令支持不同的参数和选项。
 
-(The ``scrapy deploy`` command has been removed in 1.0 in favor of the
-standalone ``scrapyd-deploy``. See `Deploying your project`_.)
+(为了遵循更独立的 ``scrapyd-deploy``,  ``scrapy deploy`` 命令在1.0版本中被移除,
+请参考 `部署项目`_ .)
 
-Configuration settings
+调整设置
 ======================
 
-Scrapy will look for configuration parameters in ini-style ``scrapy.cfg`` files
-in standard locations:
+Scrapy将会在以下路径中寻找记录了配置参数的 ``scrapy.cfg`` 文件,
+该文件以ini的方式记录:
 
-1. ``/etc/scrapy.cfg`` or ``c:\scrapy\scrapy.cfg`` (system-wide),
-2. ``~/.config/scrapy.cfg`` (``$XDG_CONFIG_HOME``) and ``~/.scrapy.cfg`` (``$HOME``)
-   for global (user-wide) settings, and
-3. ``scrapy.cfg`` inside a scrapy project's root (see next section).
+1. ``/etc/scrapy.cfg`` 或 ``c:\scrapy\scrapy.cfg`` (系统层面),
+2. ``~/.config/scrapy.cfg`` (``$XDG_CONFIG_HOME``) 及 ``~/.scrapy.cfg`` (``$HOME``)
+   作为全局(用户层面)设置, 以及
+3. 在scrapy项目根路径下的 ``scrapy.cfg`` (参考之后的章节).
 
-Settings from these files are merged in the listed order of preference:
-user-defined values have higher priority than system-wide defaults
-and project-wide settings will override all others, when defined.
+从这些文件中读取到的设置按照以下的顺序合并:
+用户定义的值具有比系统级别的默认值更高的优先级,
+而项目定义的设置则会覆盖其他.
 
-Scrapy also understands, and can be configured through, a number of environment
-variables. Currently these are:
+Scrapy也会读取并通过环境变量来设置.
+目前支持的有:
 
-* ``SCRAPY_SETTINGS_MODULE`` (See :ref:`topics-settings-module-envvar`)
+* ``SCRAPY_SETTINGS_MODULE`` (查看 :ref:`topics-settings-module-envvar`)
 * ``SCRAPY_PROJECT``
 
 
@@ -472,101 +472,15 @@ Default: ``''`` (empty string)
 
 .. _部署您的项目: http://scrapyd.readthedocs.org/en/latest/deploy.html
 
-Register commands via setup.py entry points
+通过setup.py entry point来注册命令
 -------------------------------------------
 
-.. note:: This is an experimental feature, use with caution.
+.. note:: 这是个实验性的特性,请谨慎使用.
 
-You can also add Scrapy commands from an external library by adding a
-``scrapy.commands`` section in the entry points of the library ``setup.py``
-file.
+您可以通过在库文件 ``setup.py`` 的entry point中添加
+``scrapy.commands`` 部分来添加Scrapy命令.
 
-The following example adds ``my_command`` command::
-
-  from setuptools import setup, find_packages
-
-  setup(name='scrapy-mymodule',
-    entry_points={
-      'scrapy.commands': [
-        'my_command=my_scrapy_module.commands:MyCommand',
-      ],
-    },
-   )
-
-
-Register commands via setup.py entry points
--------------------------------------------
-
-.. note:: This is an experimental feature, use with caution.
-
-You can also add Scrapy commands from an external library by adding a
-``scrapy.commands`` section in the entry points of the library ``setup.py``
-file.
-
-The following example adds ``my_command`` command::
-
-  from setuptools import setup, find_packages
-
-  setup(name='scrapy-mymodule',
-    entry_points={
-      'scrapy.commands': [
-        'my_command=my_scrapy_module.commands:MyCommand',
-      ],
-    },
-   )
-
-Register commands via setup.py entry points
--------------------------------------------
-
-.. note:: This is an experimental feature, use with caution.
-
-You can also add Scrapy commands from an external library by adding a
-``scrapy.commands`` section in the entry points of the library ``setup.py``
-file.
-
-The following example adds ``my_command`` command::
-
-  from setuptools import setup, find_packages
-
-  setup(name='scrapy-mymodule',
-    entry_points={
-      'scrapy.commands': [
-        'my_command=my_scrapy_module.commands:MyCommand',
-      ],
-    },
-   )
-
-Register commands via setup.py entry points
--------------------------------------------
-
-.. note:: This is an experimental feature, use with caution.
-
-You can also add Scrapy commands from an external library by adding a
-``scrapy.commands`` section in the entry points of the library ``setup.py``
-file.
-
-The following example adds ``my_command`` command::
-
-  from setuptools import setup, find_packages
-
-  setup(name='scrapy-mymodule',
-    entry_points={
-      'scrapy.commands': [
-        'my_command=my_scrapy_module.commands:MyCommand',
-      ],
-    },
-   )
-
-Register commands via setup.py entry points
--------------------------------------------
-
-.. note:: This is an experimental feature, use with caution.
-
-You can also add Scrapy commands from an external library by adding a
-``scrapy.commands`` section in the entry points of the library ``setup.py``
-file.
-
-The following example adds ``my_command`` command::
+以下是添加 ``my_command`` 命令的example::
 
   from setuptools import setup, find_packages
 
