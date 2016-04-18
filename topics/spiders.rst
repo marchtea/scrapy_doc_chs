@@ -66,23 +66,23 @@ scrapy.Spider
 
    .. attribute:: custom_settings
 
-      A dictionary of settings that will be overridden from the project wide
-      configuration when running this spider. It must be defined as a class
-      attribute since the settings are updated before instantiation.
+      该设置是一个dict.当启动spider时,该设置将会覆盖项目级的设置.
+      由于设置必须在初始化(instantiation)前被更新,所以该属性
+      必须定义为class属性.
 
-      For a list of available built-in settings see:
-      :ref:`topics-settings-ref`.
+      请通过
+      :ref:`topics-settings-ref`
+      查看支持的设置.
 
    .. attribute:: crawler
 
-      This attribute is set by the :meth:`from_crawler` class method after
-      initializating the class, and links to the
-      :class:`~scrapy.crawler.Crawler` object to which this spider instance is
-      bound.
+      该属性在初始化class后,由类方法 :meth:`from_crawler`
+      设置, 并且链接了本spider实例对应的
+      :class:`~scrapy.crawler.Crawler` 对象.
 
-      Crawlers encapsulate a lot of components in the project for their single
-      entry access (such as extensions, middlewares, signals managers, etc).
-      See :ref:`topics-api-crawler` to know more about them.
+      Crawler包含了很多项目中的组件,作为单一的入口点
+      (例如插件,中间件,信号管理器等).
+      请查看 :ref:`topics-api-crawler` 来了解更多.
 
    .. attribute:: settings
 
